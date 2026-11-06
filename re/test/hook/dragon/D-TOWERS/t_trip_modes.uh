@@ -1,0 +1,18 @@
+# Window tripwires in modes 13 (100,000 each) and mode 6 with a Watch/Gate hit (ScorePart 0 + 3008).
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 13
+110 event s_trip6 ControlCollision
+120 event s_trip3 ControlCollision
+130 event s_trip8 ControlCollision
+140 poke info_text_box message_field 6
+150 event s_trip3 ControlCollision
+160 event s_trip8 ControlCollision
+110 expect n_score == 100000 delta 109
+120 expect n_score == 100000 delta 119
+130 expect n_score == 100000 delta 129
+150 expect n_score == 40000 delta 149
+160 expect n_score == 50000 delta 159
+200 quit

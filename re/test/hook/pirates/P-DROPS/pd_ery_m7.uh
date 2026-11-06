@@ -1,0 +1,18 @@
+# EryTargetBank mode 7: ScorePart index 0 / 1 (5,000 / 35,000), no blocker sends.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop10.message_field v_lite1.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 7
+300 event a_drop10 ControlCollision
+310 event a_drop11 ControlCollision
+320 event a_drop12 ControlCollision
+300 expect n_score == 5000 delta 299
+310 expect n_score == 5000 delta 309
+320 expect n_score == 35000 delta 319
+320 expect a_drop10.message_field == 0
+300 expect sound 8
+320 expect sound 14
+380 quit

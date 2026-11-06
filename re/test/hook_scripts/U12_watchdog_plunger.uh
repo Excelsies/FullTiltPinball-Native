@@ -1,0 +1,39 @@
+# The Full Tilt TDemo watchdog, plunger branch. Run: --table dragon.
+# Demo mode starts at frame 10 and arms the 5.0 s watchdog. Ball 0 is held inside the plunger's
+# bounding box. The first tick (expected near frame 510) stores the ball position; nothing is pressed
+# (the saved position is still (-100, -100), checked only as `none sound` in 505-515 and the plunger
+# watch at 515). The second tick (frame 1010) finds the ball inside the box and inside the plunger
+# box: plunger press plus a release timer of 2.0 + r/32767 s, where r is the rand() drawn in that frame.
+# Precondition: the hook build runs -noaudio, so no wave is loaded and every sound has Duration 0 (loader.cpp:
+# FT 0x40cc60 clears the +0xc duration to 0 and sets it only when the wave loaded); that puts the press at frame 1010.
+# Values: press at frame 1010; 2586 draws in frames 157..1008 (837 frames of 3 plus 15 frames of 5: frames 158-160,
+# 216-224, 635, 695, 696); 4 draws in frame 1010 (delta 1009); n_rand_last at 1010 = 18281, so the release is
+# 2.0 + 18281/32767 s = 2.558 s later, at frame 1010 + ceil(255.8) = 1266. The rules' NewGame draws at frame 0
+# (SelectRandomQuest, mode 10, selected_quest 6) and every later value of the one rand stream depends on it, which
+# decides demo ball 1's path. Held ball 0 is outside UnstuckBall's reach (inside s_plunger1's box); the watchdog
+# press frame does not depend on the stream. What the script pins: the watchdog press frame and the release-timer formula.
+# Draw counts are deltas (`expect ... delta F`), so the 101 table-load TLightGroup draws and any
+# earlier draw change do not move them. Ball 0 is held inside s_plunger1's box, so the engine's stuck
+# check (DragonRules::UnstuckBall, FT 0x42c320) returns for it; the draws depend on demo ball 1 and on
+# where ball 0 is held. If the demo stops feeding ball 1, or ball 0 is held elsewhere, these numbers
+# change.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch s_plunger1.pullback_started
+10 key down demo
+11 key up demo
+12 place 0 -6.9575 12.836 0.37 0 0 0
+12 hold 0 on
+505-515 expect none sound
+515 expect s_plunger1.pullback_started == 0
+1008 expect s_plunger1.pullback_started == 0
+1009 expect s_plunger1.pullback_started == 0
+1008 expect n_rand_draws == 2586 delta 156
+1010 expect n_rand_draws == 4 delta 1009
+1010 expect n_rand_last == 18281
+1010 expect s_plunger1.pullback_started == 1
+1011 expect s_plunger1.pullback_started == 1
+1265 expect s_plunger1.pullback_started == 1
+1266 expect s_plunger1.pullback_started == 0
+1600 quit

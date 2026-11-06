@@ -1,0 +1,231 @@
+{
+ "name": "ft_lifecycle",
+ "description": "Fresh game, no flipper input: new game, plunge each ball (1.0 s pull), 42 s of shots every 1.5 s per ball, 5 cycles: covers launch/skill-shot text, ball save, drain, bonus count, next ball, game over and the high-score dialog (root shots). Table independent.",
+ "steps": [
+  {
+   "wait": 3.0
+  },
+  {
+   "shot": "00_loaded",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "loaded"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "new_game"
+  },
+  {
+   "wait": 2.0
+  },
+  {
+   "shot": "01_new_game",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "new_game"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.6
+  },
+  {
+   "shot": "b0_launched",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b0_launched"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "burst": "b0",
+   "count": 28,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b0_end"
+  },
+  {
+   "rootshot": "b0_root"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.6
+  },
+  {
+   "shot": "b1_launched",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b1_launched"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "burst": "b1",
+   "count": 28,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b1_end"
+  },
+  {
+   "rootshot": "b1_root"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.6
+  },
+  {
+   "shot": "b2_launched",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b2_launched"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "burst": "b2",
+   "count": 28,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b2_end"
+  },
+  {
+   "rootshot": "b2_root"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.6
+  },
+  {
+   "shot": "b3_launched",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b3_launched"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "burst": "b3",
+   "count": 28,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b3_end"
+  },
+  {
+   "rootshot": "b3_root"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.6
+  },
+  {
+   "shot": "b4_launched",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b4_launched"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "burst": "b4",
+   "count": 28,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "b4_end"
+  },
+  {
+   "rootshot": "b4_root"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "rootshot": "zz_end_root"
+  },
+  {
+   "shot": "zz_end",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "end"
+  }
+ ]
+}

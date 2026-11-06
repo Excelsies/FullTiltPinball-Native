@@ -1,0 +1,10 @@
+{
+  "name": "newgame_timing",
+  "description": "F2 at 3.0 s, then 9 s of watching (the closing shot makes the replay wait the 9 s) the rule globals: the timeline gives the time from F2 to each transition of the NewGame sequence (light show, StartGamePlayer1, ball feed). Used with the audio-on and audio-off Wine targets and hookrun.py for the native side.",
+  "steps": [
+    {"wait": 3.0},
+    {"tap": "new_game"},
+    {"wait": 9.0},
+    {"shot": "end"}
+  ]
+}

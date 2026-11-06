@@ -1,0 +1,42 @@
+# Tilt replaces a running mode. Mode 8 is forced with a poke (the mode 8 start is pirates_mode_select.cpp's), then real
+# nudges (bump_left / bump_right alternate every 25 frames, held 10 frames as in D-G1/d_nudge.uh) until the table tilts:
+# mode 17, jackpot and modes_played unchanged, no bonus text, then mode 3 (measured native: tilt + 269 frames; Wine: tilt + 6.2 s).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 key down plunger
+250 key up plunger
+300 poke info_text_box message_field 8
+400 key down bump_left
+410 key up bump_left
+425 key down bump_right
+435 key up bump_right
+450 key down bump_left
+460 key up bump_left
+475 key down bump_right
+485 key up bump_right
+500 key down bump_left
+510 key up bump_left
+525 key down bump_right
+535 key up bump_right
+550 key down bump_left
+560 key up bump_left
+575 key down bump_right
+585 key up bump_right
+480 expect mode == 8
+481 expect mode == 17
+481 expect tilt_lock == 1
+481 expect text info_text_box display id 2006
+# native: the ball is lost 269 frames after the tilt (Wine 618: 6.2 s); a known difference from Wine
+749 expect mode == 17
+750 expect mode == 3
+760 expect ball_count == 2
+760 expect jackpot == 1000000
+760 expect modes_played == 0
+481-760 expect none text info_text_box display id 3028
+481-760 expect none text info_text_box display id 3029
+481-760 expect none text info_text_box display id 3033
+1500 quit

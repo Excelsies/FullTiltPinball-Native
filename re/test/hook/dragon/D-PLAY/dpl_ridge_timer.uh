@@ -1,0 +1,15 @@
+# RidgeControl, natural expiry: the 20 s TLightFlasherStartTimedThenStayOff sent after a hit ends with ControlTimerExpired on
+# v_lite69, which resets its MessageField (listing 2693-2696). 20.0 s = 2000 frames at 10 ms.
+init fixed_dt 10
+init seed 1
+init watch v_lite69.message_field v_lite69.light_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+100 event s_trip1 ControlCollision
+100 expect v_lite69.message_field == 1
+100 expect v_lite69.light_on == 1
+1900 expect v_lite69.message_field == 1
+2300 expect v_lite69.message_field == 0
+2300 expect v_lite69.light_on == 0
+2400 quit

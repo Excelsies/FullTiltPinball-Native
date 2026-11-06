@@ -1,0 +1,35 @@
+# H-2: in mode 2 each hideaway sink lights its own bit (v_lite524 MessageField |= 1 / 2 / 4); the third with bit 8
+# already set completes the set (CheckHideawayComplete: SetHideawayLights(1) clears the bits, AwardCoins ladder step 1 = 50,000).
+# Second cycle: ladder step 2 = 100,000. Each sink hit scores 40,000 (listing 3444-3672, 697-744). Steps 3-6 and the capped 7th cycle: h_ladder.uh.
+# Sound: AwardCoins plays tabb84 (id 56) only in the completing frame; every hideaway hit plays tabb11 (id 10). Ids read from sounds.jsonl
+# (info field) after the disassembly global-to-tag mapping; not resolved independently from the DAT.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite524.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 poke v_lite524 message_field 8
+210 event a_sink17 ControlCollision
+210 expect sound 10
+210 expect none sound 56
+211 expect v_lite524.message_field == 9
+211 expect n_score == 40000 delta 209
+220 event a_sink15 ControlCollision
+220 expect none sound 56
+221 expect v_lite524.message_field == 11
+221 expect n_score == 40000 delta 219
+230 event a_sink14 ControlCollision
+231 expect v_lite524.message_field == 0
+231 expect n_score == 90000 delta 229
+230 expect text info_text_box display id 3003
+230 expect sound 56
+240 poke v_lite524 message_field 8
+250 event a_sink17 ControlCollision
+260 event a_sink15 ControlCollision
+270 event a_sink14 ControlCollision
+270 expect sound 56
+271 expect v_lite524.message_field == 0
+271 expect n_score == 220000 delta 249
+300 quit

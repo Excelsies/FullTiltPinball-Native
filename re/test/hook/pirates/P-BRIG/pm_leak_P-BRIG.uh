@@ -1,0 +1,15 @@
+# The locked-ball count 0x435d3c is a plain global, not per player. Player 1 locks two balls in
+# mode 2; the switch to player 2 leaves locked at 2 (the original does not reset it).
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event s_hole19 ControlBallCaptured
+400 event s_hole19 ControlBallCaptured
+410 expect locked == 2
+500 msg table SwitchToNextPlayer 0
+520 expect locked == 2
+600 quit

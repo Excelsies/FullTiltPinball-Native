@@ -1,0 +1,17 @@
+# PrisonWindowTripwireControl, mode 6 with three lit windows (listing 3736-3770): text 3034, v_lite57 flashes, no 3008,
+# group reset-and-turned-on. Three mode 2 hits light the windows. Lit count 2 (AwardJackpot) is not checked here.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+init watch v_lite57.flasher_on
+100 poke info_text_box message_field 2
+105 event s_trip6 ControlCollision
+110 event s_trip5 ControlCollision
+115 event s_trip6 ControlCollision
+120 poke info_text_box message_field 6
+130 event s_trip5 ControlCollision
+130 expect text info_text_box display id 3034
+130 expect v_lite57.flasher_on == 1
+130 expect none text info_text_box display id 3008
+140 quit

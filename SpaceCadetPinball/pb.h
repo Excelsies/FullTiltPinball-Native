@@ -56,6 +56,9 @@ public:
 	static int quickFlag;
 	static TTextBox *InfoTextBox, *MissTextBox;
 
+	// Gate for every Full Tilt (Dragon's Keep / Skulduggery) difference; false for Space Cadet. Defined in tables.cpp.
+	static bool IsFullTiltTable();
+
 	static int init();
 	static int uninit();
 	static void SelectDatFile(const std::vector<const char*>& dataSearchPaths);
@@ -65,7 +68,8 @@ public:
 	static void toggle_demo();
 	static void replay_level(bool demoMode);
 	static void ballset(float dx, float dy);
-	static void frame(float dtMilliSec);
+	static void frame(float dtMilliSec, float maxSliceMs = 0);
+	static constexpr int MaxPhysicsSlices = 16;
 	static void timed_frame(float timeDelta);
 	static void pause_continue();
 	static void loose_focus();

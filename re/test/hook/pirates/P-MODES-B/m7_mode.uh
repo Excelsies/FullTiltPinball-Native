@@ -1,0 +1,67 @@
+# Mode7Controller (FT 0x42b420; listing 6139-6254). P1 prologue (ball fed ~frame 105); the mode is forced
+# like the original's `info_text_box+6` write (poke) and entered by the ControlMissionComplete event the dispatcher sends.
+# Expected values: listing (score 200,000, flashers -1.0 on v_lite1-3, strings 3062 / 3025, timer 27.4 s, ModeEnd tail).
+# Flashed-light draw: the LCG model (214013 / 2531011, seed 1) with the mode-2 entry's extra draw (see below) gives
+# draw 874 = 7262 (n_rand_last at frame 300), then 22233 -> RandIndex(3) = 2 -> v_lite545, then 5454 ->
+# (5454*150>>15)+100 = 124 -> 0.124 s.
+# Effects of the other rule functions reached are not asserted here.
+# Jackpot ledger: +40,000 arrives at the light_sweeps ControlTimerExpired event, not at the mode end. The sweep branch
+# calls ReleaseHoldSink (pirates_core.cpp) -> a_sink8 TSinkResetTimer adds a ball at the sink (TSink::TimerExpired:
+# n_active_balls 2 -> 3, frame 302 (event at 301)) and calls the handler with the sink as caller, so the control call
+# reaches MissionControl, whose code-agnostic TSink pre-hook (pirates_rules.cpp, FT 0x42d850: caller TypeId 1017 ->
+# AddJackpot(40000)) adds 40,000. The mode end itself adds 750,000 (modes 4-11).
+# Held-ball precondition: the game starts in mode 3 with no_hold_start = 1 (Mode3LaunchController ControlMissionComplete,
+# pirates_ball.cpp:251 = FT 0x42abf0 sets the no-held-ball global to 1, PIRATES.EXE.c:28569), and the sweep branch of
+# this mode calls ReleaseHoldSink only when NoHeldBall == 0 (pirates_modes_b.cpp; FT: the sweep branch calls
+# ReleaseHoldSink only while that global is 0, PIRATES.EXE.c:28879). Forcing the mode from the skill lane would skip the
+# release (n_active_balls 2, jackpot 1,000,000 at the sweep, 1,750,000 at the mode end). The ball is held in a real game,
+# so the script enters mode 2 first: `190 poke info_text_box message_field 2` + `191 event info_text_box
+# ControlMissionComplete` runs Mode2IdleController (pirates_ball.cpp:211 NoHeldBall = 0, FT 0x42ab90) and
+# `195 expect no_hold_start == 0` states the precondition.
+# The mode 2 entry also runs SelectNextMode (MissionControlSwitch -> SetModeLight(2) -> pirates_mode_select.cpp:198
+# RandIndex), one extra draw at frame 191: n_rand_draws at 300 is 874, last 7262, so the flash draws are 22233 ->
+# RandIndex(3) = 2 -> v_lite545 and the duration draw 5454 -> RandIndex(150)+100 = 124 -> 0.124 s; 302 expects:
+# v_lite545 flashes, v_lite547 / v_lite546 do not.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms v_lite547.flasher_on v_lite546.flasher_on v_lite545.flasher_on v_lite1.flasher_on v_lite2.flasher_on v_lite3.flasher_on s_magnet2.active v_lite561.light_on v_lite606.message_field a_spot6.message_field v_lite505.light_on v_lite504.light_on
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+195 expect no_hold_start == 0
+200 poke a_spot6 message_field 3
+200 poke info_text_box message_field 7
+201 event info_text_box ControlMissionComplete
+201 expect mode == 7
+201 expect n_score == 200000
+201 expect a_spot6.message_field == 0
+201 expect v_lite1.flasher_on == 1
+201 expect v_lite2.flasher_on == 1
+201 expect v_lite3.flasher_on == 1
+201 expect text info_text_box display id 3062
+201 expect sound 47
+201 expect track 0
+300 expect n_rand_draws == 874
+300 expect n_rand_last == 7262
+301 event light_sweeps ControlTimerExpired
+301 expect text info_text_box display id 3025
+302 expect mode_timer.time_left_ms in 27300 27400
+302 expect v_lite547.flasher_on == 0
+302 expect n_active_balls == 3
+302 expect jackpot == 1040000
+302 expect v_lite546.flasher_on == 0
+302 expect v_lite545.flasher_on == 1
+400 poke s_magnet2 active 1
+400 poke v_lite561 light_on 1
+400 poke v_lite606 message_field 4
+401 event mode_timer ControlTimerExpired
+402 expect s_magnet2.active == 0
+402 expect v_lite561.light_on == 0
+402 expect v_lite606.message_field == 5
+402 expect v_lite504.light_on == 0
+402 expect v_lite505.light_on == 1
+402 expect jackpot == 1790000
+402 expect mode == 2
+450 quit

@@ -1,0 +1,21 @@
+# D-TSINKS WatchSinkControl1 branch D (listing 3362-3375, code 0x4273a6-0x4273bd), mode 6: only a_sink17 reset timer (-1): no sound, no
+# score, no text, no draw, tower state untouched.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 6
+190 poke v_lite49 message_field 1
+190 poke a_sink17 active 1
+199 dump before v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+200 event a_sink13 ControlCollision
+210 dump after v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+210 expect n_score == 0 delta 199
+210 expect multiball == 0 delta 199
+200 expect none sound 24
+200 expect none sound 43
+200 expect none text info_text_box display
+210 expect a_sink17.active == 1
+210 expect v_lite49.message_field == 1
+210 expect n_rand_draws == 14 delta 199
+250 quit

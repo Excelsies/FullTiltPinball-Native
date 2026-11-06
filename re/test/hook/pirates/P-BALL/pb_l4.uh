@@ -1,0 +1,19 @@
+# The skill shot and the ball save end in the same frame. Both halves:
+#  - U-COM-4 half: ball_save 3 -> 2 at the skill-shot frame (200); mode 3 before.
+#  - skill-result half: outcome 3 (poke s_launcher1 message_field 3, one-way event) gives mode 5 (StartMode5 via Mode3 jump table 0x42ad4c) in that same frame.
+# Coin / mystery outcomes have no hook observable (not checked; see pb_skill_gate_o*).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+199 expect ball_save == 3
+199 expect mode == 3
+200 poke s_launcher1 message_field 3
+200 event s_oneway3 ControlCollision
+200 expect text info_text_box clear
+200 expect ball_save == 2
+200 expect mode == 5
+210 expect mode == 5
+400 quit

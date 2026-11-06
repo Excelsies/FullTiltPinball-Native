@@ -1,0 +1,29 @@
+# The cheat sequence state 0x43bb70 / 0x43bb74 (DragonState CheatState / CheatMode) is written only by the cheat-letter handler (listing
+# pbctrl_bdoor_controller, FT 0x4282c0): neither a new ball nor a player change resets it, so a half-typed sequence of player 1 is completed by player 2.
+# Control: a lone X at mode 2 does nothing (the X case needs the last accepted letter A, bb70 == 0x41), mode stays 2. Player 1 then types N, M, A (bb70 = A,
+# bb74 = 2 = the NMAX family). Switch to player 2 (info_text_box message_field set to 2 and a_kout2.message_field to 5 there, as the per-player values are P2's own):
+# the single X completes NMAX and StartSelectedQuest starts mode 5, with ball_held 1 (as d_nmax). A reset of the cheat state per player would leave mode 2.
+# The `type` frames are the key-to-message latency of the hook (d_nmax: NMAX typed at 420 acts at 423): expects sit 50 frames after each type.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 event a_spot4 ControlCollision
+410 poke a_kout2 message_field 5
+420 type X
+470 expect mode == 2
+480 type NMA
+540 expect mode == 2
+560 msg table SwitchToNextPlayer 0
+600 poke info_text_box message_field 2
+601 poke a_kout2 message_field 5
+610 expect mode == 2
+620 type X
+680 expect mode == 5
+680 expect ball_held == 1
+700 quit

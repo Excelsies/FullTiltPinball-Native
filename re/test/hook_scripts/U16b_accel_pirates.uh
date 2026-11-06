@@ -1,0 +1,20 @@
+# TAccelerator check, PIRATES a_accl1.
+# Same as U16b_accel_dragon.uh against the line (3.3351,-14.1103)-(3.0980,-12.9515), direction
+# (-0.9823, -0.1875), Boost 70, mult 403 = 3: speed 70 x (1 +- 0.03). Placement: 0.5 units before the line
+# midpoint along the direction; the crossing frame N is 11.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_accl1.speed_mult1 a_accl1.speed_mult2 a_accl1.dir_x a_accl1.dir_y
+0 expect a_accl1.speed_mult1 == 70
+0 expect a_accl1.speed_mult2 ~= 0.03 1e-6
+0 expect a_accl1.dir_x ~= -0.9823 1e-4
+0 expect a_accl1.dir_y ~= -0.1875 1e-4
+10 place 0 3.7077 -13.4372 0.37 -0.9823 -0.1875 10 0x1
+12 expect n_ball0_speed in 67.8 72.2
+# 3 -> 4: the table has the placed captive ball, which draws once per frame from ft_rand;
+# one frame, frame 11 -> 12: 3 draws without it, 4 with it (n_placed_balls 0 -> 1).
+12 expect n_rand_draws ~= 4 0 delta 11
+40 dump end
+50 quit

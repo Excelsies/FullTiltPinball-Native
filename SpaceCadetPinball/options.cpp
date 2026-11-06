@@ -152,6 +152,7 @@ optionsStruct options::Options
 	{"FontFileName", ""},
 	{"Language", translations::GetCurrentLanguage()->ShortName},
 	{"Hide Cursor", false},
+	{"Table"},
 };
 
 void options::InitPrimary()
@@ -306,6 +307,7 @@ void options::toggle(Menu1 uIDCheckItem)
 		break;
 	case Menu1::Prefer3DPBGameData:
 		Options.Prefer3DPBGameData ^= true;
+		Options.Table.V.clear(); // a remembered table would hide the switch; the historic order decides again
 		winmain::Restart();
 		break;
 	case Menu1::WindowIntegerScale:
@@ -607,6 +609,21 @@ void options::SetSetting(const std::string& key, const std::string& value)
 {
 	settings[key] = value;
 	if (ImGui::GetCurrentContext())
+		ImGui::MarkIniSettingsDirty();
+}
+
+bool options::PeekSetting(const std::string& key, std::string& value)
+{
+	auto setting = settings.find(key);
+	if (setting == settings.end())
+		return false;
+	value = setting->second;
+	return true;
+}
+
+void options::EraseSetting(const std::string& key)
+{
+	if (settings.erase(key) && ImGui::GetCurrentContext())
 		ImGui::MarkIniSettingsDirty();
 }
 

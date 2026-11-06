@@ -1,0 +1,9 @@
+{"name":"ng_burst","steps":[
+ {"wait":3.0},
+ {"shot":"loaded"},
+ {"wait":0.2},
+ {"tap":"new_game"},
+ {"wait":0.12},
+ {"burst":"ng","count":70,"interval":0.1},
+ {"shot":"end"}
+]}

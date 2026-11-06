@@ -129,6 +129,28 @@ enum class MessageCode
 	SwitchToNextPlayer = 1021,
 	GameOver = 1022,
 	Reset = 1024,
+
+	// Full Tilt only codes (value = Full Tilt code + 0x100; msgmap.json new_members). Sent by the FT table rules and classes only.
+	TBlockerSetFrame = 0x139,
+	TBlockerMoveToFrame = 0x13a,
+	TBlockerEnableNow = 0x13b,
+	TBlockerDisableNow = 0x13c,
+	FtPartEnable = 0x14b,
+	FtPartDisable = 0x14c,
+	THoleEjectBall = 0x143,
+	TKickoutDestroyBall = 0x14e,
+	TLightSweepsStart = 0x11b,
+	TTimerGetTimeLeft = 0x148,
+	ControlBlockerMoveDone = 0x13d,
+	ControlScorerReplaced = 0x14d,
+	ControlModeResume = 0x151,
+	ControlModeEnd = 0x152,
+	ControlBallDrained = 0x153,
+	ControlRampPlaneLayer = 0x154,
+	ControlBallToLayer1 = 0x155,
+	ControlBallToLayer2 = 0x156,
+	ControlReloadScores = 0x4fd,
+	TableBuilt = 0x4f7,
 };
 
 class TPinballComponent
@@ -138,6 +160,15 @@ public:
 	virtual ~TPinballComponent();
 	virtual int Message(MessageCode code, float value);
 	virtual void port_draw();
+#ifdef FT_TEST_HOOK
+	// Test-hook field access (read/write of class-specific members by name); false = unknown field.
+	virtual bool HookGet(const std::string& field, double& out) const;
+	virtual bool HookSet(const std::string& field, double value);
+#endif
+	// FT 0x413550: MessageField and all four per-player copies = 0.
+	void ResetPlayerState();
+	// FT 0x413570: save MessageField for the current player, load the copy of player floor(value).
+	void SwapPlayerState(float value);
 	int get_scoring(unsigned int index) const;
 	virtual vector2 get_coordinates();
 	void SpriteSet(int index) const;
@@ -146,6 +177,10 @@ public:
 	char UnusedBaseFlag;
 	char ActiveFlag;
 	int MessageField;
+	// Per-player copy of MessageField (Full Tilt tables only; FT +0x1a..+0x26, helpers 0x413550/0x413570).
+	int PlayerMessageField[4];
+	// DAT part type this component was built from (set by the part switch; 0 until then).
+	int TypeId;
 	char* GroupName;
 	component_control* Control;
 	int GroupIndex;

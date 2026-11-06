@@ -1,0 +1,31 @@
+# Per-player save / restore of the jackpot: P1 +20000 (spot target hit), P1 drains, P2 drains; P1 returns with its jackpot restored.
+# Jackpot 1040000 at 210 and 1790000 at 5000, not 1020000: s_oneway3 at 207 starts mode 4 through
+# Mode4Controller: its ControlMissionComplete calls ScoreValue(nullptr, 200000), which replaces the last scorer
+# a_spot102 (a TSoloTarget), and the MissionControl pre-hook counts that replacement again, +20000 (the original's
+# behaviour per the decompile; not measured on Wine) = 1040000, n_score 250000 -> 450000 as the timeline shows.
+# The drain at 1730 ends the mode: MissionControlSwitch ModeEnd adds 750000 for modes 4-11 (pirates_rules.cpp:216-218) before the
+# player switch, so the value P1 saved and gets back is 1790000.
+# modes_played and letters restores are not checked here.
+init option Players 2
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 dump p1_ball1
+205 event a_spot102 ControlCollision
+210 expect jackpot == 1040000
+207 event s_oneway3 ControlCollision
+1730 place 0 0 15.6 0.37 0 1 5 0x1
+2500 dump p2_ball1
+2500 expect current_player == 1
+2500 expect jackpot == 20000
+2600 event s_oneway3 ControlCollision
+4000 place 0 0 15.6 0.37 0 1 5 0x1
+5000 dump p1_ball2
+5000 expect current_player == 0
+5000 expect ball_count == 2
+5000 expect jackpot == 1790000
+5000 expect mode == 3
+5100 quit

@@ -1,0 +1,48 @@
+{
+ "name": "dl2_startup_wine",
+ "description": "D-L2 Wine half: peeks before and after NewGame (run with --anchor window --window-poll 0.02).",
+ "steps": [
+  {
+   "wait": 0.5
+  },
+  {
+   "peek": "pre_0_5"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "peek": "pre_0_8"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "peek": "pre_1_1"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "peek": "pre_1_4"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "peek": "pre_1_7"
+  },
+  {
+   "wait": 0.7
+  },
+  {
+   "peek": "post_2_4"
+  },
+  {
+   "wait": 0.6
+  },
+  {
+   "peek": "post_3_0"
+  }
+ ]
+}

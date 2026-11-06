@@ -1,0 +1,20 @@
+# R-2: the same ladder in mode 2, where the wind group adds +1 (one wind light lit) and +2 (two or more): Island hits score
+# idx 0, 4, 8, 11, 11 = 25k, 175k, 325k, 475k, 475k (cumulative 25k, 200k, 525k, 1,000k, 1,475k). Expected from the ladder row.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 2
+199 expect n_score == 0
+200 event a_ramp8 ControlBallToLayer2
+201 expect n_score == 25000
+500 event a_ramp8 ControlBallToLayer2
+501 expect n_score == 200000
+800 event a_ramp8 ControlBallToLayer2
+801 expect n_score == 525000
+1100 event a_ramp8 ControlBallToLayer2
+1101 expect n_score == 1000000
+1400 event a_ramp8 ControlBallToLayer2
+1401 expect n_score == 1475000
+1450 quit

@@ -1,0 +1,18 @@
+# D-TSINKS PrisonSinkControl2 branch D (listing 3217-3267, code 0x427203-0x42727d), mode 6: as PrisonSinkControl1's mode 6:
+# tabc51wave, one draw RandIndex(2) (0x427215), seed 1 -> rand 41 -> index 0 -> v_lite65 flashes, v_lite66 not.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 6
+199 dump before v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+200 seed 1
+200 event a_sink18 ControlCollision
+210 dump after v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+200 expect sound 43
+200 expect n_score == 0 delta 199
+210 expect v_lite65.flasher_on == 1
+210 expect v_lite66.flasher_on == 0
+210 expect multiball == 0 delta 199
+210 expect n_rand_draws == 15 delta 199
+250 quit

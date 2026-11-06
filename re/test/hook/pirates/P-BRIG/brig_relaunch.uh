@@ -1,0 +1,17 @@
+# B9 (BallLockedInBrig 0x424210): a lock that does not start mode 13 feeds the next ball: the plunger gets 0x3fb
+# (PlungerRelaunchBall) with 0.96 s, so MultiballCount drops to 0 at the capture and is back at 1 once the relaunch has run.
+# Mode forced to 2 by poke. Capture at frame 210; the relaunch is due 96 frames (0.96 s) later, i.e. around frame 306.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+200 expect multiball == 1
+210 event s_hole19 ControlBallCaptured
+210 expect locked == 1
+210 expect multiball == 0
+290 expect multiball == 0
+305 expect multiball == 1
+305 expect locked == 1
+305 expect mode == 2
+320 quit

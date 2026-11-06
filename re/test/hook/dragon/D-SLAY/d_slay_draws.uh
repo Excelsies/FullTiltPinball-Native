@@ -1,0 +1,30 @@
+# DragonMouthSinkControl random draws (listing 3917-4060): every counted hit makes one RandIndex(6) draw (which sink
+# to re-arm) and, by the lit count of dragon_fire_light_group, one more: count 0/1 none, 2 none, 3 RandIndex(5), 4 and >= 5
+# RandIndex(10). Hits at 160 (count 0), 180 (v_lite58..60 lit, count 3), 200 (+v_lite61, count 4), 220 (+v_lite62, count 5).
+# Every frame of the run draws once outside the sink (frames 161-175 show +1 each), so the hit frame shows 1 + the sink
+# draws: 2, 3, 3, 3. With `init seed 1` the draws repeat run to run (hookrun compare of two runs).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+160 event a_sink19 ControlCollision
+# listing: count 0 -> RandIndex(6) only
+160 expect n_rand_draws ~= 2 0 delta 159
+170 poke v_lite58 light_on 1
+170 poke v_lite59 light_on 1
+170 poke v_lite60 light_on 1
+180 event a_sink19 ControlCollision
+# listing: count 3 -> RandIndex(6) + RandIndex(5)
+180 expect n_rand_draws ~= 3 0 delta 179
+190 poke v_lite61 light_on 1
+200 event a_sink19 ControlCollision
+# listing: count 4 -> RandIndex(6) + RandIndex(10)
+200 expect n_rand_draws ~= 3 0 delta 199
+210 poke v_lite62 light_on 1
+220 event a_sink19 ControlCollision
+# listing: count >= 5 -> RandIndex(6) + RandIndex(10)
+220 expect n_rand_draws ~= 3 0 delta 219
+300 quit

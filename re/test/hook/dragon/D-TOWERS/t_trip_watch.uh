@@ -1,0 +1,18 @@
+# WatchWindowTripwireControl (0x427b30), mode 2: Watch [40k, 80k, 120k], then the group resets.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 2
+110 event s_trip3 ControlCollision
+120 event s_trip4 ControlCollision
+130 event s_trip3 ControlCollision
+140 event s_trip4 ControlCollision
+110 expect n_score == 40000 delta 109
+# tabc04 = sound id 24 on every Watch hit (pinned from this run)
+110 expect sound 24
+120 expect n_score == 80000 delta 119
+130 expect n_score == 120000 delta 129
+140 expect n_score == 40000 delta 139
+110 expect text info_text_box display id 3008
+160 quit

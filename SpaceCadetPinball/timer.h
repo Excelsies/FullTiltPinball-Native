@@ -18,6 +18,8 @@ public:
 	static int kill(void (*callback)(int, void*));
 	static int set(float time, void* caller, void (* callback)(int, void*));
 	static int check();
+	// Seconds until the timer fires (0.0 when already due), -1.0 when no active timer has that id (FT 0x41f880).
+	static float get_time_left(int timerId);
 
 private:
 	static int SetCount;

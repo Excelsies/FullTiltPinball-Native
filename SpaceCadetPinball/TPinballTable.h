@@ -10,6 +10,8 @@ class TPlunger;
 class TDrain;
 class TDemo;
 class TLightGroup;
+class TTableLayer;
+class TLightSweeps;
 
 struct score_struct_super
 {
@@ -17,6 +19,7 @@ struct score_struct_super
 	int Score;
 	int ScoreE9Part;
 	int JackpotScore;
+	int SuperJackpotScore; // Full Tilt third accumulator (FT slot +0x92); stays 0 for Space Cadet
 	int BallCount;
 	int ExtraBalls;
 	int BallLockedCounter;
@@ -37,6 +40,7 @@ public:
 	int Message(MessageCode code, float value) override;
 	TBall* AddBall(vector2 position);
 	int BallCountInRect(const RectF& rect);
+	int BallCountInRect(const RectF& rect, unsigned int mask);
 	int BallCountInRect(const vector2& pos, float margin);
 
 	static void EndGame_timeout(int timerId, void* caller);
@@ -44,8 +48,8 @@ public:
 	static void replay_timer_callback(int timerId, void* caller);
 	static void tilt_timeout(int timerId, void* caller);
 
-	TFlipper* FlipperL;
-	TFlipper* FlipperR;
+	std::vector<TFlipper*> FlipperListL; // part type 1003, non-owning (ComponentList owns)
+	std::vector<TFlipper*> FlipperListR; // part type 1004
 	scoreStruct* CurScoreStruct;
 	scoreStruct* ScoreBallcount;
 	scoreStruct* ScorePlayerNumber1;
@@ -73,6 +77,8 @@ public:
 	std::vector<TBall*> BallList;
 	std::vector<TFlipper*> FlipperList;
 	TLightGroup* LightGroup;
+	TTableLayer* TableLayer{};
+	TLightSweeps* LightSweeps{};
 	float GravityDirVectMult{};
 	float GravityAngleX{};
 	float GravityAnglY{};
@@ -85,6 +91,9 @@ public:
 	bool BonusScoreFlag{};
 	int JackpotScore{};
 	bool JackpotScoreFlag{};
+	// Full Tilt third accumulator (FT +0x17a / +0x17e, cap 20,000,000): Space Cadet never sets the flag or reads the value
+	int SuperJackpotScore{};
+	bool SuperJackpotScoreFlag{};
 	int UnknownP71{};
 	int BallCount{};
 	int MaxBallCount;

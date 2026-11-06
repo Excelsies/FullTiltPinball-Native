@@ -1,0 +1,16 @@
+# AwardJackpot, reached through the real Kickout1Control (dragon_ball.cpp): the jackpot (1,000,000) is
+# scored and not reset, sound tabc43wave, glyph text in font 1 (read text.jsonl: Q8).
+# Kickout1Control awards a random armor (50,000) in every mode but 7 (info_text_box message_field is the mode) and
+# calls AwardJackpot only in mode 7, so the script pokes mode 7.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 7
+200 event a_kout1 ControlCollision
+203 expect n_score == 1000000 delta 199
+203 expect jackpot == 1000000
+# sound id 38 = tabc43wave (AwardJackpot)
+195-205 expect sound 38
+250 quit

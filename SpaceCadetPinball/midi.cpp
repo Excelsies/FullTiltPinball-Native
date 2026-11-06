@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ft_test_hook.h"
 #include "midi.h"
 
 
@@ -7,7 +8,8 @@
 
 std::vector<Mix_Music*> midi::LoadedTracks{};
 Mix_Music* midi::track1, * midi::track2, * midi::track3;
-MidiTracks midi::active_track, midi::NextTrack;
+std::vector<Mix_Music*> midi::NamedTracks{};
+int midi::ActiveKey = 0, midi::NextKey = 0;
 int midi::Volume = MIX_MAX_VOLUME;
 bool midi::IsPlaying = false, midi::MixOpen = false;
 
@@ -36,8 +38,10 @@ void midi::music_play()
 	if (!IsPlaying)
 	{
 		IsPlaying = true;
-		play_track(NextTrack, true);
-		NextTrack = MidiTracks::None;
+		auto key = NextKey;
+		NextKey = 0;
+		ft_test_hook::TrackEvent(key < 0 ? -key : key, true); // as play_track(NextTrack) logged
+		play_key(key, true);
 	}
 }
 
@@ -46,18 +50,18 @@ void midi::music_stop()
 	if (IsPlaying)
 	{
 		IsPlaying = false;
-		NextTrack = active_track;
+		NextKey = ActiveKey;
 		StopPlayback();
 	}
 }
 
 void midi::StopPlayback()
 {
-	if (active_track != MidiTracks::None)
+	if (ActiveKey != 0)
 	{
 		if (MixOpen)
 			Mix_HaltMusic();
-		active_track = MidiTracks::None;
+		ActiveKey = 0;
 	}
 }
 
@@ -65,25 +69,33 @@ int midi::music_init(bool mixOpen, int volume)
 {
 	MixOpen = mixOpen;
 	SetVolume(volume);
-	active_track = MidiTracks::None;
-	NextTrack = MidiTracks::None;
+	ActiveKey = 0;
+	NextKey = 0;
 	IsPlaying = false;
 	track1 = track2 = track3 = nullptr;
+	NamedTracks.clear();
+
+	if (pb::IsFullTiltTable())
+	{
+		// Dragon's Keep / Skulduggery: the table rules load their own named tracks (load_track) once the
+		// table is built; there is nothing to load yet. Music stays available whenever audio is open.
+		return MixOpen;
+	}
 
 	if (pb::FullTiltMode)
 	{
-		track1 = load_track("TABA1");
-		track2 = load_track("TABA2");
-		track3 = load_track("TABA3");
+		track1 = load_music("TABA1");
+		track2 = load_music("TABA2");
+		track3 = load_music("TABA3");
 
 		// FT demo .006 has only one music track, but it is nearly 9 min. long
 		if (!track1 && pb::FullTiltDemoMode)
-			track1 = load_track("DEMO");
+			track1 = load_music("DEMO");
 	}
 	else
 	{
 		// 3DPB has only one music track. PINBALL2.MID is a bitmap font, in the same format as PB_MSGFT.bin
-		track1 = load_track("PINBALL");
+		track1 = load_music("PINBALL");
 	}
 
 	return track1 != nullptr;
@@ -97,8 +109,9 @@ void midi::music_shutdown()
 	{
 		Mix_FreeMusic(midi);
 	}
-	active_track = MidiTracks::None;
+	ActiveKey = 0;
 	LoadedTracks.clear();
+	NamedTracks.clear();
 }
 
 void midi::SetVolume(int volume)
@@ -108,7 +121,23 @@ void midi::SetVolume(int volume)
 		Mix_VolumeMusic(volume);
 }
 
-Mix_Music* midi::load_track(std::string fileName)
+int midi::load_track(const std::string& name)
+{
+	auto audio = load_music(name);
+	if (!audio)
+	{
+		printf("midi: track %s not loaded (audio closed or no file)\n", name.c_str());
+		fflush(stdout);
+		return 0;
+	}
+	NamedTracks.push_back(audio);
+	auto handle = static_cast<int>(NamedTracks.size());
+	printf("midi: track %s loaded as handle %d\n", name.c_str(), handle);
+	fflush(stdout);
+	return handle;
+}
+
+Mix_Music* midi::load_music(std::string fileName)
 {
 	if (!MixOpen || pb::quickFlag)
 		return nullptr;
@@ -120,9 +149,11 @@ Mix_Music* midi::load_track(std::string fileName)
 		fileName.insert(0, "SOUND");
 	}
 
-	auto audio = load_track_sub(fileName, true);
+	// Full Tilt opens only .MDS (its exe has no .MID string): .MDS first there, so the .MID twins that
+	// the PIRATE folder ships are not picked. 3DPB music is MIDI only.
+	auto audio = load_track_sub(fileName, !pb::FullTiltMode);
 	if (!audio)
-		audio = load_track_sub(fileName, false);
+		audio = load_track_sub(fileName, pb::FullTiltMode);
 
 	if (!audio)
 		return nullptr;
@@ -137,11 +168,19 @@ Mix_Music* midi::load_track_sub(std::string fileName, bool isMidi)
 	// 3DPB music is MIDI only.
 	Mix_Music* audio = nullptr;
 	fileName += isMidi ? ".MID" : ".MDS";
-	for (int i = 0; i < 2; i++)
+	// Probes: the name as given, all lower case, then (Full Tilt tables only) all upper case, because the Full Tilt
+	// data ships upper case names (SOUND/TABC7.MDS) and the rules ask for lower case ones; a case-sensitive
+	// file system finds only the upper case spelling. The third probe is reached only when the first two found nothing,
+	// so a file that loaded before loads the same way; 3DPB keeps the two upstream probes.
+	const int probeCount = pb::FullTiltMode ? 3 : 2;
+	for (int i = 0; i < probeCount; i++)
 	{
 		if (i == 1)
 			std::transform(fileName.begin(), fileName.end(), fileName.begin(),
 			               [](unsigned char c) { return std::tolower(c); });
+		else if (i == 2)
+			std::transform(fileName.begin(), fileName.end(), fileName.begin(),
+			               [](unsigned char c) { return std::toupper(c); });
 		if (isMidi)
 		{
 			auto filePath = pb::make_path_name(fileName);
@@ -159,6 +198,7 @@ Mix_Music* midi::load_track_sub(std::string fileName, bool isMidi)
 			auto midi = MdsToMidi(pb::make_path_name(fileName));
 			if (midi)
 			{
+				printf("midi: opened %s as MDS\n", fileName.c_str());
 				// Dump converted MIDI file
 				/*auto filePath = fileName + ".midi";
 				FILE* fileHandle = fopenu(filePath.c_str(), "wb");
@@ -178,59 +218,81 @@ Mix_Music* midi::load_track_sub(std::string fileName, bool isMidi)
 
 bool midi::play_track(MidiTracks track, bool replay)
 {
-	auto midi = TrackToMidi(track);
-	if (!midi || (!replay && active_track == track))
+	ft_test_hook::TrackEvent(static_cast<int>(track), replay);
+	return play_key(static_cast<int>(track), replay);
+}
+
+bool midi::play_track(int handle, bool replay)
+{
+	ft_test_hook::TrackEvent(handle, replay);
+	assertm(handle >= 0 && handle <= static_cast<int>(NamedTracks.size()), "midi: unknown track handle");
+	if (handle == 0)
+	{
+		// FT play_track stops the current music before it tests the handle for null.
+		// When music is paused nothing is playing, so nothing changes.
+		StopPlayback();
+		return false;
+	}
+	return play_key(-handle, replay);
+}
+
+bool midi::play_key(int key, bool replay)
+{
+	auto midi = KeyToMusic(key);
+	if (!midi || (!replay && ActiveKey == key))
 		return false;
 
 	StopPlayback();
 
 	if (!IsPlaying)
 	{
-		NextTrack = track;
+		NextKey = key;
 		return false;
 	}
 
 	if (MixOpen && Mix_PlayMusic(midi, -1))
 	{
-		active_track = MidiTracks::None;
+		ActiveKey = 0;
 		return false;
 	}
 
 	// On Windows, MIDI volume can only be set during playback.
 	// And it changes application master volume for some reason.
 	SetVolume(Volume);
-	active_track = track;
+	ActiveKey = key;
 	return true;
 }
 
 MidiTracks midi::get_active_track()
 {
-	if (!IsPlaying)
-		return NextTrack;
-	else
-		return active_track;
+	auto key = IsPlaying ? ActiveKey : NextKey;
+	return key >= 1 && key <= 3 ? static_cast<MidiTracks>(key) : MidiTracks::None;
 }
 
-Mix_Music* midi::TrackToMidi(MidiTracks track)
+int midi::active_track()
 {
-	Mix_Music* midi;
-	switch (track)
+	auto key = IsPlaying ? ActiveKey : NextKey;
+	return key < 0 ? -key : 0;
+}
+
+Mix_Music* midi::KeyToMusic(int key)
+{
+	if (key < 0)
 	{
-	default:
-	case MidiTracks::None:
-		midi = nullptr;
-		break;
-	case MidiTracks::Track1:
-		midi = track1;
-		break;
-	case MidiTracks::Track2:
-		midi = track2;
-		break;
-	case MidiTracks::Track3:
-		midi = track3;
-		break;
+		auto index = static_cast<size_t>(-key) - 1;
+		return index < NamedTracks.size() ? NamedTracks[index] : nullptr;
 	}
-	return midi;
+	switch (key)
+	{
+	case 1:
+		return track1;
+	case 2:
+		return track2;
+	case 3:
+		return track3;
+	default:
+		return nullptr;
+	}
 }
 
 /// <summary>

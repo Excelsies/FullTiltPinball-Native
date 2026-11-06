@@ -1,0 +1,32 @@
+# Quests done (v_lite28 message_field 2: 200,000, 3013), three armor lights (150,000, 3014), held bonus (drain
+# message_field 1000, 3016), Ball Save-style hold light v_lite31 lit: it is turned off and the total (351,000) becomes the held
+# bonus (held_bonus). Texts 200 frames apart; total added at the last text (3017).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite31.light_on
+10 key down new_game
+11 key up new_game
+200 poke v_lite28 message_field 2
+200 poke v_lite37 light_on 1
+200 poke v_lite38 light_on 1
+200 poke v_lite39 light_on 1
+200 poke v_lite31 light_on 1
+200 poke drain message_field 1000
+220 poke info_text_box message_field 11
+300 event info_text_box ControlMissionComplete
+300 expect text info_text_box display id 3013
+300 expect bonus_step == 2
+499 expect bonus_step == 3
+699 expect bonus_step == 7
+899 expect bonus_step == 8
+1099 expect bonus_step == 9
+1099 expect ball_count == 2
+499-500 expect text info_text_box display id 3014
+699-700 expect text info_text_box display id 3016
+899-900 expect text info_text_box display id 3017
+900 expect n_score == 351000 delta 299
+901 expect held_bonus == 351000
+901 expect v_lite31.light_on == 0
+1400 expect ball_count == 2
+1500 quit

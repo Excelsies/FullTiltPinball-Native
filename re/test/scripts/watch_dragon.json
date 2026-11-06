@@ -1,0 +1,99 @@
+{
+ "_comment": "DRAGON.EXE rule state read by probe_run.py; addresses from re/work/spec/dragon_framework.md section 6 and control_tables_dragon.json tags (tag+4 = component, assumed; probe checks).",
+ "table_global": "0x439b00",
+ "values": [
+  {
+   "name": "mode",
+   "tag": "0x439d18",
+   "field": 6
+  },
+  {
+   "name": "saved_quest",
+   "tag": "0x43ac90",
+   "field": 6
+  },
+  {
+   "name": "selected_quest",
+   "tag": "0x43a870",
+   "field": 6
+  },
+  {
+   "name": "quests_done",
+   "tag": "0x43abf0",
+   "field": 6
+  },
+  {
+   "name": "held_bonus",
+   "tag": "0x439d28",
+   "field": 6
+  },
+  {
+   "name": "ball_save",
+   "addr": "0x434d2c"
+  },
+  {
+   "name": "drain_state",
+   "addr": "0x43bb6c"
+  },
+  {
+   "name": "last_ball",
+   "addr": "0x439b1c"
+  },
+  {
+   "name": "ball_drained",
+   "addr": "0x439b14"
+  },
+  {
+   "name": "ball_held",
+   "addr": "0x439b10"
+  },
+  {
+   "name": "targets_hit",
+   "addr": "0x434d08"
+  },
+  {
+   "name": "spells",
+   "addr": "0x434d24"
+  },
+  {
+   "name": "bonus_step",
+   "addr": "0x434d10"
+  },
+  {
+   "name": "player_count",
+   "table": "0x102"
+  },
+  {
+   "name": "current_player",
+   "table": "0x106"
+  },
+  {
+   "name": "multiplier",
+   "table": "0x15e"
+  },
+  {
+   "name": "jackpot",
+   "table": "0x172"
+  },
+  {
+   "name": "super_jackpot",
+   "table": "0x17a"
+  },
+  {
+   "name": "ball_count",
+   "table": "0x186"
+  },
+  {
+   "name": "extra_balls",
+   "table": "0x18e"
+  },
+  {
+   "name": "multiball",
+   "table": "0x192"
+  },
+  {
+   "name": "tilt_lock",
+   "table": "0x1b2"
+  }
+ ]
+}

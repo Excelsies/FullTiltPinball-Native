@@ -1,0 +1,415 @@
+# P-MSEL: ModeSelectTargetControl + SelectNextMode + SetModeLight/SelectModeIndex/ClearSelectedModeLight
+# (listing 3107-3174, 2021-2109, 1919-2020). P1 prologue, then one scenario per 40 frames from frame 200: reset at F, seed + event at F+1.
+# Expected values: see gen_p_msel.py (generated; rerun it instead of editing). Pending stubs on the path:
+# Mode2IdleController (P-BALL) and the other Mode<n>Controller of MissionControlSwitch: neutral, no checked effect.
+# D32 reconciliation (SR-P3c): S13 enters mode 6 through StartMode6 (NMAX with selected index 5) instead of poking the info box:
+# the poke left Mode6Controller without its level text (set by its ControlMissionComplete, pirates_modes_a.cpp:414-417) and
+# the merged ControlMissionStarted branch aborted at its defensive Fatal (pirates_modes_a.cpp:426-427).
+init fixed_dt 10
+init seed 1
+init watch v_lite552.flasher_on v_lite552.light_on v_lite553.flasher_on v_lite553.light_on v_lite554.flasher_on v_lite554.light_on v_lite555.flasher_on v_lite555.light_on v_lite556.flasher_on v_lite556.light_on v_lite557.flasher_on v_lite557.light_on v_lite558.flasher_on v_lite558.light_on v_lite559.flasher_on v_lite559.light_on v_lite607.flasher_on mode_timer.time_left_ms mode_timer.timer a_spot8.message_field
+10 key down new_game
+11 key up new_game
+100 type hidden\ttest
+# paused from frame 190 (no engine draws in a paused tick); unpaused again for the timer scenarios S12-S18
+190 key down pause
+191 key up pause
+# S1 all unlit, seed 1 -> index 0 (r=41)
+200 msg v_lite552 TLightResetAndTurnOff 0
+200 msg v_lite553 TLightResetAndTurnOff 0
+200 msg v_lite554 TLightResetAndTurnOff 0
+200 msg v_lite555 TLightResetAndTurnOff 0
+200 msg v_lite556 TLightResetAndTurnOff 0
+200 msg v_lite557 TLightResetAndTurnOff 0
+200 msg v_lite558 TLightResetAndTurnOff 0
+200 msg v_lite559 TLightResetAndTurnOff 0
+200 msg v_lite607 TLightResetAndTurnOff 0
+200 msg map_piece_light_group TLightResetAndTurnOff 0
+200 msg mode_timer TTimerResetTimer -1.0
+200 poke mode_timer message_field 0
+200 poke info_text_box message_field 2
+201 seed 1
+201 event a_spot102 ControlCollision
+201 expect n_rand_draws == 1 delta 200
+201 expect selected_mode == 1
+201 expect n_score == 50000 delta 200
+201 expect v_lite607.flasher_on == 1
+201 expect text info_text_box display id 3068
+201 expect v_lite552.flasher_on == 1
+# S2 all unlit -> index 1 (r=7533)
+240 msg v_lite552 TLightResetAndTurnOff 0
+240 msg v_lite553 TLightResetAndTurnOff 0
+240 msg v_lite554 TLightResetAndTurnOff 0
+240 msg v_lite555 TLightResetAndTurnOff 0
+240 msg v_lite556 TLightResetAndTurnOff 0
+240 msg v_lite557 TLightResetAndTurnOff 0
+240 msg v_lite558 TLightResetAndTurnOff 0
+240 msg v_lite559 TLightResetAndTurnOff 0
+240 msg v_lite607 TLightResetAndTurnOff 0
+240 msg map_piece_light_group TLightResetAndTurnOff 0
+240 msg mode_timer TTimerResetTimer -1.0
+240 poke mode_timer message_field 0
+240 poke info_text_box message_field 2
+241 seed 987654321
+241 event a_spot102 ControlCollision
+241 expect n_rand_draws == 1 delta 240
+241 expect selected_mode == 2
+241 expect n_score == 50000 delta 240
+241 expect v_lite607.flasher_on == 1
+241 expect text info_text_box display id 3069
+241 expect v_lite553.flasher_on == 1
+# S3 all unlit -> index 4 (r=20691)
+280 msg v_lite552 TLightResetAndTurnOff 0
+280 msg v_lite553 TLightResetAndTurnOff 0
+280 msg v_lite554 TLightResetAndTurnOff 0
+280 msg v_lite555 TLightResetAndTurnOff 0
+280 msg v_lite556 TLightResetAndTurnOff 0
+280 msg v_lite557 TLightResetAndTurnOff 0
+280 msg v_lite558 TLightResetAndTurnOff 0
+280 msg v_lite559 TLightResetAndTurnOff 0
+280 msg v_lite607 TLightResetAndTurnOff 0
+280 msg map_piece_light_group TLightResetAndTurnOff 0
+280 msg mode_timer TTimerResetTimer -1.0
+280 poke mode_timer message_field 0
+280 poke info_text_box message_field 2
+281 seed 4000000
+281 event a_spot102 ControlCollision
+281 expect n_rand_draws == 1 delta 280
+281 expect selected_mode == 5
+281 expect n_score == 50000 delta 280
+281 expect v_lite607.flasher_on == 1
+281 expect text info_text_box display id 3072
+281 expect v_lite556.flasher_on == 1
+# S4 all unlit -> index 6 (r=32582)
+320 msg v_lite552 TLightResetAndTurnOff 0
+320 msg v_lite553 TLightResetAndTurnOff 0
+320 msg v_lite554 TLightResetAndTurnOff 0
+320 msg v_lite555 TLightResetAndTurnOff 0
+320 msg v_lite556 TLightResetAndTurnOff 0
+320 msg v_lite557 TLightResetAndTurnOff 0
+320 msg v_lite558 TLightResetAndTurnOff 0
+320 msg v_lite559 TLightResetAndTurnOff 0
+320 msg v_lite607 TLightResetAndTurnOff 0
+320 msg map_piece_light_group TLightResetAndTurnOff 0
+320 msg mode_timer TTimerResetTimer -1.0
+320 poke mode_timer message_field 0
+320 poke info_text_box message_field 2
+321 seed 20000
+321 event a_spot102 ControlCollision
+321 expect n_rand_draws == 1 delta 320
+321 expect selected_mode == 7
+321 expect n_score == 50000 delta 320
+321 expect v_lite607.flasher_on == 1
+321 expect text info_text_box display id 3074
+321 expect v_lite558.flasher_on == 1
+# S5 lit 0,2 -> candidates [1,3,4,5,6], index 3 -> 5 (r=20691)
+360 msg v_lite552 TLightResetAndTurnOff 0
+360 msg v_lite553 TLightResetAndTurnOff 0
+360 msg v_lite554 TLightResetAndTurnOff 0
+360 msg v_lite555 TLightResetAndTurnOff 0
+360 msg v_lite556 TLightResetAndTurnOff 0
+360 msg v_lite557 TLightResetAndTurnOff 0
+360 msg v_lite558 TLightResetAndTurnOff 0
+360 msg v_lite559 TLightResetAndTurnOff 0
+360 msg v_lite607 TLightResetAndTurnOff 0
+360 msg map_piece_light_group TLightResetAndTurnOff 0
+360 msg mode_timer TTimerResetTimer -1.0
+360 poke mode_timer message_field 0
+360 poke info_text_box message_field 2
+360 poke v_lite552 light_on 1
+360 poke v_lite554 light_on 1
+361 seed 4000000
+361 event a_spot102 ControlCollision
+361 expect n_rand_draws == 1 delta 360
+361 expect selected_mode == 6
+361 expect n_score == 50000 delta 360
+361 expect v_lite607.flasher_on == 1
+361 expect text info_text_box display id 3073
+361 expect v_lite557.flasher_on == 1
+# S6 only index 2 unlit -> 2
+400 msg v_lite552 TLightResetAndTurnOff 0
+400 msg v_lite553 TLightResetAndTurnOff 0
+400 msg v_lite554 TLightResetAndTurnOff 0
+400 msg v_lite555 TLightResetAndTurnOff 0
+400 msg v_lite556 TLightResetAndTurnOff 0
+400 msg v_lite557 TLightResetAndTurnOff 0
+400 msg v_lite558 TLightResetAndTurnOff 0
+400 msg v_lite559 TLightResetAndTurnOff 0
+400 msg v_lite607 TLightResetAndTurnOff 0
+400 msg map_piece_light_group TLightResetAndTurnOff 0
+400 msg mode_timer TTimerResetTimer -1.0
+400 poke mode_timer message_field 0
+400 poke info_text_box message_field 2
+400 poke v_lite552 light_on 1
+400 poke v_lite553 light_on 1
+400 poke v_lite555 light_on 1
+400 poke v_lite556 light_on 1
+400 poke v_lite557 light_on 1
+400 poke v_lite558 light_on 1
+401 seed 1
+401 event a_spot102 ControlCollision
+401 expect n_rand_draws == 1 delta 400
+401 expect selected_mode == 3
+401 expect n_score == 50000 delta 400
+401 expect v_lite607.flasher_on == 1
+401 expect text info_text_box display id 3070
+401 expect v_lite554.flasher_on == 1
+# S7 all lit, none flashing -> 7, no draw
+440 msg v_lite552 TLightResetAndTurnOff 0
+440 msg v_lite553 TLightResetAndTurnOff 0
+440 msg v_lite554 TLightResetAndTurnOff 0
+440 msg v_lite555 TLightResetAndTurnOff 0
+440 msg v_lite556 TLightResetAndTurnOff 0
+440 msg v_lite557 TLightResetAndTurnOff 0
+440 msg v_lite558 TLightResetAndTurnOff 0
+440 msg v_lite559 TLightResetAndTurnOff 0
+440 msg v_lite607 TLightResetAndTurnOff 0
+440 msg map_piece_light_group TLightResetAndTurnOff 0
+440 msg mode_timer TTimerResetTimer -1.0
+440 poke mode_timer message_field 0
+440 poke info_text_box message_field 2
+440 poke v_lite552 light_on 1
+440 poke v_lite553 light_on 1
+440 poke v_lite554 light_on 1
+440 poke v_lite555 light_on 1
+440 poke v_lite556 light_on 1
+440 poke v_lite557 light_on 1
+440 poke v_lite558 light_on 1
+441 seed 1
+441 event a_spot102 ControlCollision
+441 expect n_rand_draws == 0 delta 440
+441 expect selected_mode == 8
+441 expect n_score == 50000 delta 440
+441 expect v_lite607.flasher_on == 1
+441 expect text info_text_box display id 3075
+441 expect v_lite559.flasher_on == 1
+# S8 all lit, 555 flashing -> returns 3, selection untouched (7)
+480 msg v_lite552 TLightResetAndTurnOff 0
+480 msg v_lite553 TLightResetAndTurnOff 0
+480 msg v_lite554 TLightResetAndTurnOff 0
+480 msg v_lite555 TLightResetAndTurnOff 0
+480 msg v_lite556 TLightResetAndTurnOff 0
+480 msg v_lite557 TLightResetAndTurnOff 0
+480 msg v_lite558 TLightResetAndTurnOff 0
+480 msg v_lite559 TLightResetAndTurnOff 0
+480 msg v_lite607 TLightResetAndTurnOff 0
+480 msg map_piece_light_group TLightResetAndTurnOff 0
+480 msg mode_timer TTimerResetTimer -1.0
+480 poke mode_timer message_field 0
+480 poke info_text_box message_field 2
+480 poke v_lite552 light_on 1
+480 poke v_lite553 light_on 1
+480 poke v_lite554 light_on 1
+480 poke v_lite556 light_on 1
+480 poke v_lite557 light_on 1
+480 poke v_lite558 light_on 1
+480 msg v_lite555 TLightFlasherStart 0
+480 poke mode_timer message_field 7
+481 seed 1
+481 event a_spot102 ControlCollision
+481 expect n_rand_draws == 0 delta 480
+481 expect selected_mode == 7
+481 expect n_score == 50000 delta 480
+481 expect v_lite607.flasher_on == 1
+481 expect text info_text_box display id 3071
+481 expect v_lite559.flasher_on == 0
+# S9 map pieces complete -> 7, no draw
+520 msg v_lite552 TLightResetAndTurnOff 0
+520 msg v_lite553 TLightResetAndTurnOff 0
+520 msg v_lite554 TLightResetAndTurnOff 0
+520 msg v_lite555 TLightResetAndTurnOff 0
+520 msg v_lite556 TLightResetAndTurnOff 0
+520 msg v_lite557 TLightResetAndTurnOff 0
+520 msg v_lite558 TLightResetAndTurnOff 0
+520 msg v_lite559 TLightResetAndTurnOff 0
+520 msg v_lite607 TLightResetAndTurnOff 0
+520 msg map_piece_light_group TLightResetAndTurnOff 0
+520 msg mode_timer TTimerResetTimer -1.0
+520 poke mode_timer message_field 0
+520 poke info_text_box message_field 2
+520 msg map_piece_light_group TLightTurnOn 0
+521 seed 1
+521 event a_spot102 ControlCollision
+521 expect n_rand_draws == 0 delta 520
+521 expect selected_mode == 8
+521 expect n_score == 50000 delta 520
+521 expect v_lite607.flasher_on == 1
+521 expect text info_text_box display id 3075
+521 expect v_lite559.flasher_on == 1
+# S10 mode 3: no selection, no text
+560 msg v_lite552 TLightResetAndTurnOff 0
+560 msg v_lite553 TLightResetAndTurnOff 0
+560 msg v_lite554 TLightResetAndTurnOff 0
+560 msg v_lite555 TLightResetAndTurnOff 0
+560 msg v_lite556 TLightResetAndTurnOff 0
+560 msg v_lite557 TLightResetAndTurnOff 0
+560 msg v_lite558 TLightResetAndTurnOff 0
+560 msg v_lite559 TLightResetAndTurnOff 0
+560 msg v_lite607 TLightResetAndTurnOff 0
+560 msg map_piece_light_group TLightResetAndTurnOff 0
+560 msg mode_timer TTimerResetTimer -1.0
+560 poke mode_timer message_field 0
+560 poke info_text_box message_field 3
+560 poke mode_timer message_field 4
+561 event a_spot102 ControlCollision
+561 expect selected_mode == 4
+561 expect n_score == 50000 delta 560
+561 expect v_lite607.flasher_on == 1
+561 expect n_rand_draws == 0 delta 560
+561 expect none text info_text_box display
+# S11 mode 12: no selection, no text
+600 msg v_lite552 TLightResetAndTurnOff 0
+600 msg v_lite553 TLightResetAndTurnOff 0
+600 msg v_lite554 TLightResetAndTurnOff 0
+600 msg v_lite555 TLightResetAndTurnOff 0
+600 msg v_lite556 TLightResetAndTurnOff 0
+600 msg v_lite557 TLightResetAndTurnOff 0
+600 msg v_lite558 TLightResetAndTurnOff 0
+600 msg v_lite559 TLightResetAndTurnOff 0
+600 msg v_lite607 TLightResetAndTurnOff 0
+600 msg map_piece_light_group TLightResetAndTurnOff 0
+600 msg mode_timer TTimerResetTimer -1.0
+600 poke mode_timer message_field 0
+600 poke info_text_box message_field 12
+600 poke mode_timer message_field 4
+601 event a_spot102 ControlCollision
+601 expect selected_mode == 4
+601 expect n_score == 50000 delta 600
+601 expect v_lite607.flasher_on == 1
+601 expect n_rand_draws == 0 delta 600
+601 expect none text info_text_box display
+700 key down pause
+701 key up pause
+# S12 mode 4 (lower bound): 5.0 s timer set at F, event at F+50 (4.5 s left)
+720 msg v_lite552 TLightResetAndTurnOff 0
+720 msg v_lite553 TLightResetAndTurnOff 0
+720 msg v_lite554 TLightResetAndTurnOff 0
+720 msg v_lite555 TLightResetAndTurnOff 0
+720 msg v_lite556 TLightResetAndTurnOff 0
+720 msg v_lite557 TLightResetAndTurnOff 0
+720 msg v_lite558 TLightResetAndTurnOff 0
+720 msg v_lite559 TLightResetAndTurnOff 0
+720 msg v_lite607 TLightResetAndTurnOff 0
+720 msg map_piece_light_group TLightResetAndTurnOff 0
+720 msg mode_timer TTimerResetTimer -1.0
+720 poke mode_timer message_field 0
+720 poke info_text_box message_field 4
+721 msg mode_timer TTimerResetTimer 5.0
+771 event a_spot102 ControlCollision
+771 expect mode_timer.time_left_ms in 14440 14510
+771 expect n_score == 50000 delta 770
+# S13 mode 6: entered through StartMode6 (NMAX with selected index 5), 5.0 s timer set at F+11, event at F+61 (4.5 s left)
+820 msg v_lite552 TLightResetAndTurnOff 0
+820 msg v_lite553 TLightResetAndTurnOff 0
+820 msg v_lite554 TLightResetAndTurnOff 0
+820 msg v_lite555 TLightResetAndTurnOff 0
+820 msg v_lite556 TLightResetAndTurnOff 0
+820 msg v_lite557 TLightResetAndTurnOff 0
+820 msg v_lite558 TLightResetAndTurnOff 0
+820 msg v_lite559 TLightResetAndTurnOff 0
+820 msg v_lite607 TLightResetAndTurnOff 0
+820 msg map_piece_light_group TLightResetAndTurnOff 0
+820 msg mode_timer TTimerResetTimer -1.0
+820 poke mode_timer message_field 0
+820 poke info_text_box message_field 2
+820 poke mode_timer message_field 5
+821 type N
+823 type M
+825 type A
+827 type X
+830 expect mode == 6
+831 msg mode_timer TTimerResetTimer 5.0
+881 event a_spot102 ControlCollision
+881 expect mode_timer.time_left_ms in 14440 14510
+881 expect n_score == 50000 delta 880
+# S14 mode 11 (upper bound): 5.0 s timer set at F, event at F+50 (4.5 s left)
+920 msg v_lite552 TLightResetAndTurnOff 0
+920 msg v_lite553 TLightResetAndTurnOff 0
+920 msg v_lite554 TLightResetAndTurnOff 0
+920 msg v_lite555 TLightResetAndTurnOff 0
+920 msg v_lite556 TLightResetAndTurnOff 0
+920 msg v_lite557 TLightResetAndTurnOff 0
+920 msg v_lite558 TLightResetAndTurnOff 0
+920 msg v_lite559 TLightResetAndTurnOff 0
+920 msg v_lite607 TLightResetAndTurnOff 0
+920 msg map_piece_light_group TLightResetAndTurnOff 0
+920 msg mode_timer TTimerResetTimer -1.0
+920 poke mode_timer message_field 0
+920 poke info_text_box message_field 11
+921 msg mode_timer TTimerResetTimer 5.0
+971 event a_spot102 ControlCollision
+971 expect mode_timer.time_left_ms in 14440 14510
+971 expect n_score == 50000 delta 970
+# S15 mode 3 (below): 5.0 s timer set at F, event at F+50 (4.5 s left)
+1020 msg v_lite552 TLightResetAndTurnOff 0
+1020 msg v_lite553 TLightResetAndTurnOff 0
+1020 msg v_lite554 TLightResetAndTurnOff 0
+1020 msg v_lite555 TLightResetAndTurnOff 0
+1020 msg v_lite556 TLightResetAndTurnOff 0
+1020 msg v_lite557 TLightResetAndTurnOff 0
+1020 msg v_lite558 TLightResetAndTurnOff 0
+1020 msg v_lite559 TLightResetAndTurnOff 0
+1020 msg v_lite607 TLightResetAndTurnOff 0
+1020 msg map_piece_light_group TLightResetAndTurnOff 0
+1020 msg mode_timer TTimerResetTimer -1.0
+1020 poke mode_timer message_field 0
+1020 poke info_text_box message_field 3
+1021 msg mode_timer TTimerResetTimer 5.0
+1071 event a_spot102 ControlCollision
+1071 expect mode_timer.time_left_ms in 4400 4510
+1071 expect n_score == 50000 delta 1070
+# S16 mode 12 (above): 5.0 s timer set at F, event at F+50 (4.5 s left)
+1120 msg v_lite552 TLightResetAndTurnOff 0
+1120 msg v_lite553 TLightResetAndTurnOff 0
+1120 msg v_lite554 TLightResetAndTurnOff 0
+1120 msg v_lite555 TLightResetAndTurnOff 0
+1120 msg v_lite556 TLightResetAndTurnOff 0
+1120 msg v_lite557 TLightResetAndTurnOff 0
+1120 msg v_lite558 TLightResetAndTurnOff 0
+1120 msg v_lite559 TLightResetAndTurnOff 0
+1120 msg v_lite607 TLightResetAndTurnOff 0
+1120 msg map_piece_light_group TLightResetAndTurnOff 0
+1120 msg mode_timer TTimerResetTimer -1.0
+1120 poke mode_timer message_field 0
+1120 poke info_text_box message_field 12
+1121 msg mode_timer TTimerResetTimer 5.0
+1171 event a_spot102 ControlCollision
+1171 expect mode_timer.time_left_ms in 4400 4510
+1171 expect n_score == 50000 delta 1170
+# S17 mode 2 (select): 5.0 s timer set at F, event at F+50 (4.5 s left)
+1220 msg v_lite552 TLightResetAndTurnOff 0
+1220 msg v_lite553 TLightResetAndTurnOff 0
+1220 msg v_lite554 TLightResetAndTurnOff 0
+1220 msg v_lite555 TLightResetAndTurnOff 0
+1220 msg v_lite556 TLightResetAndTurnOff 0
+1220 msg v_lite557 TLightResetAndTurnOff 0
+1220 msg v_lite558 TLightResetAndTurnOff 0
+1220 msg v_lite559 TLightResetAndTurnOff 0
+1220 msg v_lite607 TLightResetAndTurnOff 0
+1220 msg map_piece_light_group TLightResetAndTurnOff 0
+1220 msg mode_timer TTimerResetTimer -1.0
+1220 poke mode_timer message_field 0
+1220 poke info_text_box message_field 2
+1221 msg mode_timer TTimerResetTimer 5.0
+1271 event a_spot102 ControlCollision
+1271 expect mode_timer.time_left_ms in 4400 4510
+1271 expect n_score == 50000 delta 1270
+# S18 mode 5 with no timer running: nothing is started
+1320 msg v_lite552 TLightResetAndTurnOff 0
+1320 msg v_lite553 TLightResetAndTurnOff 0
+1320 msg v_lite554 TLightResetAndTurnOff 0
+1320 msg v_lite555 TLightResetAndTurnOff 0
+1320 msg v_lite556 TLightResetAndTurnOff 0
+1320 msg v_lite557 TLightResetAndTurnOff 0
+1320 msg v_lite558 TLightResetAndTurnOff 0
+1320 msg v_lite559 TLightResetAndTurnOff 0
+1320 msg v_lite607 TLightResetAndTurnOff 0
+1320 msg map_piece_light_group TLightResetAndTurnOff 0
+1320 msg mode_timer TTimerResetTimer -1.0
+1320 poke mode_timer message_field 0
+1320 poke info_text_box message_field 5
+1321 event a_spot102 ControlCollision
+1321 expect mode_timer.timer == 0
+1321 expect mode_timer.time_left_ms == 0
+1321 expect n_score == 50000 delta 1320
+1340 quit

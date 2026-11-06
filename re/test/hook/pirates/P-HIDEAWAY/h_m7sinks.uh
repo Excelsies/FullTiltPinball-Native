@@ -1,0 +1,26 @@
+# H-4 (mode 7 sinks a_sink5-7 score [75,000, 200,000]): outside mode 7 each of these sinks sets its bit in
+# v_lite547 (1 / 2 / 4) and calls Mode7SinkBank: 75,000 for the first two, 200,000 when the third completes the set (bits
+# cleared, v_lite547 MessageField 0). No random draw. String 3003 is shown. Sound tabb08 (id 9) on each bank hit; id read from
+# sounds.jsonl (info field) after the disassembly global-to-tag mapping, not resolved independently from the DAT.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite547.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 4
+210 event a_sink5 ControlCollision
+211 expect v_lite547.message_field == 1
+211 expect n_score == 75000 delta 209
+210 expect n_rand_draws == 2 delta 209
+210 expect text info_text_box display id 3003
+210 expect sound 9
+220 event a_sink6 ControlCollision
+220 expect sound 9
+221 expect v_lite547.message_field == 3
+221 expect n_score == 75000 delta 219
+230 event a_sink7 ControlCollision
+230 expect sound 9
+231 expect v_lite547.message_field == 0
+231 expect n_score == 200000 delta 229
+300 quit

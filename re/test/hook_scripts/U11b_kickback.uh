@@ -1,0 +1,17 @@
+# TKickback Space Cadet regression: a ball rests on kickback a_kick1 until the
+# 0.7 s arming timer fires, then the next contact kicks it. The upstream sequence must stay
+# unchanged; this is an R-seed script (baseline vs candidate byte compare).
+# Expected values are what upstream's TKickback produces on the baseline binary: arming sound at
+# frame 91 (first contact ~19 + 0.7 s), kick before frame 110.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 place 0 7.0 11.0 0.37 0 1 3
+60 shot resting
+88-94 expect sound 13
+95 shot armed
+115 shot kicked
+110 expect n_ball0_speed in 40 70
+110 expect n_ball0_y in -1 10
+300 quit

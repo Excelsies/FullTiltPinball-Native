@@ -1,0 +1,21 @@
+# Mode 6 tower state 0x434d14 (DragonState Mode6TowerState) is written only by Mode6Controller's ControlMissionComplete
+# (0 = v_lite48 off, 1 = on, 2 = flashing, listing 4807-4814) and read by its end (4861-4867); not reset per ball or per player. Player 1: v_lite48 lit, mode 6
+# start -> state 1. Switch to player 2: v_lite48 is P2's own (off). P2 mode 6 ends (ControlModeEnd): the end restores v_lite48 from the stored state, so it is turned ON
+# for P2 although P2 never lit it. A per-player reset to 0 would leave it off (the state-0 branch does ResetAndTurnOff).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+init watch v_lite48.light_on
+10 key down new_game
+11 key up new_game
+148 poke v_lite48 light_on 1
+150 poke info_text_box message_field 6
+151 event info_text_box ControlMissionComplete
+300 msg table SwitchToNextPlayer 0
+350 expect v_lite48.light_on == 0
+360 poke info_text_box message_field 6
+370 event info_text_box ControlModeEnd
+380 expect v_lite48.light_on == 1
+500 quit

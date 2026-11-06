@@ -1,0 +1,37 @@
+# O-2 (listing 3837-3877 / 3878-3918, disassembly 0x428741-0x4287e5): mode 8 with the treasure light flashing.
+# v_mlite110 (sink 9) / v_mlite104 (sink 12): Message(0x13 = TLightResetAndTurnOn, 0) [the push 0 hoisted at 0x428746 is its value], the
+# orbit light group reset off (0x14, 0), AwardNextSpecialTreasure(0) (first treasure 100,000, text 3019, tabb84 id 56),
+# LightNextTreasureX() (pirates_treasure.cpp:135-165), ReleaseHoldSink(-1.0).
+# LightNextTreasureX index 0 starts the first Treasure X light v_mlite110 flashing (TLightFlasherStartTimed -1) right
+# after it was reset-and-on, so flasher_on is 1 at 221 (light_on stays 1); the second event (sink 12) takes index 1:
+# v_mlite107 flashes while v_mlite104 stays steady (flasher_on 0, it is flashed at index 2).
+# The sink score (40,000) and tabb11 / text 3002 must NOT occur (they belong to the not-flashing branch).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_mlite107.flasher_on v_mlite107.light_on v_mlite110.flasher_on v_mlite110.light_on v_mlite104.flasher_on v_mlite104.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 8
+205 msg v_mlite110 TLightFlasherStartTimedThenStayOn 20
+206 expect v_mlite110.flasher_on == 1
+220 event a_sink9 ControlCollision
+221 expect v_mlite110.flasher_on == 1
+221 expect v_mlite110.light_on == 1
+221 expect n_score == 100000 delta 219
+220 expect text info_text_box display id 3019
+220 expect sound 56
+220 expect none sound 10
+220 expect none text info_text_box display id 3002
+300 poke info_text_box message_field 8
+305 msg v_mlite104 TLightFlasherStartTimedThenStayOn 20
+306 expect v_mlite104.flasher_on == 1
+320 event a_sink12 ControlCollision
+321 expect v_mlite104.flasher_on == 0
+321 expect v_mlite104.light_on == 1
+321 expect v_mlite107.flasher_on == 1
+321 expect n_score == 350000 delta 219
+320 expect text info_text_box display id 3020
+320 expect sound 56
+320 expect none sound 10
+400 quit

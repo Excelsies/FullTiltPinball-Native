@@ -1,0 +1,36 @@
+# TDiverter (1043) a_dvtrdb on DRAGON (mask 8, 2 bitmaps): pass-through from the back side flashes bitmap 1 for
+# FlashTime (0.1 s = 10 frames); a front-side ball bounces and leaves the bitmap at 0 (part_1043 3.2).
+# Segment (-5.9002,-10.6693)-(-5.9582,-12.5848); midpoint (-5.9292,-11.6271); front (+n) side is x < midpoint.
+# Expectations: back-side crossing at frame 12, flap back to 0 at N + 10 +-1 (frame 21); front-side bounce at frame 61.
+# The rules' NewGame (dragon_ball.cpp, the TGateEnable / TGateDisable block) enables a_dvtraa, a_dvtrbb, a_dvtrcb and
+# a_dvtrda at frame 0. With a_dvtrda enabled the mask-8 ball placed at frame 10 is deflected by it (dx -1.0 -> +0.14
+# at frame 11) and crosses a_dvtrdb only at frame 15; the other three do not touch its path. The script tests
+# a_dvtrdb's own pass-through / bounce, so a hook poke at frame 3 disables a_dvtrda first.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_dvtrdb.active a_dvtrdb.bitmap
+3 msg a_dvtrda TGateDisable 0
+5 msg a_dvtrdb TGateEnable 0
+6 expect a_dvtrdb.active == 1
+6 expect a_dvtrdb.bitmap == 0
+# back side: ball at x > midpoint moving toward -x, mask 8
+10 place 0 -5.7792 -11.6271 0.37 -1 0 20 0x8
+60 place 0 -6.5 -11.6271 0.37 1 0 20 0x8
+# back side: crossing frame N = 12: bitmap 1 from N, back to 0 FlashTime (0.1 s) later = frame 21 (N + 10 +-1)
+11 expect a_dvtrdb.bitmap == 0
+12 expect a_dvtrdb.bitmap == 1
+20 expect a_dvtrdb.bitmap == 1
+21 expect a_dvtrdb.bitmap == 0
+22 expect a_dvtrdb.bitmap == 0
+# front side: the ball placed at frame 60 moves +x (toward the segment, the +n side), is reflected at frame 61 and the flap stays at 0
+60 expect n_ball0_dx in 0.9 1
+61 expect n_ball0_dx in -1 -0.9
+60 expect a_dvtrdb.bitmap == 0
+61 expect a_dvtrdb.bitmap == 0
+62 expect a_dvtrdb.bitmap == 0
+63 expect a_dvtrdb.bitmap == 0
+64 expect a_dvtrdb.bitmap == 0
+65 expect a_dvtrdb.bitmap == 0
+120 quit

@@ -8,6 +8,7 @@ class TLight;
 class TSound;
 class TPinballTable;
 class TPinballComponent;
+class TableRules;
 enum class Msg : int;
 
 struct component_tag_base
@@ -70,6 +71,11 @@ public:
 	static component_info score_components[88];
 	static component_tag_base* simple_components[145];
 	static int waiting_deployment_flag;
+	// Full Tilt per-table rules; null for Space Cadet (and until the rules land).
+	static TableRules* Rules;
+	// Rules of the current catalogue table (nullptr: none). Set before the table ctor, destroyed after its dtor.
+	static TableRules* CreateRules();
+	static void DestroyRules();
 	static bool table_unlimited_balls, easyMode;
 	static Msg RankRcArray[9], MissionRcArray[17];
 	static int mission_select_scores[17];
@@ -77,10 +83,13 @@ public:
 	static std::reference_wrapper<TLight*> WormholeLightArray1[3], WormholeLightArray2[3];
 
 	static void make_links(TPinballTable* table);
+	// Engine text events (FT codes 0x57..0x6e): true when Rules handled it, false when the caller keeps its own code.
+	static bool TextEvent(int ftCode);
 	static void ClearLinks();
 	static TPinballComponent* make_component_link(component_tag_base& tag);
 	static void handler(MessageCode code, TPinballComponent* cmp);
-	static void pbctrl_bdoor_controller(char key);
+	// Rules (FT tables): key = the VK, flags say whether it is the left / right flipper key.
+	static void pbctrl_bdoor_controller(char key, bool isLeftFlip = false, bool isRightFlip = false);
 	static void table_add_extra_ball(float count);
 	static void table_set_bonus_hold();
 	static void table_set_bonus();

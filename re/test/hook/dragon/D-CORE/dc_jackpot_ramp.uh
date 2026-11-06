@@ -1,0 +1,20 @@
+# JackpotRampControl a_ramp103 (mode 2): score and jackpot +50,000 then +100,000 (v_lite67 still lit), sound tabc18wave (loader sound index from a native run), text 3006, v_lite24 lit.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite24.light_on v_lite67.light_on
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+200 event a_ramp103 ControlBallToLayer2
+203 expect n_score == 50000 delta 199
+203 expect jackpot == 50000 delta 199
+193-203 expect sound 13
+193-203 expect text info_text_box display id 3006
+203 expect v_lite24.light_on == 1
+203 expect v_lite67.light_on == 1
+203 expect mode == 2
+220 event a_ramp103 ControlBallToLayer2
+223 expect n_score == 100000 delta 219
+223 expect jackpot == 100000 delta 219
+260 quit

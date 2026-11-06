@@ -38,4 +38,8 @@ public :
 	int LastActiveTime{};
 	float VisualZArray[50]{};
 	bool CollisionDisabledFlag{};
+
+	// Full Tilt: index of the ball bitmap (ball groups carry two per resolution), toggled by the
+	// Dragon's Keep / Skulduggery cheat 'PB'. Read by the ctor, so only balls built afterwards change.
+	static int AltBallIndex;
 };

@@ -1,0 +1,15 @@
+# AddDragonEggs (FT 0x4232b0, lines 421-443) through its real callers: the egg-ramp exits
+# DragonEggRampExitControl1 (s_rexit18, adds 1 egg light) and DragonEggRampExitControl2 (s_rexit19, adds 2) react to
+# ControlBallToLayer1 (dragon_shop.cpp:168-186) and ignore ControlCollision.
+# The egg meter (k glyphs '#', k = lit eggs after the add) is shown and k x 100,000 is scored raw.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 event s_rexit18 ControlBallToLayer1
+201 expect n_score == 100000 delta 199
+400 event s_rexit19 ControlBallToLayer1
+401 expect n_score == 300000 delta 399
+600 quit

@@ -1,0 +1,5 @@
+# Hook check: init fixed_dt without a value must exit 3 (not abort).
+init window 960 666
+init expect_exit 3
+init fixed_dt
+5 quit

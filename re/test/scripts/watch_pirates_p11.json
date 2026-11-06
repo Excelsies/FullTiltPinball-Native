@@ -1,0 +1,75 @@
+{
+ "_comment": "UTe P-11 trace: PIRATES info_text_box state and the global tick counter (see make_ute_scripts.py)",
+ "table_global": "0x43ab9c",
+ "values": [
+  {
+   "name": "mode",
+   "tag": "0x43ad38",
+   "field": 6
+  },
+  {
+   "name": "last_ball",
+   "addr": "0x43aba8"
+  },
+  {
+   "name": "player_count",
+   "table": "0x102"
+  },
+  {
+   "name": "jackpot",
+   "table": "0x172"
+  },
+  {
+   "name": "ball_count",
+   "table": "0x186"
+  },
+  {
+   "name": "tilt_lock",
+   "table": "0x1b2"
+  },
+  {
+   "name": "time_ticks",
+   "chain": "43a740"
+  },
+  {
+   "name": "tb_mode",
+   "chain": "43ad3c:6"
+  },
+  {
+   "name": "tb_head",
+   "chain": "43ad3c:5e"
+  },
+  {
+   "name": "tb_head_time",
+   "chain": "43ad3c:5e:8"
+  },
+  {
+   "name": "tb_head_end",
+   "chain": "43ad3c:5e:c"
+  },
+  {
+   "name": "tb_text0",
+   "chain": "43ad3c:5e:4:0"
+  },
+  {
+   "name": "tb_text1",
+   "chain": "43ad3c:5e:4:4"
+  },
+  {
+   "name": "tb_text2",
+   "chain": "43ad3c:5e:4:8"
+  },
+  {
+   "name": "tb_overlay_state",
+   "chain": "43ad3c:12e"
+  },
+  {
+   "name": "tb_overlay0",
+   "chain": "43ad3c:66"
+  },
+  {
+   "name": "tb_timer_id",
+   "chain": "43ad3c:13a"
+  }
+ ]
+}

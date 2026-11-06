@@ -1,0 +1,11 @@
+# Baseline for the draw-count checks of shop_well_*: the same frames without the sink event draw once per frame (ball jitter), so the
+# event frame's delta 2 in the other shop_well scripts is exactly one RandIndex(4) draw.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 8
+201 poke a_sink4 message_field 1
+205 expect n_rand_draws == 1 delta 204
+260 quit

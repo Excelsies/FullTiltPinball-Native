@@ -1,0 +1,49 @@
+# Mode6Controller level selection (FT 0x42c430 case 0x4f; jump table 0x42c9dc/0x42c9ec: lit count 0-5, 6-10,
+# 11-15, else). The lit lights of the eight groups (left_island, right_wind, left_orbit, right_orbit, south_wind, east_wind_1,
+# east_wind_2, west_wind) are counted with TLightGroupGetOnCount. Level 1 (0-5 lit) is covered by m6_storm.uh. Each block
+# lights n lights of left_island_light_group, completes the mission and checks the level text shown at the sweep end
+# (3046 8 targets/10,000 .. 3049 5 targets/100,000) and the points of the first target hit. Expected values: machine code.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms
+10 key down new_game
+11 key up new_game
+200 msg left_island_light_group TLightGroupTurnOnAtIndex 0
+200 msg right_wind_light_group TLightGroupTurnOnAtIndex 0
+200 msg left_orbit_light_group TLightGroupTurnOnAtIndex 0
+200 msg right_orbit_light_group TLightGroupTurnOnAtIndex 0
+200 msg south_wind_light_group TLightGroupTurnOnAtIndex 0
+200 msg east_wind_1_light_group TLightGroupTurnOnAtIndex 0
+201 poke info_text_box message_field 6
+202 event info_text_box ControlMissionComplete
+202 expect text info_text_box display id 3067
+210 event light_sweeps ControlTimerExpired
+210 expect text info_text_box display id 3047
+220 event a_drop5 ControlCollision
+220 expect n_score == 25000 delta 219
+300 msg east_wind_2_light_group TLightGroupTurnOnAtIndex 0
+300 msg west_wind_light_group TLightGroupTurnOnAtIndex 0
+300 msg left_island_light_group TLightGroupTurnOnAtIndex 1
+300 msg right_wind_light_group TLightGroupTurnOnAtIndex 1
+300 msg left_orbit_light_group TLightGroupTurnOnAtIndex 1
+301 poke info_text_box message_field 6
+302 event info_text_box ControlMissionComplete
+302 expect text info_text_box display id 3067
+310 event light_sweeps ControlTimerExpired
+310 expect text info_text_box display id 3048
+320 event a_drop5 ControlCollision
+320 expect n_score == 50000 delta 319
+400 msg right_orbit_light_group TLightGroupTurnOnAtIndex 1
+400 msg south_wind_light_group TLightGroupTurnOnAtIndex 1
+400 msg east_wind_1_light_group TLightGroupTurnOnAtIndex 1
+400 msg east_wind_2_light_group TLightGroupTurnOnAtIndex 1
+400 msg west_wind_light_group TLightGroupTurnOnAtIndex 1
+401 poke info_text_box message_field 6
+402 event info_text_box ControlMissionComplete
+402 expect text info_text_box display id 3067
+410 event light_sweeps ControlTimerExpired
+410 expect text info_text_box display id 3049
+420 event a_drop5 ControlCollision
+420 expect n_score == 100000 delta 419
+500 quit

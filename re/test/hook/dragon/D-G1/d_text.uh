@@ -1,0 +1,52 @@
+# TextEvent table: one text event per FT code 0x57-0x6e, 10 frames apart; per code
+# the display/clear op, the FT code and the string id of the engine_diff C1 table (ids from the original's jump table 0x422e8c).
+# Times (-1.0 / 0.5 for 0x5b / 2.0 for 0x5d) are in text.jsonl and are not expressible in an expect line.
+# 0x58 (info box repaint) does nothing natively (TTextBox::DrawImGui draws the text every frame); 0x68-0x6a start/stop the quote ticker (no text-event expectation here).
+init window 960 666
+init fixed_dt 10
+init seed 1
+20 text 0x57
+20 expect text info_text_box clear code 87
+30 text 0x59
+30 expect text info_text_box display code 89 id 2003
+40 text 0x5a
+40 expect text info_text_box display code 90 id 2002
+50 text 0x5b
+50 expect text info_text_box display code 91 id 2004
+60 text 0x5c
+60 expect text info_text_box display code 92 id 2001
+70 text 0x5d
+70 expect text info_text_box display code 93 id 2005
+80 text 0x5e
+80 expect text info_text_box display code 94 id 2006
+90 text 0x5f
+90 expect text info_text_box clear code 95
+100 text 0x60
+100 expect text info_text_box display code 96 id 2015
+110 text 0x61
+110 expect text info_text_box display code 97 id 2007
+120 text 0x62
+120 expect text info_text_box display code 98 id 2016
+130 text 0x63
+130 expect text info_text_box display code 99 id 2008
+140 text 0x64
+140 expect text info_text_box display code 100 id 2017
+150 text 0x65
+150 expect text info_text_box display code 101 id 2009
+160 text 0x66
+160 expect text info_text_box display code 102 id 2018
+170 text 0x67
+170 expect text info_text_box display code 103 id 2010
+180 text 0x6b
+180 expect text info_text_box display code 107 id 2038
+190 text 0x6c
+190 expect text info_text_box display code 108 id 2039
+200 text 0x6d
+200 expect text info_text_box display code 109 id 2036
+210 text 0x6e
+210 expect text info_text_box display code 110 id 2037
+220 text 0x58
+230 text 0x68
+240 text 0x69
+250 text 0x6a
+270 quit

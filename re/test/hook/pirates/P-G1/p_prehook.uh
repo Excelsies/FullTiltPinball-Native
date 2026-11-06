@@ -1,0 +1,25 @@
+# MissionControl pre-hook (PIRATES 0x42d850, listing 7276-7291).
+# Disassembly 0x42d87b-0x42d8a6 (read with capstone): type 0x3ee (1006 TPopupTarget) -> inc [0x435d48] then
+# AddJackpot(0x4e20); 0x3fb (1019 TSoloTarget) -> AddJackpot(0x4e20) only, targets_hit unchanged; 0x3f9 (1017 TSink)
+# -> AddJackpot(0x9c40). So targets_hit rises only for type 1006 targets (a_drop5, a_drop10 here).
+# The hits at 220 and 240 add 40000 each, and 240 adds 2 hits, because the drop-target handlers
+# (LduggTargetControl1 / EryTargetControl1, pirates_drop_targets.cpp) score through ScorePart; NoteScorer sends
+# ControlScorerReplaced to the previous scorer and MissionControl runs its type pre-hook for that message as well (original: FUN_00423080
+# calls MissionControl 0x42d850 before the part's control function and the pre-hook tests the part type only, not the code).
+# So 220 = a_drop5 (+20000, +1 hit) + the replaced a_spot102 (TSoloTarget: +20000, no hit); 240 = a_drop10
+# (+20000, +1) + the replaced a_drop5 (TPopupTarget: +20000, +1). The per-type checks (spot: jackpot only; popup: jackpot and hit) are made.
+# That the original counts a replaced scorer again is the decompile reading; it is not measured on Wine here.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 event a_spot102 ControlCollision
+200 expect jackpot == 20000 delta 199
+200 expect targets_hit == 0 delta 199
+220 event a_drop5 ControlCollision
+220 expect jackpot == 40000 delta 219
+220 expect targets_hit == 1 delta 219
+240 event a_drop10 ControlCollision
+240 expect jackpot == 40000 delta 239
+240 expect targets_hit == 2 delta 239
+270 quit

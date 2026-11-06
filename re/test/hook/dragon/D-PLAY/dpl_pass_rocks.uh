@@ -1,0 +1,18 @@
+# PassRockAControl / PassRockBControl (listing 644-671): ControlBlockerMoveDone from a_rocka (a_rockb) with the blocker state != -1
+# enables a_spot10 (a_spot14). The target is poked inactive first so the Enable is visible.
+init fixed_dt 10
+init seed 1
+init watch a_spot10.active a_spot14.active a_rocka.blocker_state a_rockb.blocker_state
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+60 poke a_spot10 active 0
+60 poke a_spot14 active 0
+61 expect a_rocka.blocker_state != -1
+61 expect a_rockb.blocker_state != -1
+70 event a_rocka ControlBlockerMoveDone
+70 expect a_spot10.active == 1
+70 expect a_spot14.active == 0
+80 event a_rockb ControlBlockerMoveDone
+80 expect a_spot14.active == 1
+200 quit

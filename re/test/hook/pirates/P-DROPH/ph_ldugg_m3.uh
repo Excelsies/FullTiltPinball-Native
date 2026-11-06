@@ -1,0 +1,31 @@
+# LduggTargetControl1-5 in a non-letter mode (3). Each handler sets its bit in a_drop5's MessageField then calls the bank:
+# 3,000 per hit (ScorePart 0), 25,000 on the fifth (bank complete, ScorePart 1), bank reset. v_lite1 (letters) untouched outside modes 2/12 (listing 2654-2748).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop5.message_field v_lite1.message_field v_lite4.flasher_on v_lite5.flasher_on v_lite6.flasher_on v_lite7.flasher_on v_lite8.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 3
+300 event a_drop5 ControlCollision
+310 event a_drop6 ControlCollision
+320 event a_drop7 ControlCollision
+330 event a_drop8 ControlCollision
+340 event a_drop9 ControlCollision
+350 dump end
+300 expect a_drop5.message_field == 1
+300 expect n_score == 3000 delta 299
+310 expect a_drop5.message_field == 3
+310 expect n_score == 3000 delta 309
+320 expect a_drop5.message_field == 7
+330 expect a_drop5.message_field == 15
+330 expect n_score == 3000 delta 329
+340 expect a_drop5.message_field == 0
+340 expect n_score == 25000 delta 339
+340 expect v_lite1.message_field == 0
+300 expect v_lite4.flasher_on == 0
+310 expect v_lite5.flasher_on == 0
+320 expect v_lite6.flasher_on == 0
+330 expect v_lite7.flasher_on == 0
+340 expect v_lite8.flasher_on == 0
+360 quit

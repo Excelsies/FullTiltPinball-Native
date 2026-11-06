@@ -1,0 +1,23 @@
+# TRampExit (1035) s_rexit18 on DRAGON: layer masks from attribute 1301, then the layer switch in
+# both directions without a bounce (part_1035 4.1).
+# Geometry: s_rexit18 line (-0.4782,-13.5431)-(-1.9964,-13.0944), normal n = (0.2834, 0.9590). A ball on
+# the +n side moving along -n crosses LineToB (layer A -> B); from the -n side moving along +n it
+# crosses LineToA (B -> A).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch s_rexit18.group_a s_rexit18.group_b
+0 expect s_rexit18.group_a == 2
+0 expect s_rexit18.group_b == 8
+10 place 0 -1.0814 -12.7914 0.37 -0.2834 -0.9590 10 0x2
+10 expect n_ball0_mask == 2
+11 expect n_ball0_mask == 8
+11 expect n_ball0_dx ~= -0.2834 0.1
+11 expect n_ball0_dy ~= -0.9590 0.1
+40 place 0 -0.8011 -13.2391 0.37 0.2834 0.9590 10 0x8
+40 expect n_ball0_mask == 8
+41 expect n_ball0_mask == 2
+41 expect n_ball0_dx ~= 0.2834 0.1
+41 expect n_ball0_dy ~= 0.9590 0.1
+80 quit

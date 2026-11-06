@@ -1,0 +1,22 @@
+# P-MSEL: SelectNextMode (FT listing 2063-2108) through the real caller, a mode end. A running mode 7 is
+# forced like the original's `info_text_box+6` write (poke) and ended by its mode timer; ModeEnd (MissionControlSwitch, modes 4-11)
+# adds the 750,000 jackpot, lights the mode's light off and calls SelectNextMode, which draws from the one rand stream
+# (init seed 1: the selection repeats run to run, checked by the a=b compare of two runs).
+# Not covered here: "set at mode 2 entry" (needs Mode2IdleController) and "cleared by a drain" (needs BallDrainControl). The value 4 is
+# the measured draw with seed 1 (characterization,
+# not recomputed from the listing's draw model); the range check 1..8 is the behaviour (index of the eight selectable modes).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+199 expect selected_mode == 0
+200 poke info_text_box message_field 7
+201 event info_text_box ControlMissionComplete
+250 expect selected_mode == 0
+251 event mode_timer ControlTimerExpired
+252 expect mode == 2
+252 expect selected_mode in 1 8
+252 expect selected_mode == 4
+252 expect jackpot == 1750000
+300 quit

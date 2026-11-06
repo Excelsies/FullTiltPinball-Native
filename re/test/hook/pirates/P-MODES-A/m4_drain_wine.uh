@@ -1,0 +1,31 @@
+# Mode 4 with the real drain path (a ball placed in the drain, ball save spent), compared with the
+# recorded Wine run of the Skulduggery lifecycle (timeline at t = 110.152: mode 4 -> 16, jackpot
+# +750,000, modes_played 1 -> 2, bonus_step 2 -> 6 after 1.96 s). Native expectations: the drain gives jackpot +750,000, modes_played +1,
+# mode 16 in the same frame the mode changes, then the bonus count 2 -> 6 after 2.0 s. Mode 4 is entered by MissionComplete + the sweep end (no real skill shot).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms v_lite606.message_field
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+200 poke info_text_box message_field 4
+201 event info_text_box ControlMissionComplete
+201 expect mode == 4
+300 event light_sweeps ControlTimerExpired
+301 expect mode_timer.time_left_ms in 29300 29380
+300 expect text info_text_box display id 3016
+2400 expect ball_save == 0
+2400 expect mode == 4
+2400 expect v_lite606.message_field == 0
+2410 place 0 0 15.6 0.37 0 1 5 0x1
+2440 expect mode == 16
+2440 expect v_lite606.message_field == 1
+2440 expect jackpot == 750000 delta 2409
+# bonus count: Wine samples bonus_step 2 at the first mode-16 sample and 6 at +1.96 s (25.431 -> 27.393, 110.152 -> 112.163); native 2 -> 6 in exactly 2.0 s
+2740 expect bonus_step == 2
+2940 expect bonus_step == 6
+# the original's ModeEnd (0x52) of mode 4 does not touch mode_timer (only ControlBallDrained 0x53 resets it), so no timer expectation
+3000 quit

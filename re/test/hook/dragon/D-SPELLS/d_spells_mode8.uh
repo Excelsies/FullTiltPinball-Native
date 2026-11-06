@@ -1,0 +1,30 @@
+# In mode 8 (mode poked) a spell target
+# does not score and does not light its bank light: it writes its index into a_sink4's message_field (0..4 for a_spot4-7 and
+# a_spot22), plays tabc05wave and shows string 3039..3043 (SpellTargetControl1-5, mode == 8 branch).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_sink4.message_field v_lite3.light_on v_lite7.light_on
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 8
+200 event a_spot4 ControlCollision
+200 expect a_sink4.message_field == 0
+200 expect sound 4
+200 expect text info_text_box display id 3039
+210 event a_spot5 ControlCollision
+210 expect a_sink4.message_field == 1
+210 expect text info_text_box display id 3040
+220 event a_spot6 ControlCollision
+220 expect a_sink4.message_field == 2
+220 expect text info_text_box display id 3041
+230 event a_spot7 ControlCollision
+230 expect a_sink4.message_field == 3
+230 expect text info_text_box display id 3042
+240 event a_spot22 ControlCollision
+240 expect a_sink4.message_field == 4
+240 expect text info_text_box display id 3043
+250 expect n_score == 0 delta 189
+250 expect v_lite3.light_on == 0
+250 expect v_lite7.light_on == 0
+300 quit

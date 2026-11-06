@@ -1,0 +1,25 @@
+# Two players. P1 drains with the ball save off; the count runs; P2's ball is fed. Dumps at the start of each ball.
+init option Players 2
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 dump p1_ball1
+207 event s_oneway3 ControlCollision
+1730 place 0 0 15.6 0.37 0 1 5 0x1
+2500 dump p2_ball1
+# Expected values, equal to the Wine two_player reference at t = 30.87..35.85 (pirates_two_player timeline): player 2 up,
+# a fresh ball (mode 3, ball_count 3, ball_save 3, no_hold_start 1), jackpot 20000 (M3), targets_hit 0 and the per-ball globals
+# the original leaves at their new-ball values (drain_state 1, bonus_step 7): M4's "no cross-player effect".
+2500 expect current_player == 1
+2500 expect mode == 3
+2500 expect ball_count == 3
+2500 expect jackpot == 20000
+2500 expect ball_save == 3
+2500 expect no_hold_start == 1
+2500 expect targets_hit == 0
+2500 expect drain_state == 1
+2500 expect bonus_step == 7
+2600 quit

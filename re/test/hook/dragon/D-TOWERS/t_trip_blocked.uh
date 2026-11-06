@@ -1,0 +1,24 @@
+# Window tripwires, mode 2 with the tower lights' message_field != 0 (tower selected): early return, no score, no sound, no text
+# (PrisonWindowTripwireControl 0x4278.., Watch 0x4279.., Gate 0x427d10 jump-table mode 2 entry). Then v_lite50 cleared: the Gate scores again.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 2
+100 poke v_lite48 message_field 1
+100 poke v_lite49 message_field 1
+100 poke v_lite50 message_field 1
+110 event s_trip6 ControlCollision
+120 event s_trip3 ControlCollision
+130 event s_trip8 ControlCollision
+110 expect n_score == 0 delta 109
+120 expect n_score == 0 delta 119
+130 expect n_score == 0 delta 129
+110-135 expect none sound 24
+110-135 expect none text info_text_box display
+140 poke v_lite50 message_field 0
+150 event s_trip8 ControlCollision
+150 expect n_score == 50000 delta 149
+150 expect none sound 24
+150 expect none sound 43
+160 quit

@@ -1,0 +1,53 @@
+# Mode8Controller (FT 0x42b090; listing 6040-6138) and the Treasure X helpers LightNextTreasureX /
+# TreasureXLightsOff / OrbitSinksInactive. Sound ids = DAT sound group index - 4 (tabb59wave: group 48 -> 44). Held-ball precondition
+# as in P-MODES-B/m7_mode.uh: mode 2 is entered first so no_hold_start == 0 and the sweep end releases the sink (+40,000 from the sink pre-hook).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms v_lite606.message_field v_lite505.light_on v_lite504.light_on v_mlite110.flasher_on a_sink9.active a_sink12.active s_trip3.active s_trip8.active
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+195 expect no_hold_start == 0
+200 poke info_text_box message_field 8
+201 event info_text_box ControlMissionComplete
+201 expect mode == 8
+201 expect n_score == 300000
+201 expect text info_text_box display id 3061
+201 expect sound 44
+201 expect a_sink9.active == 1
+201 expect a_sink12.active == 1
+201 expect s_trip3.active == 0
+201 expect s_trip8.active == 0
+201 expect v_mlite110.flasher_on == 1   # first Treasure X (index 0): v_mlite110 and the left orbit lights flash
+300 event light_sweeps ControlTimerExpired
+300 expect text info_text_box display id 3053
+301 expect mode_timer.time_left_ms in 30600 30680
+301 expect jackpot == 1040000
+# a TLightRollover (type 1020, v_mlite7) hit: +20,000 jackpot
+320 event v_mlite7 ControlCollision
+321 expect jackpot == 1060000
+# a part of another type does not add
+330 event a_roll1 ControlCollision
+331 expect jackpot == 1060000
+# mode timer expiry: ModeEnd (modes played + 1), +750,000 from MissionControl, back to mode 2, orbit sinks inactive, tripwires active
+400 poke v_lite606 message_field 2
+401 event mode_timer ControlTimerExpired
+402 expect v_lite606.message_field == 3
+402 expect v_lite504.light_on == 0
+402 expect v_lite505.light_on == 1
+402 expect jackpot == 1810000
+402 expect mode == 2
+402 expect a_sink9.active == 0
+402 expect a_sink12.active == 0
+402 expect s_trip3.active == 1
+402 expect s_trip8.active == 1
+402 expect v_mlite110.flasher_on == 0
+# drain in mode 8
+500 poke info_text_box message_field 8
+501 event mode_timer ControlBallDrained
+502 expect mode_timer.time_left_ms == 0
+502 expect v_lite606.message_field == 4
+502 expect mode == 2
+550 quit

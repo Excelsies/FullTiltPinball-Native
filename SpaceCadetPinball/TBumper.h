@@ -17,6 +17,10 @@ public:
 	void Collision(TBall* ball, vector2* nextPosition, vector2* direction, float distance,
 		TEdgeSegment* edge) override;
 	void Fire();
+#ifdef FT_TEST_HOOK
+	bool HookGet(const std::string& field, double& out) const override;
+	bool HookSet(const std::string& field, double value) override;
+#endif
 
 	static void TimerExpired(int timerId, void* caller);
 	

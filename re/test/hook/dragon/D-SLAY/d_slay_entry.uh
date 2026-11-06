@@ -1,0 +1,25 @@
+# Entry condition: the a_spot28 sword shortcut with v_lite18 flashing (SwordTargetControl3, FT listing 1957-1983,
+# dragon_quests.cpp:358) starts mode 9 (dragon_slay.cpp:255, +500,000) and shows text 3048. The
+# all-five-quest-lights entry is covered by q_select (D-QSEL, last block, 505,000).
+# The flasher is started with `msg v_lite18 TLightFlasherStart 0`, which delivers the message to the part itself
+# (ft_test_hook.cpp:580-588); `event` would call control::handler(code, part) (ft_test_hook.cpp:578), the rules'
+# controller for that part, and v_lite18 has none. TLight::Message (TLight.cpp, TLightFlasherStart case) sets
+# FlasherOnFlag at frame 149, the shortcut fires at 150 (mode 9, text 3048 in the frame of the hit, and the light stops
+# flashing).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_lite18.flasher_on
+10 key down new_game
+11 key up new_game
+149 poke info_text_box message_field 2
+149 msg v_lite18 TLightFlasherStart 0
+149 expect v_lite18.flasher_on == 1
+150 event a_spot28 ControlCollision
+# listing: mode = 9 and Display(string 3048)
+150 expect text info_text_box display id 3048
+150 expect v_lite18.flasher_on == 0
+151 expect mode == 9
+301 expect mode == 9
+151 expect n_score == 500000 delta 148
+400 quit

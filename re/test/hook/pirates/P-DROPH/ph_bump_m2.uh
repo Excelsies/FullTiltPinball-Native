@@ -1,0 +1,34 @@
+# BumperControl mode 2: hits 1..11 count in a_bump1 and score 1,500 (crew 0); the 12th resets the counter, raises the crew a_bump2 to 1,
+# shows text 3001 (id only asserted here; its value argument, get_scoring of the new crew 1, is read from runs/ph_bump_m2/text.jsonl frame 410, not by an expect) and scores ScorePart(.., crew 1) = 3,000; then a 12th-hit cycle at crew 1 scores 3,000 per hit (listing 2497-2549).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_bump1.message_field a_bump2.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+300 event a_bump1 ControlCollision
+310 event a_bump1 ControlCollision
+320 event a_bump1 ControlCollision
+330 event a_bump1 ControlCollision
+340 event a_bump1 ControlCollision
+350 event a_bump1 ControlCollision
+360 event a_bump1 ControlCollision
+370 event a_bump1 ControlCollision
+380 event a_bump1 ControlCollision
+390 event a_bump1 ControlCollision
+400 event a_bump1 ControlCollision
+400 expect a_bump1.message_field == 11
+400 expect a_bump2.message_field == 0
+400 expect n_score == 1500 delta 399
+410 event a_bump2 ControlCollision
+410 expect a_bump1.message_field == 0
+410 expect a_bump2.message_field == 1
+410 expect n_score == 3000 delta 409
+410 expect text info_text_box display id 3001
+410 expect sound 13
+420 event a_bump3 ControlCollision
+420 expect a_bump1.message_field == 1
+420 expect n_score == 3000 delta 419
+300 expect sound 12
+460 quit

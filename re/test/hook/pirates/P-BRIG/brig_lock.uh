@@ -1,0 +1,42 @@
+# B1 (listing 4362-4386 + BallLockedInBrig 0x424210): in mode 2 three captures by the brig (s_hole19
+# ControlBallCaptured) lock balls 1, 2, 3. Each capture scores, shows string 3007 and lowers MultiballCount (clamped at 0).
+# The second lock activates s_oneway12; locks 1 and 2 play tabb39wave (sound id of that TSound) and relaunch the plunger. The
+# third lock starts mode 13 at once: balls locked join the balls in play (0 + 3), locked 0, 100,000, text 3056,
+# s_oneway12 inactive, v_lite551's own MessageField 0xf (the original's write, Mode13 0x42d5e3); no 0x52: modes_played unchanged.
+# a_kick1.disabled: 1 after a new game; Mode13 entry sends FtPartEnable (0x4b) -> 0 (listing 7151-7207 area).
+# P1; mode forced to 2 by poke (Mode2Idle is not under test). s_hole19 has no score entry in the score table (count 0), so the three captures add 0 and the sum is the 100,000 alone.
+# Sound ids (DAT sound index of the TSound parts, read from the run's sounds.jsonl): tabb39wave 25, tabb95wave 64.
+init fixed_dt 10
+init seed 1
+init watch s_oneway12.active v_lite551.message_field a_kick1.disabled
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+200 poke s_oneway12 active 0
+200 expect multiball == 1
+200 expect a_kick1.disabled == 1
+210 event s_hole19 ControlBallCaptured
+210 expect locked == 1
+210 expect multiball == 0
+210 expect mode == 2
+210 expect s_oneway12.active == 0
+210 expect text info_text_box display id 3007
+210 expect sound 25
+230 event s_hole19 ControlBallCaptured
+230 expect locked == 2
+230 expect a_kick1.disabled == 1
+230 expect multiball == 0
+230 expect s_oneway12.active == 1
+230 expect text info_text_box display id 3007
+230 expect sound 25
+250 event s_hole19 ControlBallCaptured
+250 expect locked == 0
+250 expect a_kick1.disabled == 0
+250 expect mode == 13
+250 expect multiball == 3
+250 expect s_oneway12.active == 0
+250 expect v_lite551.message_field == 15
+250 expect text info_text_box display id 3056
+250 expect sound 64
+250 expect n_score == 100000
+260 quit

@@ -1,0 +1,18 @@
+# Negative control for dm_leak_D-SLAY_jaw.uh: the same player switch and the same a_jaw move-done event, but player 1 never starts mode 9,
+# so the jaw state 0x439b18 is still 0. The event then activates nothing: the leak script's expects (active == 1) would FAIL
+# here, which is what shows the leak check depends on the carried state.
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+10 key down new_game
+11 key up new_game
+1010 msg table SwitchToNextPlayer 0
+1020 poke info_text_box message_field 9
+1021 poke a_ramp107 active 0
+1022 poke s_bwal170 active 0
+1030 event a_jaw ControlBlockerMoveDone
+1031 dump after a_ramp107.active s_bwal170.active
+1032 expect a_ramp107.active == 0
+1032 expect s_bwal170.active == 0
+1100 quit

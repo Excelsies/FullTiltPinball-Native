@@ -1,0 +1,23 @@
+# Pause: F3 shows the pause text (id 2003, code 89) in the frame of the key press, the
+# rule keys stay frozen for 449 frames, a second F3 at 851 clears it and shows the resume text (id 2004, code 91).
+# The current mode's text redisplayed at f+450 through the 0x3f1 -> 0x50 remap is the 851-852 expect
+# below: the game is in mode 10 here (NewGame start; the plunger pull at
+# 200 did not leave it: mode == 0 delta 401 at 850 only says it did not change after the pause), text 3066.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 key down pause
+401 key up pause
+400 expect text info_text_box display id 2003
+400 expect text info_text_box display code 89
+850 expect mode == 0 delta 401
+850 expect ball_save == 0 delta 401
+851 key down pause
+852 key up pause
+851-852 expect text info_text_box display id 2004
+851-852 expect text info_text_box display id 3066
+900 quit

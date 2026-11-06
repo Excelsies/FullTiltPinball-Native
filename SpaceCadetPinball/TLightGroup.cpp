@@ -4,6 +4,7 @@
 
 #include "control.h"
 #include "loader.h"
+#include "pb.h"
 #include "timer.h"
 #include "TLight.h"
 #include "TPinballTable.h"
@@ -49,7 +50,8 @@ int TLightGroup::Message(MessageCode code, float value)
 			MessageField = playerPtr->MessageField;
 			MessageField2 = playerPtr->MessageField2;
 			Timer1Time = playerPtr->Timer1Time;
-			if (!(MessageField == 0))
+			// Full Tilt resumes a running animation (restored MessageField2 != 0); upstream tests MessageField.
+			if (pb::IsFullTiltTable() ? MessageField2 != MessageCode::TLightGroupNull : MessageField != 0)
 				TimerExpired(0, this);
 			break;
 		}
@@ -81,11 +83,13 @@ int TLightGroup::Message(MessageCode code, float value)
 				auto lightCur = List.at(index);
 				auto lightPrev = List.at(index - 1);
 				lightCur->Message(lightPrev->LightOnFlag ? MessageCode::TLightTurnOn : MessageCode::TLightTurnOff, 0.0);
-				lightCur->MessageField = lightPrev->MessageField;
+				if (!pb::IsFullTiltTable())
+					lightCur->MessageField = lightPrev->MessageField;
 			}
 			auto firstLight = List.at(0);
 			firstLight->Message(lastStatus ? MessageCode::TLightTurnOn : MessageCode::TLightTurnOff, 0.0);
-			firstLight->MessageField = lastMessage;
+			if (!pb::IsFullTiltTable())
+				firstLight->MessageField = lastMessage;
 			reschedule_animation(value);
 			break;
 		}
@@ -108,10 +112,12 @@ int TLightGroup::Message(MessageCode code, float value)
 				auto lightCur = List.at(index);
 				auto lightNext = List.at(index + 1);
 				lightCur->Message(lightNext->LightOnFlag ? MessageCode::TLightTurnOn : MessageCode::TLightTurnOff, 0.0);
-				lightCur->MessageField = lightNext->MessageField;
+				if (!pb::IsFullTiltTable())
+					lightCur->MessageField = lightNext->MessageField;
 			}
 			lastLight->Message(firstStatus ? MessageCode::TLightTurnOn : MessageCode::TLightTurnOff, 0.0);
-			lastLight->MessageField = firstMessage;
+			if (!pb::IsFullTiltTable())
+				lastLight->MessageField = firstMessage;
 			reschedule_animation(value);
 			break;
 		}
@@ -159,9 +165,12 @@ int TLightGroup::Message(MessageCode code, float value)
 				start_animation();
 			MessageField2 = code;
 			AnimationFlag = 0;
-			for (auto light : List)
+			// Full Tilt never animates the last member (loop to count - 2).
+			const auto showCount = pb::IsFullTiltTable() ? count - 1 : count;
+			for (auto i = 0; i < showCount; i++)
 			{
-				if (rand() % 100 > 70)
+				auto light = List[i];
+				if (ft_rand::Int() % 100 > 70)
 				{
 					auto randVal = RandFloat() * value * 3.0f + 0.1f;
 					light->Message(MessageCode::TLightTurnOnTimed, randVal);
@@ -176,9 +185,11 @@ int TLightGroup::Message(MessageCode code, float value)
 				start_animation();
 			MessageField2 = code;
 			AnimationFlag = 0;
-			for (auto light : List)
+			const auto overCount = pb::IsFullTiltTable() ? count - 1 : count;
+			for (auto i = 0; i < overCount; i++)
 			{
-				auto randVal = static_cast<float>(rand() % 100 > 70);
+				auto light = List[i];
+				auto randVal = static_cast<float>(ft_rand::Int() % 100 > 70);
 				light->Message(MessageCode::TLightResetAndToggleValue, randVal);
 			}
 			reschedule_animation(value);
@@ -195,7 +206,7 @@ int TLightGroup::Message(MessageCode code, float value)
 			if (!noBmpInd1Count)
 				break;
 
-			auto randModCount = rand() % noBmpInd1Count;
+			auto randModCount = ft_rand::Int() % noBmpInd1Count;
 			for (auto it = List.rbegin(); it != List.rend(); ++it)
 			{
 				auto light = *it;
@@ -221,7 +232,7 @@ int TLightGroup::Message(MessageCode code, float value)
 			if (!bmpInd1Count)
 				break;
 
-			auto randModCount = rand() % bmpInd1Count;
+			auto randModCount = ft_rand::Int() % bmpInd1Count;
 			for (auto it = List.rbegin(); it != List.rend(); ++it)
 			{
 				auto light = *it;
@@ -321,6 +332,20 @@ int TLightGroup::Message(MessageCode code, float value)
 	case MessageCode::TLightGroupResetAndTurnOff:
 		{
 			auto index = next_light_down();
+			if (pb::IsFullTiltTable())
+			{
+				// Full Tilt (0x40b97b): the highest light that is on and not already flashing off (TurnOffAfterFlashingFg),
+				// so several messages in one call turn off several lights.
+				index = -1;
+				for (auto i = count - 1; i >= 0; --i)
+				{
+					if (List.at(i)->LightOnFlag && !List.at(i)->TurnOffAfterFlashingFg)
+					{
+						index = i;
+						break;
+					}
+				}
+			}
 			if (index < 0)
 				break;
 			if (MessageField2 != MessageCode::TLightGroupNull || AnimationFlag)

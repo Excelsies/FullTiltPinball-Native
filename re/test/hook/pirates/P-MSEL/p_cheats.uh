@@ -1,0 +1,55 @@
+# Skulduggery cheats: 1MAX, GMAX, FMAX, QUOTE through the engine's `hidden<Tab>test` detector
+# and the rule's BackdoorKey (FT 0x42a830). `hidden<Tab>test` is typed ONCE (sets the engine flag pb::cheat_mode, never cleared);
+# typing it again is wrong: with cheat_mode on, the lower-case letters of "hidden test" reach pb::InputDown's debug cheat keys
+# ('h' opens the High Scores dialog with 1e9, 's' adds a random score, 'i' a light override), which is not table behaviour.
+# The script asserts n_score == 0 and takes shots so such a side effect would show.
+#   1MAX: extra_balls 0 -> 1 and text 3014 (table_add_extra_ball with t > 0; the t == 0 no-text branch has no key path).
+#   FMAX: nothing happens (no extra ball, no text), and it leaves the rule's cheat state stuck (the original's FMAX exit skips
+#         the state reset, FT 0x42a830; port keep = true, faithful): a 1MAX typed right after FMAX does nothing until a
+#         non-matching sequence resets the state; here the first 1MAX (no effect) is followed by a second one (effect), measured.
+#         Asserted: 1MAX right after FMAX = no extra ball; the next 1MAX = extra ball + text 3014.
+#         (GMAX then 1MAX works without a reset.)
+#   GMAX: toggles the rule's alternate-ball flag (FT 0x439140). Not checked here: the flag is not in the hook dump, so no
+#         assertion can fail when the GMAX line is removed (n_cheat is the engine flag set by hidden<Tab>test, not by GMAX).
+#         Engine gap: the port writes St.Gmax and never reads it (the original reads it when the ball
+#         bitmap group is chosen).
+#   QUOTE: not checked as an expect (the ticker's overlay write is not in text.jsonl, n_cheat is set by hidden<Tab>test). The
+#         ticker's screen is checked by two shots, +250 and +450 frames after `type QUOTE`, compared
+#         a=b through `hookrun compare` (frames included); the same script without `type QUOTE` gives different shots.
+# Skill-wheel text windows: the ball sits in the skill lane in mode 3 and Mode3LaunchController
+# advances the wheel every 25 frames (pirates_ball.cpp:263-268, FT 0x42abf0): info_text_box displays at frames 106, 156, 181, 206, 231 (font 1, no
+# string id, text.jsonl). The no-text claim (FMAX / GMAX / a 1MAX with no effect print nothing) is checked with
+# `none ... id 3014` over the windows 125-210 and 219-235 (the extra-ball string) and `none` (any text) over the gaps
+# between wheel frames (125-155, 157-180, 182-205, 207-210, 219-230). A `type 1MAX` at 170 instead of FMAX fails the
+# id 3014 window and 157-180.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+100 type hidden\ttest
+120 expect n_cheat == 1
+125 expect extra_balls == 0
+130 type GMAX
+170 type FMAX
+210 expect extra_balls == 0
+125-210 expect none text info_text_box display id 3014
+125-155 expect none text info_text_box display
+157-180 expect none text info_text_box display
+182-205 expect none text info_text_box display
+207-210 expect none text info_text_box display
+215 type 1MAX
+219 expect extra_balls == 0
+219-235 expect none text info_text_box display id 3014
+219-230 expect none text info_text_box display
+240 type 1MAX
+260 expect extra_balls == 1
+243-260 expect text info_text_box display id 3014
+100-900 expect n_score == 0
+300 dump pre_quote
+400 type QUOTE
+650 shot q_250
+850 shot q_450
+870 dump post_quote
+900 quit

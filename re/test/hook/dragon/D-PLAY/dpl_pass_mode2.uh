@@ -1,0 +1,33 @@
+# PassTargetControl1..4 + PassTargetBank (listing 1711-1851), mode 2: the first three pass targets score the table's first value
+# (3,000) and light their lamp; the fourth completes the bank: 15,000 (second value), text 3004, bank lights flash then stay off.
+# a_spot10 -> v_lite14 (also disables a_rocka and itself), a_spot8 -> v_lite13, a_spot14 -> v_lite12 (disables a_rockb), a_spot12 -> v_lite11.
+init fixed_dt 10
+init seed 1
+init watch v_lite14.light_on v_lite13.light_on v_lite12.light_on v_lite11.light_on a_spot10.active a_spot14.active v_lite45.flasher_on v_lite46.flasher_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+100 event a_spot10 ControlCollision
+100 expect n_score == 3000 delta 99
+100 expect v_lite14.light_on == 1
+100 expect v_lite45.flasher_on == 1
+100 expect a_spot10.active == 0
+110 event a_spot8 ControlCollision
+110 expect n_score == 3000 delta 109
+110 expect v_lite13.light_on == 1
+110 expect none text info_text_box display id 3004
+120 event a_spot14 ControlCollision
+120 expect n_score == 3000 delta 119
+120 expect v_lite12.light_on == 1
+120 expect v_lite46.flasher_on == 1
+120 expect a_spot14.active == 0
+130 event a_spot12 ControlCollision
+130 expect n_score == 15000 delta 129
+130 expect text info_text_box display id 3004
+# the bank lights flash for 1 s and stay off afterwards
+135 expect v_lite11.light_on == 1
+400 expect v_lite14.light_on == 0
+400 expect v_lite13.light_on == 0
+400 expect v_lite12.light_on == 0
+400 expect v_lite11.light_on == 0
+500 quit

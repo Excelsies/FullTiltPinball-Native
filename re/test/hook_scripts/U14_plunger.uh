@@ -1,0 +1,32 @@
+# DRAGON: TSoloTarget Disable keeps the target down; plunger ReleasedTimer 0.2 s.
+# Expected values from part_same_as_upstream S1 and part_1034 5 (not recomputed from the code).
+# Note: the spec row's "pullback_started drops to 0 at g+20" is not the observable: the flag clears at the
+# release itself (part_1034 3.1 case 0x3ed); the 0.2 s timer clears Boost, read as s_plunger1.boost.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_spot22.active s_plunger1.pullback_started s_plunger1.max_pullback s_plunger1.boost
+0 expect s_plunger1.max_pullback == 50
+10 key down new_game
+11 key up new_game
+# --- TSoloTarget: ball 1 hits a_spot22 at frame 302 (active -> 0, 0.1 s re-enable timer armed)
+300 place 1 1.2 0.95 0.37 1 0 5
+301 hold 1 off
+306 expect a_spot22.active == 0
+# Disable 5 frames after the hit must kill the re-enable timer (S1): still down at +10 and long after
+307 msg a_spot22 TSoloTargetDisable 0
+312 expect a_spot22.active == 0
+330 expect a_spot22.active == 0
+400 expect a_spot22.active == 0
+# --- Plunger: pull back 450-500, release at g = 500
+450 key down plunger
+460 expect s_plunger1.pullback_started == 1
+490 expect s_plunger1.boost != 0
+500 key up plunger
+500 expect s_plunger1.pullback_started == 0
+500 expect s_plunger1.boost != 0
+510 expect s_plunger1.boost != 0
+518 expect s_plunger1.boost != 0
+521 expect s_plunger1.boost == 0
+540 expect s_plunger1.boost == 0
+560 quit

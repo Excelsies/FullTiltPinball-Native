@@ -1,0 +1,13 @@
+# Gate, outcome 5: mode 8 after the one-way event (Mode3 jump table 0x42ad4c; StartMode8, Mode8).
+# Coin / mystery awards have no hook observable here (not checked); the mode is the checkable result.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 poke s_launcher1 message_field 5
+200 event s_oneway3 ControlCollision
+200 expect text info_text_box clear
+210 expect mode == 8
+400 quit

@@ -3,6 +3,7 @@
 
 #include "control.h"
 #include "loader.h"
+#include "pb.h"
 #include "proj.h"
 #include "render.h"
 #include "TPinballTable.h"
@@ -13,6 +14,8 @@ TPinballComponent::TPinballComponent(TPinballTable* table, int groupIndex, bool 
 	visualStruct visual{};
 
 	MessageField = 0;
+	std::fill(std::begin(PlayerMessageField), std::end(PlayerMessageField), 0);
+	TypeId = 0;
 	UnusedBaseFlag = 0;
 	ActiveFlag = 0;
 	PinballTable = table;
@@ -99,8 +102,34 @@ TPinballComponent::~TPinballComponent()
 }
 
 
+void TPinballComponent::ResetPlayerState()
+{
+	MessageField = 0;
+	std::fill(std::begin(PlayerMessageField), std::end(PlayerMessageField), 0);
+}
+
+void TPinballComponent::SwapPlayerState(float value)
+{
+	const int player = PinballTable->CurrentPlayer;
+	const int next = static_cast<int>(std::floor(value));
+	assertm(player >= 0 && player < 4, "current player out of range");
+	assertm(next >= 0 && next < 4, "player index out of range");
+	PlayerMessageField[player] = MessageField;
+	MessageField = PlayerMessageField[next];
+}
+
 int TPinballComponent::Message(MessageCode code, float value)
 {
+	if (pb::IsFullTiltTable())
+	{
+		// Full Tilt base Message (0x4135b0): per-player state only, never MessageField = code.
+		if (code == MessageCode::Reset)
+			ResetPlayerState();
+		else if (code == MessageCode::PlayerChanged)
+			SwapPlayerState(value);
+		return 0;
+	}
+
 	MessageField = static_cast<int>(code);
 	if (code == MessageCode::Reset)
 		MessageField = 0;
@@ -163,3 +192,15 @@ void TPinballComponent::SpriteSetBall(int index, vector2i pos, float depth) cons
 		RenderSprite->ball_set(bmp, depth, pos.X, pos.Y);
 	}
 }
+
+#ifdef FT_TEST_HOOK
+bool TPinballComponent::HookGet(const std::string&, double&) const
+{
+	return false;
+}
+
+bool TPinballComponent::HookSet(const std::string&, double)
+{
+	return false;
+}
+#endif

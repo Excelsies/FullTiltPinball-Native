@@ -1,0 +1,13 @@
+# (seed 6: the draw is 1) WellSinkControl mode 2 -> StartSelectedQuest, no spell; mode leaves 2. Spell branch: shop_well_mode2 (RandIndex(4)==1 -> StartSelectedQuest else AwardRandomSpell)
+init fixed_dt 10
+init seed 6
+init dump_period 10
+init watch a_sink4.message_field multiplier jackpot spells extra_balls info_text_box.message_field selected_quest ball_held n_rand_draws
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 event a_sink4 ControlCollision
+205 expect spells == 0
+205 expect mode != 2
+205 expect ball_held == 1
+260 quit

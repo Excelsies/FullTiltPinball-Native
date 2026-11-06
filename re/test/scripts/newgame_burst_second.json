@@ -1,0 +1,4 @@
+{"name":"newgame_burst_second","description":"newgame_burst.json after a first new game has already played: F2 at 3.2 s, second F2 9 s later, then 70 shots 0.1 s apart (markers ng_NN follow the second F2). Tells a first-use effect (sound waves loaded lazily) from a steady-state one.",
+ "steps":[
+ {"wait":3.0},{"tap":"new_game"},{"wait":9.0},{"shot":"before"},{"tap":"new_game"},{"wait":0.12},
+ {"burst":"ng","count":70,"interval":0.1},{"shot":"end"}]}

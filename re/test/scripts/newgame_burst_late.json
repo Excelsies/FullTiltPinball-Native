@@ -1,0 +1,10 @@
+{"name":"newgame_burst_late","description":"newgame_burst.json with the F2 at 8.2 s instead of 3.2 s: after the original's own startup light show (about 1.7-4.5 s after the window appears, audio on; the ball feed of that startup game follows at about 5.4 s), so the first F2 of the process is a normal new game on both sides. 70 shots 0.1 s apart follow the F2 (markers ng_NN).",
+ "steps":[
+ {"wait":8.0},
+ {"shot":"loaded"},
+ {"wait":0.2},
+ {"tap":"new_game"},
+ {"wait":0.12},
+ {"burst":"ng","count":70,"interval":0.1},
+ {"shot":"end"}
+]}

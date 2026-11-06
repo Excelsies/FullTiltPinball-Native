@@ -1,0 +1,5 @@
+{"name":"startup_burst","description":"No key at all: 90 shots 0.1 s apart from replay start (markers ng_NN) to show the table's own startup light show and ball feed (audio-on original: show about 1.7-4.5 s, feed about 5.4 s; native: show over by about 1.5 s, feed about 2.5 s). Analyse with burst_activity.py (no keydown: pass the F2 index of a script that has one, or read the times from run.json).",
+ "steps":[
+ {"burst":"ng","count":90,"interval":0.1},
+ {"shot":"end"}
+]}

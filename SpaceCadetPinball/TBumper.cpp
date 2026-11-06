@@ -4,6 +4,7 @@
 
 #include "control.h"
 #include "loader.h"
+#include "pb.h"
 #include "render.h"
 #include "timer.h"
 #include "TPinballTable.h"
@@ -64,6 +65,22 @@ int TBumper::Message(MessageCode code, float value)
 		}
 	case MessageCode::PlayerChanged:
 		{
+			if (pb::IsFullTiltTable())
+			{
+				// FT 0x414160, code 0x3fe: base per-player swap, a running fire timer is killed and its
+				// callback run, then the per-player BmpIndex swap.
+				SwapPlayerState(value);
+				if (Timer)
+				{
+					timer::kill(Timer);
+					TimerExpired(Timer, this);
+				}
+				PlayerData[PinballTable->CurrentPlayer].BmpIndex = BmpIndex;
+				BmpIndex = PlayerData[static_cast<int>(floor(value))].BmpIndex;
+				TBumper::Message(MessageCode::TBumperSetBmpIndex, static_cast<float>(BmpIndex));
+				break;
+			}
+
 			auto playerPtr = &PlayerData[PinballTable->CurrentPlayer];
 			playerPtr->BmpIndex = BmpIndex;
 			playerPtr->MessageField = MessageField;
@@ -80,6 +97,16 @@ int TBumper::Message(MessageCode code, float value)
 			{
 				timer::kill(Timer);
 				TimerExpired(Timer, this);
+			}
+			if (pb::IsFullTiltTable())
+			{
+				// FT 0x414160, code 0x402: base reset, then only PlayerCount saved BmpIndex entries cleared.
+				ResetPlayerState();
+				BmpIndex = 0;
+				for (auto i = 0; i < PinballTable->PlayerCount; i++)
+					PlayerData[i].BmpIndex = 0;
+				TimerExpired(0, this);
+				break;
 			}
 			BmpIndex = 0;
 			MessageField = 0;
@@ -121,3 +148,27 @@ void TBumper::Fire()
 	Timer = timer::set(TimerTime, this, TimerExpired);
 	Threshold = 1000000000.0;
 }
+
+#ifdef FT_TEST_HOOK
+bool TBumper::HookGet(const std::string& field, double& out) const
+{
+	if (field == "bmp_index") { out = BmpIndex; return true; }
+	if (field == "timer") { out = Timer != 0 ? 1 : 0; return true; }
+	if (field.compare(0, 9, "saved_bmp") == 0 && field.size() == 10 && field[9] >= '0' && field[9] <= '3')
+	{
+		out = PlayerData[field[9] - '0'].BmpIndex;
+		return true;
+	}
+	return false;
+}
+
+bool TBumper::HookSet(const std::string& field, double value)
+{
+	if (field.compare(0, 9, "saved_bmp") == 0 && field.size() == 10 && field[9] >= '0' && field[9] <= '3')
+	{
+		PlayerData[field[9] - '0'].BmpIndex = static_cast<int>(value);
+		return true;
+	}
+	return false;
+}
+#endif

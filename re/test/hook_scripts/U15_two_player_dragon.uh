@@ -1,0 +1,41 @@
+# DRAGON check (FT tables only): PlayerChanged kills a running bumper fire timer and runs its
+# callback before the per-player BmpIndex swap; Reset kills it and clears saved BmpIndex only for PlayerCount
+# players. a_bump1 has a single bitmap pair here, so the fire timer is armed by a ball hit (place a ball
+# just outside the bumper circle, moving into it: the hit lands in frame 61, timer 0.1 s = frames 61-70),
+# not by TBumperSetBmpIndex. Expected values: part_same_as_upstream S4
+# (FT 0x414160 / 0x414020). Upstream (and Space Cadet) would still show timer == 1 at the PlayerChanged frame.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init watch current_player player_count a_bump1.bmp_index a_bump1.timer a_bump1.saved_bmp0 a_bump1.saved_bmp1 a_bump1.saved_bmp2
+10 key down new_game
+11 key up new_game
+40 expect player_count == 2
+40 expect current_player == 0
+40 expect a_bump1.timer == 0
+60 place 0 5.06 -2.2019 0.37 -1 0 8 0x1
+61 expect a_bump1.timer == 1
+62 msg table SwitchToNextPlayer 0
+62 expect current_player == 1
+62 expect a_bump1.timer == 0
+62 expect a_bump1.bmp_index == 0
+100 place 0 5.06 -2.2019 0.37 -1 0 8 0x1
+101 expect a_bump1.timer == 1
+102 msg table SwitchToNextPlayer 0
+102 expect current_player == 0
+102 expect a_bump1.timer == 0
+# Reset while the fire timer runs: timer killed; saved BmpIndex of the 2 players cleared, slot 2 untouched.
+110 poke a_bump1 saved_bmp0 1
+110 poke a_bump1 saved_bmp1 1
+110 poke a_bump1 saved_bmp2 3
+111 expect a_bump1.saved_bmp0 == 1
+140 place 0 5.06 -2.2019 0.37 -1 0 8 0x1
+141 expect a_bump1.timer == 1
+142 msg a_bump1 Reset 0
+142 expect a_bump1.timer == 0
+142 expect a_bump1.bmp_index == 0
+142 expect a_bump1.saved_bmp0 == 0
+142 expect a_bump1.saved_bmp1 == 0
+142 expect a_bump1.saved_bmp2 == 3
+170 quit

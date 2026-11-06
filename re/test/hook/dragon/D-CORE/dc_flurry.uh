@@ -1,0 +1,27 @@
+# Ramp6Control + CheckMode15Start, FREE-BALL case (the path play reaches): dragon lights 22-25 and 27 lit, a_ramp6 lights
+# v_lite26 -> flurry (mode 15, multiball +4, text 3063, sound tabc61wave id 49). The held-ball case (+3) is dc_flurry_held.uh.
+# NewGame starts in mode 10 with the ball on the plunger (ball_held 1); the plunger pull and the skill shot
+# (a_rebo1, Mode10LaunchBallController) leave mode 10 for mode 2 with ball_held 0, so Mode15Controller
+# (dragon_core.cpp, original 0x42b510) adds 4 and takes none back.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite70.light_on
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+620 event a_rebo1 ControlCollision
+625 poke v_lite22 light_on 1
+625 poke v_lite23 light_on 1
+625 poke v_lite24 light_on 1
+625 poke v_lite25 light_on 1
+625 poke v_lite27 light_on 1
+630 event a_ramp6 ControlBallToLayer2
+631 expect ball_held == 0
+635 expect mode == 15
+635 expect multiball == 4 delta 629
+625-635 expect text info_text_box display id 3063
+625-635 expect sound 49
+635 expect v_lite70.light_on == 1
+680 quit

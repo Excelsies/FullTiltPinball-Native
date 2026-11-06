@@ -1,0 +1,23 @@
+# Saved drain. Ball save lit (3) after the feed; a drain event shows the saved-ball text (id 3026), drain_state 3 and the
+# relaunch timer fires: the original sends 0.96 (float 0x3f75c28f at 0x426204, code 0x3fb), so the relaunch (multiball 1 -> 2,
+# n_active_balls 3) happens 95 frames after the drain event, not at d+100 (a 1.0 s reading of Wine's 50 ms samples).
+# ball_save stays 3 and the ball count does not change.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 event drain ControlCollision
+200 expect drain_state == 3
+200 expect ball_save == 3
+200 expect ball_count == 3
+200 expect text info_text_box display id 3026
+200 expect mode == 3
+294 expect multiball == 1
+294 expect n_active_balls == 2
+295 expect multiball == 2
+295 expect n_active_balls == 3
+400 expect ball_count == 3
+400 expect ball_save == 2
+400 quit

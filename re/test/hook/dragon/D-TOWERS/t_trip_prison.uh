@@ -1,0 +1,20 @@
+# PrisonWindowTripwireControl (0x427880), mode 2: score = ScorePart(.., lit windows), Prison [25k, 50k, 75k, 100k]; the group resets after the last.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 2
+110 event s_trip6 ControlCollision
+120 event s_trip5 ControlCollision
+130 event s_trip6 ControlCollision
+140 event s_trip5 ControlCollision
+150 event s_trip6 ControlCollision
+110 expect n_score == 25000 delta 109
+# tabc04 = sound id 24 in mode 2 (pinned from this run)
+110 expect sound 24
+120 expect n_score == 50000 delta 119
+130 expect n_score == 75000 delta 129
+140 expect n_score == 100000 delta 139
+150 expect n_score == 25000 delta 149
+110 expect text info_text_box display id 3008
+170 quit

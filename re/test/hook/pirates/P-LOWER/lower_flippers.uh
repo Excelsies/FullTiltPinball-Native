@@ -1,0 +1,33 @@
+# F1 (listing 5221-5252, FT 0x42a1e0 / 0x42a220): a_flip1 / a_flip2 on TFlipperExtend send TLightGroupStepBackward (FT
+# 0x1c) to lane_winds_light_group, island_lane_top_light_group and island_lane_bottom_light_group, whose lights are
+# v_lite535-537, v_lite538-540, v_lite541-543 (member lists read from a probe run that lit every third light and watched the
+# rotation; recorded in the report). One lit light per group is moved one place on every call. Any other code does nothing.
+init fixed_dt 10
+init seed 1
+init watch v_lite535.light_on v_lite536.light_on v_lite537.light_on v_lite538.light_on v_lite539.light_on v_lite540.light_on v_lite541.light_on v_lite542.light_on v_lite543.light_on
+10 key down new_game
+11 key up new_game
+200 poke v_lite535 light_on 1
+200 poke v_lite538 light_on 1
+200 poke v_lite541 light_on 1
+201 expect v_lite535.light_on == 1
+201 expect v_lite536.light_on == 0
+# not a flipper extend: nothing moves
+203 event a_flip1 ControlTimerExpired
+204 expect v_lite535.light_on == 1
+204 expect v_lite538.light_on == 1
+205 event a_flip1 TFlipperExtend
+206 expect v_lite535.light_on == 0
+206 expect v_lite536.light_on == 1
+206 expect v_lite538.light_on == 0
+206 expect v_lite539.light_on == 1
+206 expect v_lite541.light_on == 0
+206 expect v_lite542.light_on == 1
+210 event a_flip2 TFlipperExtend
+211 expect v_lite536.light_on == 0
+211 expect v_lite537.light_on == 1
+211 expect v_lite539.light_on == 0
+211 expect v_lite540.light_on == 1
+211 expect v_lite542.light_on == 0
+211 expect v_lite543.light_on == 1
+300 quit

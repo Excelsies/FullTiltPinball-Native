@@ -1,0 +1,50 @@
+# Two players (20 msg table NewGame 2). P1 takes the skill shot (jackpot +50,000), drains unsaved; player 2 starts:
+# current_player == 1, mode == 10, ball_count == 3 (M1), jackpot == super_jackpot == 20000 (M3), the per-ball globals at
+# their new-ball values (M4). P2 drains; P1's ball 2 shows the restored jackpot (M2), pinned before the switch (2450) too
+# so the restore compares two independent literals. selected_quest is not compared here.
+# P1's jackpot at its drain is 1,550,000 (timeline frame 2314: 1,000,000 start + 50,000 per target hit incl. the skill
+# shot, as Wine 1,050,000 ... 1,750,000 grows by 50,000 per hit). At frame 926 the free ball hits a_spot10, whose
+# control is PassTargetControl1 (dragon_playfield.cpp:208). It calls ScorePart, NoteScorer sends ControlScorerReplaced to
+# the previous scorer, and the code-agnostic MissionControl pre-hook (+50,000, TargetsHit++) runs for the replaced part
+# as well as for a_spot10: +100,000 at 926 (targets_hit 4 -> 6). That double count is the original's behaviour per both
+# decompiles (MissionControl runs before the control function for 0x4d; the port does the same); it is not measured on
+# Wine here.
+# drain_state is 1 and bonus_step 9 at the new ball (the original never resets them at a new ball: only the
+# multiball branch writes drain_state 0, listing 1284; the tilted or normal bonus ends at step 9). The Wine two-player
+# timeline agrees: at the P2 new ball (t=37.608, mode 10, current_player 1) drain_state 1, bonus_step 9. The P2 plunger
+# pull is short (30 frames) so that P2's ball does not go into the hole.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+20 msg table NewGame 2
+200 event a_spot4 ControlCollision
+201 expect jackpot == 50000 delta 199
+210 key down plunger
+310 key up plunger
+370 event s_oneway2 ControlCollision
+926-926 expect sound 6
+1910 place 0 0 15.6 0.37 0 1 5 0x1
+2450 expect jackpot == 1550000
+2700 expect current_player == 1
+2700 expect mode == 10
+2700 expect ball_count == 3
+2700 expect jackpot == 20000
+2700 expect super_jackpot == 20000
+2700 expect ball_save == 3
+2700 expect targets_hit == 0
+2700 expect spells == 0
+2700 expect ball_drained == 0
+2700 expect ball_held == 1
+2700 expect drain_state == 1
+2700 expect bonus_step == 9
+2800 key down plunger
+2830 key up plunger
+2890 event s_oneway2 ControlCollision
+4500 place 0 0 15.6 0.37 0 1 5 0x1
+5400 expect current_player == 0
+5400 expect jackpot == 1550000
+5400 expect ball_count == 2
+5600 quit

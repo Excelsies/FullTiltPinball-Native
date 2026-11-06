@@ -11,6 +11,8 @@
 #include "TPinballTable.h"
 #include "TTableLayer.h"
 
+int TBall::AltBallIndex = 0;
+
 TBall::TBall(TPinballTable* table, int groupIndex) : TCollisionComponent(table, groupIndex, false),
                                                      TEdgeSegment(this, &ActiveFlag, 0)
 {
@@ -28,6 +30,11 @@ TBall::TBall(TPinballTable* table, int groupIndex) : TCollisionComponent(table, 
 	Direction.X = 0.0;
 	ListBitmap = new std::vector<SpriteData>();
 
+	// FT 0x402740: a ball built from a DAT part (1037, groupIndex != -1) keeps the part's group and starts at
+	// attribute 408 (Z = v[3] + Radius); AddBall balls (groupIndex == -1) are unchanged.
+	const int partGroupIndex = groupIndex;
+	float placedZ = 0.0f;
+
 	if (groupIndex == -1)
 	{
 		HasGroupFlag = false;
@@ -41,6 +48,7 @@ TBall::TBall(TPinballTable* table, int groupIndex) : TCollisionComponent(table, 
 		CollisionMask = visual.CollisionGroup;
 		auto floatArr = loader::query_float_attribute(groupIndex, 0, 408);
 		Position = {floatArr[0], floatArr[1], floatArr[3]};
+		placedZ = floatArr[3];
 	}
 
 	/*Full tilt: ball is ballN, where N[0,2] resolution*/
@@ -56,7 +64,13 @@ TBall::TBall(TPinballTable* table, int groupIndex) : TCollisionComponent(table, 
 	auto visualCount = loader::query_visual_states(groupIndex);
 	for (auto index = 0; index < visualCount; ++index)
 	{
-		loader::query_visual(groupIndex, index, &visual);
+		loader::query_visual(groupIndex, index, &visual, AltBallIndex);
+		if (!visual.Bitmap.Bmp)
+		{
+			// State without the alternate bitmap: back to the default ball (FT 0x402740)
+			AltBallIndex = 0;
+			loader::query_visual(groupIndex, index, &visual, 0);
+		}
 		ListBitmap->push_back(visual.Bitmap);
 		auto visVec = reinterpret_cast<vector3*>(loader::query_float_attribute(groupIndex, index, 501));
 		auto zDepth = proj::z_distance(*visVec);
@@ -64,8 +78,8 @@ TBall::TBall(TPinballTable* table, int groupIndex) : TCollisionComponent(table, 
 	}
 	RenderSprite = new render_sprite(VisualTypes::Ball, nullptr, nullptr, 0, 0, nullptr);
 	PinballTable->CollisionCompOffset = Radius;
-	Position.Z = Radius;
-	GroupIndex = groupIndex;
+	Position.Z = placedZ + Radius;
+	GroupIndex = HasGroupFlag ? partGroupIndex : groupIndex;
 }
 
 void TBall::Repaint()
@@ -120,7 +134,8 @@ bool TBall::already_hit(const TEdgeSegment& edge) const
 
 int TBall::Message(MessageCode code, float value)
 {
-	if (code == MessageCode::Reset)
+	// FT 0x402a90: a placed ball (HasGroupFlag, part 1037) ignores Reset; it stays where it rolled to.
+	if (code == MessageCode::Reset && !HasGroupFlag)
 	{
 		SpriteSetBall(-1, {0, 0}, 0.0f);
 		Position.X = 0.0;

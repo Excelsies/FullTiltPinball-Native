@@ -1,0 +1,11 @@
+# RolloverScoreControl1 / 2 (listing 2748-2775): a_roll5 and a_roll2 each score the table value, 30,000.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+100 event a_roll5 ControlCollision
+100 expect n_score == 30000 delta 99
+110 event a_roll2 ControlCollision
+110 expect n_score == 30000 delta 109
+200 quit

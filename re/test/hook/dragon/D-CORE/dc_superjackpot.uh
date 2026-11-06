@@ -1,0 +1,34 @@
+# SuperJackpotOneWayControl: s_oneway5 steps 25,000 / 75,000 / 100,000 / 125,000 / 150,000 (then 150,000 again), +200,000 super jackpot each, text 3076, sound tabc20wave (loader sound index from a native run).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch super_jackpot
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+200 event s_oneway5 ControlCollision
+203 expect n_score == 25000 delta 199
+203 expect super_jackpot == 200000 delta 199
+193-203 expect text info_text_box display id 3076
+210 event s_oneway5 ControlCollision
+213 expect n_score == 75000 delta 209
+213 expect super_jackpot == 200000 delta 209
+203-213 expect text info_text_box display id 3076
+220 event s_oneway5 ControlCollision
+223 expect n_score == 100000 delta 219
+223 expect super_jackpot == 200000 delta 219
+213-223 expect text info_text_box display id 3076
+230 event s_oneway5 ControlCollision
+233 expect n_score == 125000 delta 229
+233 expect super_jackpot == 200000 delta 229
+223-233 expect text info_text_box display id 3076
+240 event s_oneway5 ControlCollision
+243 expect n_score == 150000 delta 239
+243 expect super_jackpot == 200000 delta 239
+233-243 expect text info_text_box display id 3076
+250 event s_oneway5 ControlCollision
+253 expect n_score == 150000 delta 249
+253 expect super_jackpot == 200000 delta 249
+243-253 expect text info_text_box display id 3076
+193-203 expect sound 14
+300 quit

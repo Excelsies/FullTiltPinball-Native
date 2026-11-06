@@ -9,8 +9,12 @@
 #include "pb.h"
 #include "render.h"
 #include "Sound.h"
+#include "table_rules.h"
+#include "table_text.h"
+#include "tables.h"
 #include "translations.h"
 #include "font_selection.h"
+#include "ft_test_hook.h"
 
 constexpr const char* winmain::Version;
 
@@ -52,6 +56,27 @@ winmain::DurationMs winmain::SpinThreshold = DurationMs(0.005);
 WelfordState winmain::SleepState{};
 int winmain::CursorIdleCounter = 0;
 
+static void StartupWait(int milliseconds)
+{
+	// Window events stay queued for the main loop; input is dropped.
+	const auto start = std::chrono::steady_clock::now();
+	while (std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count() < milliseconds)
+	{
+		SDL_PumpEvents();
+		if (SDL_HasEvent(SDL_QUIT))
+			break;
+		// The original paints the window (UpdateWindow) before its wait: show the table without running the game.
+		render::update();
+		SDL_RenderClear(winmain::Renderer);
+		render::PresentVScreen();
+		SDL_RenderPresent(winmain::Renderer);
+		SDL_Delay(16);
+	}
+	SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP);
+	SDL_FlushEvents(SDL_TEXTINPUT, SDL_TEXTINPUT);
+	SDL_FlushEvents(SDL_MOUSEMOTION, SDL_MOUSEWHEEL);
+}
+
 int winmain::WinMain(LPCSTR lpCmdLine)
 {
 	std::set_new_handler(memalloc_failure);
@@ -68,6 +93,14 @@ int winmain::WinMain(LPCSTR lpCmdLine)
 		SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
 	{
 		pb::ShowMessageBox(SDL_MESSAGEBOX_ERROR, "Could not initialize SDL2", SDL_GetError());
+		return 1;
+	}
+
+	auto tableError = tables::ParseCommandLine(lpCmdLine);
+	if (!tableError.empty())
+	{
+		printf("%s\n", tableError.c_str());
+		pb::ShowMessageBox(SDL_MESSAGEBOX_ERROR, "Unknown table", tableError.c_str());
 		return 1;
 	}
 
@@ -215,6 +248,20 @@ int winmain::WinMain(LPCSTR lpCmdLine)
 		searchPaths.insert(searchPaths.end(), std::begin(PlatformDataPaths), std::end(PlatformDataPaths));
 		pb::SelectDatFile(searchPaths);
 
+		// Full Tilt tables: their strings come from the user's EXE next to the DAT (no fallback text); the window
+		// title is rc 2019. Space Cadet keeps the title it was created with.
+		if (pb::IsFullTiltTable())
+		{
+			const auto exePath = tables::ExePath();
+			if (!table_text::Load(exePath) || !table_text::Get(2019))
+			{
+				pb::ShowMessageBox(SDL_MESSAGEBOX_ERROR, "Could not load table text",
+				                   ("The table's strings could not be read from its EXE next to the .dat file: " + exePath).c_str());
+				return 1;
+			}
+			SDL_SetWindowTitle(window, table_text::Get(2019));
+		}
+
 		// Second step: run updates that depend on .DAT file selection
 		options::InitSecondary();
 
@@ -258,12 +305,21 @@ int winmain::WinMain(LPCSTR lpCmdLine)
 		SDL_ShowWindow(window);
 		fullscrn::set_screen_mode(Options.FullScreen);
 
-		if (strstr(lpCmdLine, "-demo"))
+		ft_test_hook::Init();
+		// Full Tilt waits 2000 ms after window setup before replay_level; scripted hook runs start at frame 0.
+		if (pb::IsFullTiltTable() && !ft_test_hook::Active())
+			StartupWait(2000);
+		if (ft_test_hook::DefersReplay())
+		{
+			// init startup_wait 1: the hook runs the wait in script ticks, then calls replay_level itself.
+		}
+		else if (strstr(lpCmdLine, "-demo"))
 			pb::toggle_demo();
 		else
 			pb::replay_level(false);
 
 		MainLoop();
+		ft_test_hook::Shutdown();
 
 		options::uninit();
 		midi::music_shutdown();
@@ -322,8 +378,9 @@ void winmain::MainLoop()
 		if (!ProcessWindowMessages() || bQuit)
 			break;
 
-		if (has_focus)
+		if (has_focus || ft_test_hook::Active())
 		{
+			ft_test_hook::BeforeFrame();
 			if (mouse_down)
 			{
 				int x, y, w, h;
@@ -351,10 +408,13 @@ void winmain::MainLoop()
 				last_mouse_x = x;
 				last_mouse_y = y;
 			}
-			if (!single_step && !no_time_loss)
+			if (!single_step && !no_time_loss && !ft_test_hook::HoldFrame())
 			{
-				auto dt = static_cast<float>(frameDuration.count());
-				pb::frame(dt);
+				auto dt = ft_test_hook::FrameDt(static_cast<float>(frameDuration.count()));
+				// Physics steps in <= 1 ms slices like the original's uncapped loop, on every table: the Full Tilt tables
+				// need it, and Space Cadet's early-press launch depends on it too.
+				const bool sliceSteps = !ft_test_hook::Active();
+				pb::frame(dt, sliceSteps ? 1.0f : 0.0f);
 				if (DispGRhistory)
 				{
 					auto targetSize = static_cast<unsigned>(static_cast<float>(Options.UpdatesPerSecond) * gfrWindow);
@@ -370,7 +430,7 @@ void winmain::MainLoop()
 			}
 			no_time_loss = false;
 
-			if (UpdateToFrameCounter >= UpdateToFrameRatio)
+			if (UpdateToFrameCounter >= UpdateToFrameRatio || ft_test_hook::Active())
 			{
 				if (Options.HideCursor && CursorIdleCounter <= 0)
 					ImGui::SetMouseCursor(ImGuiMouseCursor_None);
@@ -388,10 +448,13 @@ void winmain::MainLoop()
 				ImGui::Render();
 				ImGui_Render_RenderDrawData(ImGui::GetDrawData());
 
+				ft_test_hook::AfterRender(Renderer);
 				SDL_RenderPresent(Renderer);
 				frameCounter++;
 				UpdateToFrameCounter -= UpdateToFrameRatio;
 			}
+
+			ft_test_hook::AfterFrame();
 
 			auto sdlError = SDL_GetError();
 			if (sdlError[0] || !PrevSdlError.empty())
@@ -694,6 +757,22 @@ void winmain::RenderUi()
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Table"))
+			{
+				for (const auto& table : tables::Catalogue())
+				{
+					if (!tables::IsAvailable(table))
+						continue;
+					auto current = &table == &tables::Current();
+					if (ImGui::MenuItem(table.Title, nullptr, current) && !current)
+					{
+						tables::Choose(table);
+						Restart();
+					}
+				}
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Game Data"))
 			{
 				if (ImGui::MenuItem("Prefer 3DPB Data", nullptr, Options.Prefer3DPBGameData))
@@ -757,20 +836,36 @@ void winmain::RenderUi()
 			}
 			if (ImGui::BeginMenu("Cheats"))
 			{
-				if (ImGui::MenuItem("hidden test", nullptr, pb::cheat_mode))
-					pb::PushCheat("hidden test");
-				if (ImGui::MenuItem("1max"))
-					pb::PushCheat("1max");
-				if (ImGui::MenuItem("bmax", nullptr, control::table_unlimited_balls))
-					pb::PushCheat("bmax");
-				if (ImGui::MenuItem("gmax"))
-					pb::PushCheat("gmax");
-				if (ImGui::MenuItem("rmax"))
-					pb::PushCheat("rmax");
-				if (pb::FullTiltMode && ImGui::MenuItem("quote"))
-					pb::PushCheat("quote");
-				if (ImGui::MenuItem("easy mode", nullptr, control::easyMode))
-					pb::PushCheat("easy mode");
+				if (pb::IsFullTiltTable())
+				{
+					// FT tables: `hidden test` is the engine's (typed with a Tab, FT 0x411f50); the rest comes from the rules.
+					if (ImGui::MenuItem("hidden test", nullptr, pb::cheat_mode))
+						pb::PushCheat("hidden\ttest");
+					int cheatCount = 0;
+					const auto cheatNames = control::Rules ? control::Rules->CheatNames(cheatCount) : nullptr;
+					for (int i = 0; cheatNames && i < cheatCount; i++)
+					{
+						if (ImGui::MenuItem(cheatNames[i]))
+							pb::PushCheat(cheatNames[i]);
+					}
+				}
+				else
+				{
+					if (ImGui::MenuItem("hidden test", nullptr, pb::cheat_mode))
+						pb::PushCheat("hidden test");
+					if (ImGui::MenuItem("1max"))
+						pb::PushCheat("1max");
+					if (ImGui::MenuItem("bmax", nullptr, control::table_unlimited_balls))
+						pb::PushCheat("bmax");
+					if (ImGui::MenuItem("gmax"))
+						pb::PushCheat("gmax");
+					if (ImGui::MenuItem("rmax"))
+						pb::PushCheat("rmax");
+					if (pb::FullTiltMode && ImGui::MenuItem("quote"))
+						pb::PushCheat("quote");
+					if (ImGui::MenuItem("easy mode", nullptr, control::easyMode))
+						pb::PushCheat("easy mode");
+				}
 
 				ImGui::EndMenu();
 			}

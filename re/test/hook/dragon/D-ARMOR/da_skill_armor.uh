@@ -1,0 +1,17 @@
+# Skill shot with an armor award.
+# P1, launch, a_spot7 collision in mode 10: Mode10LaunchBallController -> AwardRandomArmor (seed 1: armor-post branch, +100,000;
+# sounds.jsonl: a_bloce, AwardRandomArmor) and SpellTargetBank (+2,500, dragon_spells.cpp) -> mode 2; total +102,500 (Wine +102,500).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+360 event a_spot7 ControlCollision
+361 expect mode == 2
+362 shot armor_award
+365 shot armor_award_b
+361 expect n_score == 102500
+420 quit

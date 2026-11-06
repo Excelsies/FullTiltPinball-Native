@@ -1,0 +1,31 @@
+# count 7 with v_lite57 lit -> offer 6 (text for 6)
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch selected_quest ball_held extra_balls spells v_lite33.light_on v_lite34.light_on v_lite57.light_on v_lite37.light_on s_hole118.message_field v_lite80.light_on v_lite81.light_on v_lite82.light_on v_lite83.light_on v_lite84.light_on v_lite85.light_on v_lite86.light_on v_lite87.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+201 poke v_lite57 light_on 1
+210 event s_rexit19 ControlBallToLayer1
+213 event s_rexit19 ControlBallToLayer1
+216 event s_rexit19 ControlBallToLayer1
+219 event s_rexit18 ControlBallToLayer1
+221 expect mode == 2
+240 event s_hole118 ControlBallCaptured
+241 expect mode == 12
+240 expect text info_text_box display id 3054
+240-240 expect sound 31
+260 key down right_flipper
+260 key up right_flipper
+600 expect v_lite80.light_on == 1
+600 expect v_lite81.light_on == 1
+600 expect v_lite82.light_on == 1
+600 expect v_lite83.light_on == 1
+600 expect v_lite84.light_on == 1
+600 expect v_lite85.light_on == 1
+600 expect v_lite86.light_on == 1
+600 expect v_lite87.light_on == 0
+262 expect s_hole118.message_field == 0
+265 expect mode == 2
+700 quit

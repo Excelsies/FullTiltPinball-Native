@@ -1,0 +1,23 @@
+# PassTargetControl2 / PassTargetControl4 in mode 7 (listing 1783-1805, 1829-1851): the target flashes its lamp 0.5 s
+# (code 7), adds 250,000 to the jackpot (AddJackpot) and scores 100,000 (ScoreValue), and does not go through PassTargetBank.
+# The other two targets are not touched: v_lite14/v_lite12 stay unlit.
+init fixed_dt 10
+init seed 1
+init watch v_lite13.flasher_on v_lite11.flasher_on v_lite14.light_on v_lite12.light_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 7
+99 expect v_lite13.flasher_on == 0
+100 event a_spot8 ControlCollision
+100 expect n_score == 100000 delta 99
+100 expect jackpot == 300000 delta 99
+100 expect v_lite13.flasher_on == 1
+110 event a_spot12 ControlCollision
+110 expect n_score == 100000 delta 109
+# 350,000 = 250,000 + 50,000 (a_spot12's own MissionControl target jackpot) + 50,000: ScoreValue replaces the last scorer a_spot8, which
+# sends ControlScorerReplaced through the handler (MissionControl counts a_spot8 as a target again; FtRules::NoteScorer, FT 0x4230f0)
+110 expect jackpot == 350000 delta 109
+110 expect v_lite11.flasher_on == 1
+110 expect v_lite14.light_on == 0
+110 expect none text info_text_box display id 3004
+200 quit

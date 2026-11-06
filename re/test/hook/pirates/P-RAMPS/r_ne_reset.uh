@@ -1,0 +1,18 @@
+# a_ramp8 replacing a_ramp5 as scorer (0x4d on a_ramp5) resets a_ramp5's own combo: 25k, 175k, a_ramp8 25k, a_ramp5 back to idx 0 (25k), then 150k.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 3
+200 event a_ramp5 ControlBallToLayer2
+201 expect n_score == 25000
+500 event a_ramp5 ControlBallToLayer2
+501 expect n_score == 175000
+800 event a_ramp8 ControlBallToLayer2
+801 expect n_score == 200000
+1100 event a_ramp5 ControlBallToLayer2
+1101 expect n_score == 225000
+1400 event a_ramp5 ControlBallToLayer2
+1401 expect n_score == 375000
+1450 quit

@@ -1,0 +1,24 @@
+# The skill-shot wheel, with a shot every 20 frames from frame 100 (wheel_check.py checks that all 15 shot BMPs exist and start with the BM signature). After the ball is fed (mode 3) skill_index advances by 1 mod 9 every 25 frames (the glyph is
+# shown 0.2 s, its expiry sends the next ControlMissionStarted). Checked by wheel_check.py on timeline.jsonl.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+100 shot w00
+120 shot w01
+140 shot w02
+160 shot w03
+180 shot w04
+200 shot w05
+220 shot w06
+240 shot w07
+260 shot w08
+280 shot w09
+300 shot w10
+320 shot w11
+340 shot w12
+360 shot w13
+380 shot w14
+600 quit

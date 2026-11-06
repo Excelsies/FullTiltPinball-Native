@@ -1,0 +1,18 @@
+# ShipRampExitControl (FT 0x429140): outside mode 4 -> ScorePart + string 3003; in mode 4 -> ResetLduggTargets
+# (pirates_drop_banks.cpp), counter++, string 3018, AdvanceFathom (multiplier = fathom lit count + 1).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch fathom_light_group.message_field
+10 key down new_game
+11 key up new_game
+150 dump before
+200 event s_rexit8 ControlBallToLayer2
+200-201 expect text info_text_box display id 3003
+200-201 expect sound 26  # tabb40 (3003 branch)
+220 poke info_text_box message_field 4
+230 event s_rexit8 ControlBallToLayer2
+230-231 expect text info_text_box display id 3018
+230-231 expect sound 42  # tabb57 (mode-4 branch)
+231 expect multiplier == 7  # fathom group has 6 lights; code 0xf lights all, multiplier = lit count + 1 (listing 1137-1160)
+260 quit

@@ -1,0 +1,31 @@
+# TRamp, DRAGON a_ramp103 (part_tramp R1/R2/R3/R5): entry through the plane edge on wall 1301.
+# a_ramp103: ramp layer mask 0x2, wall 1301 layer 0 (mask 0x1), wall 1302 layer 2 (mask 0x4), no 1303.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_ramp103.active
+# Ball on layer 1 (mask 0x1), 0.3 units west of the middle of the 1301 plane edge
+# (2.8223,-5.3452)-(2.7100,-8.0971), moving east along the edge normal at speed 5.
+10 place 0 2.4664 -6.7090 0.37 0.9992 -0.0408 5 0x1
+# Expectations (part_tramp R2/R5, frames observed on a run and reproduced by a second):
+# frames 10-15 the ball is free on layer 1 and moves ~0.05 per frame; at frame 16 it crosses the plane
+# edge: the mask becomes the ramp layer (0x2) and CollisionDisabledFlag drops the rest of the frame's
+# movement (displacement 0.0038, far below speed x 0.01 = 0.05); frame 17 moves normally again.
+10 expect a_ramp103.active == 1
+15 expect n_ball0_mask == 1
+15 expect n_ball0_x in 0.045 0.055 delta 14
+16 expect n_ball0_mask == 2
+16 expect n_ball0_x in 0 0.02 delta 15
+17 expect n_ball0_mask == 2
+17 expect n_ball0_x in 0.04 0.055 delta 16
+20 expect n_ball0_mask == 2
+# Exit: the ball on the ramp layer (mask 0x2) crosses the 1301 wall westward (Line2): the mask becomes
+# wall 1301's layer (0x1) and the rest of that frame's movement is dropped as well.
+40 place 0 3.1300 -6.7380 0.37 -0.9992 -0.0408 5 0x2
+45 expect n_ball0_mask == 2
+46 expect n_ball0_mask == 1
+46 expect n_ball0_x in -0.05 -0.02 delta 45
+47 expect n_ball0_mask == 1
+47 expect n_ball0_x in -0.065 -0.05 delta 46
+60 quit

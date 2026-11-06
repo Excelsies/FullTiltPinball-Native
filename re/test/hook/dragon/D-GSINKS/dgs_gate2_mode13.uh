@@ -1,0 +1,31 @@
+# a_sink10 / GateSinkControl2 (0x427680), mode13: no award; mode 6 only resets a_sink16's timer; other modes play tabc04wave, and (mode != 13) turn the tower light off + swap the gates.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 13
+100 poke v_lite50 message_field 0
+100 poke v_lite125 light_on 1
+100 poke a_dvtrda active 0
+100 poke a_dvtrdb active 1
+100 poke v_lite126 light_on 0
+110 event a_sink10 ControlCollision
+110 expect n_score == 0 delta 109
+110 expect multiball == 0 delta 109
+110 expect none text info_text_box display
+110 expect mode == 13
+110 expect v_lite50.light_on == 0
+110 expect v_lite50.message_field == 0
+110 expect v_lite125.light_on == 1
+110 expect a_dvtrda.active == 0
+110 expect a_dvtrdb.active == 1
+110 expect v_lite126.flasher_on == 0
+110 expect v_lite126.light_on == 0
+110 expect sound 24
+110 expect none sound 26
+150 expect n_active_balls == 0 delta 109
+160 expect n_active_balls == 1 delta 109
+110 dump after v_lite50.light_on v_lite50.message_field v_lite125.light_on a_dvtrda.active a_dvtrdb.active v_lite126.light_on v_lite126.flasher_on
+150 dump pre
+160 dump late
+300 quit

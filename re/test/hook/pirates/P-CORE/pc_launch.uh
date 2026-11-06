@@ -1,0 +1,22 @@
+# SetModeLaunch (FT 0x423440, listing 482-494) + ModeRunningLightOff (0x423420, 471-481): NewGame ends in
+# SetModeLaunch -> v_lite606 TLightResetAndTurnOff, info_text_box MessageField = 3, MissionControl(ControlMissionComplete).
+# NewGame (listing 359-386) calls SetModeLaunch and then SetMode(0) (pirates_rules.cpp:174-175, mode 0).
+# The dump shows mode 3 at the end: TPinballTable's new game sends PlungerStartFeedTimer (TPinballTable.cpp:444), and
+# PlungerControl (rules/pirates_ball.cpp:114-129) with ball_save 0 writes info_text_box->MessageField = 3 (:120), lights
+# the ball save (ball_save 3) and runs the launch controller (no_hold_start 1); the FT tables start a game by themselves
+# at load (mode 3 at Wine t = 1.65 s). The subject is v_lite606, turned off by SetModeLaunch's ModeRunningLightOff after
+# a poke turned it on.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite606.light_on
+5 poke v_lite606 light_on 1
+8 expect v_lite606.light_on == 1
+10 key down new_game
+11 key up new_game
+300 dump after_launch
+300 expect mode == 3
+300 expect ball_save == 3
+300 expect no_hold_start == 1
+300 expect v_lite606.light_on == 0
+310 quit

@@ -1,0 +1,25 @@
+# Check winds_east_west; sound ids = DAT sound order offset 4 (tabb12=11, tabb43=29, tabb44=30); scores from acceptance_pirates.md rows WINDS / island lanes
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+140 poke info_text_box message_field 3
+160 event a_roll9 ControlCollision
+161 expect n_score == 25000
+160-161 expect sound 11
+160-161 expect text info_text_box display id 3011
+170 event a_roll8 ControlCollision
+171 expect n_score == 50000
+180 event a_roll6 ControlCollision
+181 expect n_score == 75000
+180-181 expect text info_text_box display id 3012
+190 poke info_text_box message_field 8
+200 event a_roll9 ControlCollision
+201 expect n_score == 75000
+200-201 expect none sound 11
+210 poke info_text_box message_field 5
+220 event a_roll6 ControlCollision
+221 expect n_score == 125000
+220-221 expect sound 11
+260 quit

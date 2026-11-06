@@ -1,0 +1,21 @@
+# SkuTargetBank mode 7: ScoreValue(0, 25000) per hit, 50,000 on completion plus ActivateRandomMagnet and AwardJackpot; bank resets.
+# SkuTargetBank mode 7 calls AwardJackpot before ScoreValue(0, 50000) (pirates_drop_banks.cpp:233-235). The jackpot then
+# is 1,000,000 + 3 x 20,000 = 1,060,000: only the three hits' own TPopupTarget pre-hook counts (MissionControl
+# 0x42d850); no ControlScorerReplaced adds more because mode 7 scores with ScoreValue(nullptr), so the last scorer stays
+# null. Completion adds 50,000 + 1,060,000 = 1,110,000 (timeline: n_score 1.11e6 at 320).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop13.message_field v_lite1.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 7
+300 event a_drop13 ControlCollision
+310 event a_drop14 ControlCollision
+320 event a_drop15 ControlCollision
+300 expect n_score == 25000 delta 299
+310 expect n_score == 25000 delta 309
+320 expect n_score == 1110000 delta 319
+320 expect a_drop13.message_field == 0
+300 expect sound 59
+380 quit

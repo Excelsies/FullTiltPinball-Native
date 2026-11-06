@@ -29,6 +29,11 @@
 #include "TPlunger.h"
 #include "TWall.h"
 #include "TTextBox.h"
+#include "ft_test_hook.h"
+#include "table_rules.h"
+#include "tables.h"
+#include "rules/dragon_rules.h"
+#include "rules/pirates_rules.h"
 #include "translations.h"
 
 int control_bump_scores1[] = {500, 1000, 1500, 2000};
@@ -772,6 +777,38 @@ component_tag_base* control::simple_components[145]
 };
 
 int control::waiting_deployment_flag;
+TableRules* control::Rules = nullptr;
+
+// The rules of the current catalogue table (Dragon's Keep, Skulduggery); null for every other table, so Space
+// Cadet keeps its own code in this file.
+TableRules* control::CreateRules()
+{
+	switch (tables::Current().Id)
+	{
+	case TableId::Dragon:
+		return new DragonRules();
+	case TableId::Pirates:
+		return new PiratesRules();
+	default:
+		return nullptr;
+	}
+}
+
+void control::DestroyRules()
+{
+	delete Rules;
+	Rules = nullptr;
+}
+
+bool control::TextEvent(int ftCode)
+{
+	if (!Rules)
+		return false;
+	ft_test_hook::TextCode(ftCode);
+	Rules->TextEvent(ftCode);
+	ft_test_hook::TextCode(-1);
+	return true;
+}
 bool control::table_unlimited_balls = false, control::easyMode = false;
 int control::extraball_light_flag;
 Msg control::RankRcArray[9] =
@@ -845,6 +882,13 @@ std::reference_wrapper<TLight*> control::WormholeLightArray2[3] =
 
 void control::make_links(TPinballTable* table)
 {
+	if (Rules)
+	{
+		Rules->MakeLinks(table);
+		return;
+	}
+	if (pb::IsFullTiltTable())
+		return; // no Space Cadet rule code on FT tables (Rules is null for them until the rules land)
 	TableG = table;
 
 	for (auto& score_component : score_components)
@@ -862,6 +906,13 @@ void control::make_links(TPinballTable* table)
 
 void control::ClearLinks()
 {
+	if (Rules)
+	{
+		Rules->ClearLinks();
+		return;
+	}
+	if (pb::IsFullTiltTable())
+		return; // no Space Cadet rule code on FT tables (Rules is null for them until the rules land)
 	TableG = nullptr;
 	for (auto& component : score_components)
 		component.Tag.SetComponent(nullptr);
@@ -891,6 +942,13 @@ TPinballComponent* control::make_component_link(component_tag_base& tag)
 
 void control::handler(MessageCode code, TPinballComponent* cmp)
 {
+	if (Rules)
+	{
+		Rules->Handler(code, cmp);
+		return;
+	}
+	if (pb::IsFullTiltTable())
+		return; // no Space Cadet rule code on FT tables (Rules is null for them until the rules land)
 	component_control* control = cmp->Control;
 	
 	if (control)
@@ -900,8 +958,15 @@ void control::handler(MessageCode code, TPinballComponent* cmp)
 	MissionControl(code, cmp);
 }
 
-void control::pbctrl_bdoor_controller(char key)
+void control::pbctrl_bdoor_controller(char key, bool isLeftFlip, bool isRightFlip)
 {
+	if (Rules)
+	{
+		Rules->BackdoorKey(static_cast<unsigned char>(key), isLeftFlip, isRightFlip);
+		return;
+	}
+	if (pb::IsFullTiltTable())
+		return; // no Space Cadet rule code on FT tables (Rules is null for them until the rules land)
 	// Buffer large enough for longest cheat + null
 	static char cheatBuffer[11 + 1]{};
 	static const char* bufferEnd = &cheatBuffer[11];
@@ -1112,6 +1177,13 @@ void control::cheat_bump_rank()
 
 void control::UnstuckBall(TBall& ball, int dt)
 {
+	if (Rules)
+	{
+		Rules->UnstuckBall(ball, dt);
+		return;
+	}
+	if (pb::IsFullTiltTable())
+		return; // no Space Cadet rule code on FT tables (Rules is null for them until the rules land)
 	if (!CheckBallInControlBounds(ball, *flip1) &&
 		!CheckBallInControlBounds(ball, *flip2) &&
 		!CheckBallInControlBounds(ball, *plunger))
@@ -2901,6 +2973,13 @@ void control::BallDrainControl(MessageCode code, TPinballComponent* caller)
 
 void control::table_control_handler(MessageCode code)
 {
+	if (Rules)
+	{
+		Rules->TableControlHandler(code);
+		return;
+	}
+	if (pb::IsFullTiltTable())
+		return; // no Space Cadet rule code on FT tables (Rules is null for them until the rules land)
 	if (code == MessageCode::SetTiltLock)
 	{
 		table_unlimited_balls = false;

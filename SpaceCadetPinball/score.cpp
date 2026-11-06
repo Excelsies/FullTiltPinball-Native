@@ -9,7 +9,7 @@
 #include "render.h"
 
 
-score_msg_font_type* score::msg_fontp;
+score_msg_font_type* score::msg_fonts[score::MsgFontCount];
 
 int score::init()
 {
@@ -52,8 +52,9 @@ scoreStruct* score::dup(scoreStruct* score, int scoreIndex)
 	return new scoreStruct(*score);
 }
 
-void score::load_msg_font(LPCSTR lpName)
+void score::load_msg_font(LPCSTR lpName, int slot)
 {
+	SDL_assert_release(slot >= 0 && slot < MsgFontCount);
 	if (!pb::record_table)
 		return;
 
@@ -61,33 +62,36 @@ void score::load_msg_font(LPCSTR lpName)
 	if (groupIndex < 0)
 		return;
 
-	msg_fontp = new score_msg_font_type();
+	// Reloading a slot replaces its font.
+	delete msg_fonts[slot];
+	auto font = new score_msg_font_type();
+	msg_fonts[slot] = font;
 
 	// FT font has multiple resolutions
 	auto gapArray = reinterpret_cast<int16_t*>(pb::record_table->field(groupIndex, FieldTypes::ShortArray));
 	if (gapArray)
-		msg_fontp->GapWidth = gapArray[fullscrn::GetResolution()];
+		font->GapWidth = gapArray[fullscrn::GetResolution()];
 	else
-		msg_fontp->GapWidth = 0;
+		font->GapWidth = 0;
 
 	for (auto charIndex = 32; charIndex < 128; charIndex++, ++groupIndex)
 	{
 		auto bmp = pb::record_table->GetBitmap(groupIndex);
 		if (!bmp)
 			break;
-		if (!msg_fontp->Height)
-			msg_fontp->Height = bmp->Height;
-		msg_fontp->Chars[charIndex] = bmp;
+		if (!font->Height)
+			font->Height = bmp->Height;
+		font->Chars[charIndex] = bmp;
 	}
 }
 
 
 void score::unload_msg_font()
 {
-	if (msg_fontp)
+	for (auto& font : msg_fonts)
 	{
-		delete msg_fontp;
-		msg_fontp = nullptr;
+		delete font;
+		font = nullptr;
 	}
 }
 

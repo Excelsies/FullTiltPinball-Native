@@ -1,0 +1,39 @@
+# Mode13Controller, ControlBallDrained with MultiballCount 1 (0x42b0e0 ... 0x42b3b7): mode := 2, MissionControl(Complete),
+# the nine window lights v_lite104..112 (flashing since frame 105) are all turned off (FT code 0x14, forwarded to every light of the three groups);
+# then (mode is neither 6 nor 13) tower 1 light v_lite47 off and the right-lane diverter lights reset (v_lite126 flashes, v_lite125 off, v_lite78 on).
+init fixed_dt 10
+init seed 1
+init watch v_lite104.flasher_on v_lite105.flasher_on v_lite106.flasher_on v_lite107.flasher_on v_lite108.flasher_on v_lite109.flasher_on v_lite110.flasher_on v_lite111.flasher_on v_lite112.flasher_on
+10 key down new_game
+11 key up new_game
+init watch v_lite47.light_on v_lite78.light_on v_lite125.light_on v_lite126.flasher_on
+100 poke info_text_box message_field 13
+105 msg prison_window_light_group TLightFlasherStartTimed -1.0
+105 msg watch_window_light_group TLightFlasherStartTimed -1.0
+105 msg gate_window_light_group TLightFlasherStartTimed -1.0
+106 expect v_lite104.flasher_on == 1
+106 expect v_lite105.flasher_on == 1
+106 expect v_lite106.flasher_on == 1
+106 expect v_lite107.flasher_on == 1
+106 expect v_lite108.flasher_on == 1
+106 expect v_lite109.flasher_on == 1
+106 expect v_lite110.flasher_on == 1
+106 expect v_lite111.flasher_on == 1
+106 expect v_lite112.flasher_on == 1
+110 event info_text_box ControlBallDrained
+110 expect mode == 2
+110 expect v_lite104.flasher_on == 0
+110 expect v_lite105.flasher_on == 0
+110 expect v_lite106.flasher_on == 0
+110 expect v_lite107.flasher_on == 0
+110 expect v_lite108.flasher_on == 0
+110 expect v_lite109.flasher_on == 0
+110 expect v_lite110.flasher_on == 0
+110 expect v_lite111.flasher_on == 0
+110 expect v_lite112.flasher_on == 0
+110 expect multiball == 1
+110 expect v_lite47.light_on == 0
+110 expect v_lite78.light_on == 1
+110 expect v_lite125.light_on == 0
+110 expect v_lite126.flasher_on == 1
+130 quit

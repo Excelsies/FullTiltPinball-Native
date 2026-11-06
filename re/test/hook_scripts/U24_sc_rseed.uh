@@ -1,0 +1,26 @@
+# Space Cadet R-seed script (baseline vs candidate must be byte-identical): new game, pause / resume
+# (timed and untimed info-box texts), plunge, bumps (nudge text), flips, shots.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 key down new_game
+11 key up new_game
+100 shot new_game
+150 key down pause
+151 key up pause
+160 key down pause
+161 key up pause
+200 shot resumed
+300 key down plunger
+400 key up plunger
+500 key down left_flipper
+510 key up left_flipper
+600 key down bump_left
+618 key up bump_left
+640 shot nudge
+700 key down bump_left
+740 key up bump_left
+760 shot tilt
+1500 shot late
+1600 quit

@@ -1,0 +1,28 @@
+# Dragon jaw state 0x439b18 (DragonState JawOpen, listing: written 1 by OpenDragonJaw, 0 by CloseDragonJaw, read by the Mode 9
+# ControlBlockerMoveDone branch: with the jaw open, a_jaw's move-done activates a_ramp107 and s_bwal170). Not reset per ball or per player.
+# Player 1: the mode 9 intro sweep ends (frame 505) -> OpenDragonJaw -> state 1 (d_slay_jaw.uh: open by frame 1000). Switch to player 2,
+# who never opened the jaw. The component flags are cleared by poke (so only the stored state can set them), mode 9 is set on player 2 and
+# a_jaw reports its move done: the stored state 1 carries over and a_ramp107 / s_bwal170 become active. Had the state been reset on the
+# switch they would stay 0. Negative control (same sequence, player 1 never opens the jaw, the expected value is the fresh one): dm_leak_D-SLAY_jaw_ctl.uh.
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+1000 dump open a_jaw.blocker_state
+1001 expect a_jaw.blocker_state == 7
+1010 msg table SwitchToNextPlayer 0
+1020 poke info_text_box message_field 9
+1021 poke a_ramp107 active 0
+1022 poke s_bwal170 active 0
+1023 dump cleared a_ramp107.active s_bwal170.active
+1024 expect a_ramp107.active == 0
+1024 expect s_bwal170.active == 0
+1030 event a_jaw ControlBlockerMoveDone
+1031 dump after a_ramp107.active s_bwal170.active
+1032 expect a_ramp107.active == 1
+1032 expect s_bwal170.active == 1
+1100 quit

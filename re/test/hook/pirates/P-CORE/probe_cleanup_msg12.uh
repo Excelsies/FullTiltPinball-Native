@@ -1,0 +1,25 @@
+# PROBE-ONLY: needs a probe build with a test-only HoldSinkControl stub (not part of the tree; run_p_core.py --probe);
+# on a normal build it fails. The driver `event a_sink8` reaches that stub (ControlCollision -> ModeStartCleanup). The
+# message-field-12 branch is checked through a real caller by pd_cleanup_m12.uh (pirates_lava.cpp:37 StartMode12 ->
+# SetMode(12) -> Mode12Controller -> ModeStartCleanup, :140).
+# ModeStartCleanup with info_text_box.MessageField == 12 (0xc): the original skips SetLavaLights(0) (listing 5808-5828).
+# The runner requires "pending SetHideawayLights" and "pending SetSkulduggeryLights" in target.log and forbids
+# "pending SetLavaLights"; probe_cleanup (message_field 0) requires it.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite504.light_on v_lite505.light_on a_bloce.blocker_state info_text_box.message_field
+10 key down new_game
+11 key up new_game
+200 poke v_lite504 light_on 0
+200 poke v_lite505 light_on 1
+205 msg a_bloce 313 0
+207 poke info_text_box message_field 12
+208 expect info_text_box.message_field == 12
+210 dump before_cleanup
+220 event a_sink8 ControlCollision
+230 dump after_cleanup
+230 expect v_lite504.light_on == 1
+230 expect v_lite505.light_on == 0
+230 expect a_bloce.blocker_state == 1
+300 quit

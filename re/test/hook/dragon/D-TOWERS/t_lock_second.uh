@@ -1,0 +1,21 @@
+# EnableTowerLock (0x423d50) / UpdateTowerLocks (0x423be0): with tower 1 (v_lite48) lit solid, a completed bank flashes tower 2 (v_lite49)
+# and activates sink a_sink17 only; with towers 1 and 2 lit it flashes tower 3 (v_lite50) and no sink is active (listing 826-856, 778-825).
+# The CheckMode15Start path after the bank is not checked here.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 2
+100 poke v_lite48 light_on 1
+110 event a_spot3 ControlCollision
+120 event a_spot2 ControlCollision
+130 event a_spot1 ControlCollision
+140 dump tower2 v_lite48.flasher_on v_lite49.flasher_on v_lite50.flasher_on v_lite48.message_field v_lite49.message_field v_lite50.message_field a_sink17.active a_sink18.active
+140 expect v_lite49.flasher_on == 1
+140 expect v_lite49.message_field == 1
+140 expect v_lite48.message_field == 0
+140 expect v_lite50.flasher_on == 0
+140 expect a_sink17.active == 1
+140 expect a_sink18.active == 0
+130 expect n_score == 10000 delta 129
+160 quit

@@ -1,0 +1,33 @@
+# B6 (listing 3386-3443): the jail target in mode 7. Hit 1: field 1, v_lite530 flashes, 531 / 532 reset off. Hit 2:
+# field 2, 530 on, 531 flashes, 532 off. Hit 3: tabb61wave, SetJailLights(1) (field 0), AwardFullCrew (a_bump2->MessageField = 6),
+# score. The mode stays 7. In mode 9 the target does nothing at all.
+# Sound ids: tabb02wave 4, tabb61wave 46 (sounds.jsonl).
+init fixed_dt 10
+init seed 1
+init watch a_spot6.message_field v_lite530.light_on v_lite531.light_on v_lite532.light_on a_bump2.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 9
+210 event a_spot6 ControlCollision
+210 expect a_spot6.message_field == 0
+210 expect n_score == 0
+220 poke info_text_box message_field 7
+230 event a_spot6 ControlCollision
+230 expect a_spot6.message_field == 1
+230 expect n_score == 5000 delta 229
+230 expect sound 4
+350 expect v_lite530.light_on == 1
+350 expect v_lite531.light_on == 0
+350 expect v_lite532.light_on == 0
+360 event a_spot6 ControlCollision
+360 expect a_spot6.message_field == 2
+360 expect n_score == 5000 delta 359
+370 expect v_lite530.light_on == 1
+480 expect v_lite531.light_on == 1
+480 expect v_lite532.light_on == 0
+490 event a_spot6 ControlCollision
+490 expect a_spot6.message_field == 0
+490 expect a_bump2.message_field == 6
+490 expect mode == 7
+490 expect sound 46
+520 quit

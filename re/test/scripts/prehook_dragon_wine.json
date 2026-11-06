@@ -1,0 +1,72 @@
+{
+ "name": "prehook_dragon_wine",
+ "description": "UTe: pre-hook double count on the original (probe_run.py --anchor window --watch watch_<t>_ute.json)",
+ "steps": [
+  {
+   "wait": 4.0
+  },
+  {
+   "peek": "base"
+  },
+  {
+   "call": "0_a_spot4",
+   "func": "423060",
+   "code": "4a",
+   "part": "439d84"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "0_a_spot4"
+  },
+  {
+   "call": "1_a_spot4",
+   "func": "423060",
+   "code": "4a",
+   "part": "439d84"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "1_a_spot4"
+  },
+  {
+   "call": "2_a_spot4",
+   "func": "423060",
+   "code": "4a",
+   "part": "439d84"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "2_a_spot4"
+  },
+  {
+   "call": "3_a_sink1",
+   "func": "423060",
+   "code": "4a",
+   "part": "43a3c4"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "3_a_sink1"
+  },
+  {
+   "call": "4_a_sink1",
+   "func": "423060",
+   "code": "4a",
+   "part": "43a3c4"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "4_a_sink1"
+  }
+ ]
+}

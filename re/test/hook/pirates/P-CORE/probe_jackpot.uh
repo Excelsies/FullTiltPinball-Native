@@ -1,0 +1,28 @@
+# PROBE-ONLY: needs a probe build with a test-only BumperControl stub (not part of the tree; run_p_core.py --probe):
+# ControlCollision -> AwardJackpot(2.0), ControlBallCaptured -> AwardJackpot(-1.5). On a normal build a_bump1 is the real
+# BumperControl and the script fails. Positive-time AwardJackpot is checked through a real caller by pd_ldugg_m4.uh
+# (sound id 57 and the glyph text at 340, mode-4 LDUGG bank completion, pirates_drop_banks.cpp:186). The negative-time
+# (silent) branch has no real caller (every AwardJackpot call passes 0.0f, or ActivateRandomMagnet's positive return,
+# pirates_drop_banks.cpp:234), so it is checked by this probe only.
+# AwardJackpot (FT 0x424700, listing 1285-1309). Positive time: sound tabb85, glyph text at t + 2.0, SpecialAddScore
+# adds the jackpot (1,000,000 after NewGame) to the score, the jackpot itself is not reset. Negative time: no sound, text time 1.5 + 2.0.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 dump before_a
+220 event a_bump1 ControlCollision
+230 dump after_a
+230 expect jackpot == 1000000
+230 expect n_score == 1000000 delta 219
+220-230 expect text info_text_box display
+220-230 expect sound 57   # tabb85wave (sounds.jsonl info AwardJackpot)
+300 dump before_b
+320 event a_bump1 ControlBallCaptured
+330 dump after_b
+330 expect jackpot == 1000000
+330 expect n_score == 1000000 delta 319
+320-330 expect text info_text_box display
+320-330 expect none sound 57   # tabb85 id (sounds.jsonl info AwardJackpot, run 1); ball sounds (id 0) keep playing
+400 quit

@@ -1,0 +1,51 @@
+# PIRATES: tilt_timeout (15.0 s after the tilt) drains every ball except the placed one
+# (FT 0x41a1b0 skips HasGroupFlag balls, part_1037 section 7). New game at 10, ball in play, bump_left
+# re-pressed until tilt_lock == 1 (as U16a_rexit_tilt.uh), then 1600 frames.
+# Tilt at 224, timeout drain at 1724, a real lost ball for the rules: BallDrainControl (pirates_ball.cpp:141-203; tilt
+# reset :160-165, last-ball block :175-186) sets drain_state 1 and hands over to Mode16BonusController
+# (pirates_ball.cpp:360-397, reached through MissionControl), which takes ball_count 3 -> 2 (ChangeBallCount, :374),
+# clears the tilt (ClearTiltLock, tilt_lock 0, mode 3) and sends PlungerStartFeedTimer 0.96 s (:386; extra_balls is 0
+# at 1720-1820 in the dumps, so the ExtraBalls != 0 branch :395 is not taken), so a fresh ball is fed at frame 1820
+# (+96). The subject (the timeout drains every ball except the placed one) is checked at 1724 and 1819 (no fresh ball
+# yet); after the feed the placed ball must still be the only ball that survived the timeout.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 key down bump_left
+230 key down bump_left
+260 key down bump_left
+290 key up bump_left
+300 expect tilt_lock == 1
+# keep the play ball alive until the timeout: park it mid-table and hold it (it would drain at ~600 otherwise).
+# The held ball is placed with speed 1 (>= 0.8): a ball slower than that, outside the UnstuckBall exempt parts,
+# is thrown after 500 ms and relaunched 20 frames later (the original's UnstuckBall, FT 0x42c320), and the relaunch
+# feed calls pb::tilt_no_more (TPlunger.cpp:103), which clears tilt_lock. With speed >= 0.8 LastActiveTime is
+# refreshed every frame, UnstuckBall never acts, and the script tests the placed ball's tilt_timeout behaviour only.
+301 place 0 0 0 0.37 0 1 1 0x1
+301 hold 0 on
+300 expect n_active_balls == 2
+300 expect n_placed_balls == 1
+1700 expect tilt_lock == 1
+1700 expect n_active_balls == 2
+1700 expect n_ball0_active == 1
+1700 expect n_ball1_active == 1
+1700 expect ball_count == 3
+# tilt at frame 224 (observed) + 1500 frames = 15.0 s: the timeout fires in tick 1724
+1723 expect n_active_balls == 2
+1724 expect n_active_balls == 1
+1724 expect n_ball0_active == 0
+# the lost ball is counted by the real rules and the tilt is cleared
+1730 expect ball_count == 2
+1730 expect tilt_lock == 0
+1730 expect n_ball1_active == 1
+1819 expect n_active_balls == 1
+1819 expect n_ball0_active == 0
+# the fresh ball fed 0.96 s after the drain (frame 1820); the placed ball is still the same one
+1900 expect n_active_balls == 2
+1900 expect n_ball0_active == 1
+1900 expect n_placed_balls == 1
+1900 expect n_ball1_active == 1
+1920 quit

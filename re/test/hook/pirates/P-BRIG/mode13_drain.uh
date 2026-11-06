@@ -1,0 +1,21 @@
+# B8 (listing 7151-7207): Mode13 on ControlBallDrained with MultiballCount == 1 ends mode 13: text cleared, mode 2, the
+# jail lights reset off (SetJailLights(0)), SetLavaLights(1) clears the lava bank state a_spot11->MessageField, MissionControl.
+# Entry with no ball locked is B5. Precondition: the plain new game has one ball in play (multiball == 1). Mode forced to 13 by poke.
+init fixed_dt 10
+init seed 1
+init watch a_spot11.message_field a_spot6.message_field a_kick1.disabled
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 13
+200 poke a_spot11 message_field 5
+200 poke a_spot6 message_field 2
+200 expect multiball == 1
+206 msg a_kick1 FtPartEnable 0
+208 expect a_kick1.disabled == 0
+210 event drain ControlBallDrained
+210 expect mode == 2
+210 expect a_kick1.disabled == 1
+210 expect a_spot11.message_field == 0
+210 expect a_spot6.message_field == 0
+210 expect text info_text_box clear
+260 quit

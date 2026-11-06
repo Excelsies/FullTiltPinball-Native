@@ -1,0 +1,34 @@
+# Mystery award light v_lite529: lit by HideawaySinkControl1, collected by WindsRolloverControl1. WindsRolloverControl1
+# (pirates_winds.cpp:253-270) scores the part and plays the rollover sound when the collect took no display (time == 0),
+# and HideawaySinkControl1 (pirates_hideaway.cpp:64-111) lights the mystery only in mode 5 (case 5, :85-90: ScorePart,
+# tabb70 sound, LightMysteryAward) while the default branch (other modes) scores 3002 and sound tabb11. This script
+# pokes mode 5: an unlit mystery is not collected (v_lite529 stays off, no award, only the rollover score), the sink
+# lights it (v_lite529 on, string 3059), the next a_roll3 collects it (light off, one award, no rollover score).
+# CollectMysteryAward 0x425d10 / ClearMysteryAward 0x423a80 / LightMysteryAward 0x423a30.
+# The draw: RandomMysteryAward (pirates_awards.cpp:198-208) takes ft::RandIndex(6) of the seeded stream. The rules
+# consume draws before frame 200 (dump pre at 190: n_rand_draws 649, n_rand_last 1017), so seed 1 draws index 2 =
+# AwardFullCrew (string 3044, a_bump2.message_field 6, no score); the AwardMapPiece branch is checked by awards_mapfull /
+# awards_winds_map. The a_sink17 mode 5 score is 65,000 - 25,000 = 40,000.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_lite529.flasher_on
+init watch v_lite529.light_on
+init watch a_bump2.message_field
+10 key down new_game
+11 key up new_game
+140 poke info_text_box message_field 5
+150 event a_roll3 ControlCollision
+151 expect n_score == 25000
+151 expect v_lite529.light_on == 0
+160 event a_sink17 ControlCollision
+161 expect n_score == 65000
+161 expect v_lite529.light_on == 1
+160-161 expect text info_text_box display id 3059
+190 dump pre
+200 event a_roll3 ControlCollision
+200-201 expect text info_text_box display id 3044
+201 expect n_score == 65000
+201 expect a_bump2.message_field == 6
+299 expect v_lite529.light_on == 0
+300 quit

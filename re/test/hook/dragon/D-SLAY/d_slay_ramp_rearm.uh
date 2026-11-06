@@ -1,0 +1,16 @@
+# ramp-plane rule (listing 5330-5345, Mode9Ramp 0x434d18): ControlRampPlaneLayer from a_ramp107 sets Mode9Ramp = 1,
+# so the 30 s timer expiry (frame 3700) re-arms the timer for 0.05 s instead of leaving mode 9. Compare d_slay_time30.uh
+# (no event: mode leaves 9 at 3700).
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+700 event s_oneway2 ControlCollision
+710 event a_ramp107 ControlRampPlaneLayer
+# listing: Mode9Ramp != 0 at expiry -> TTimerResetTimer 0.05, mode stays 9
+3721 expect mode == 9
+3801 expect mode == 9
+3900 quit

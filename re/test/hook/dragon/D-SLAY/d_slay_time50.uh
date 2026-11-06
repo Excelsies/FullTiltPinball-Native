@@ -1,0 +1,23 @@
+# Mode timer with items lit (listing 5097-5160): v_lite37 -> 35, v_lite38 +5, v_lite39 +5, v_lite32 +5 = 50 s;
+# v_lite33 lit -> v_lite114 = 8 - 1 = 7. The s_oneway2 hit at frame 700 starts mode_timer at 50 s (text 3047) and the
+# mode is still 9 at 5690, left at 5710.
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 key down new_game
+11 key up new_game
+148 poke v_lite37 light_on 1
+148 poke v_lite38 light_on 1
+148 poke v_lite39 light_on 1
+148 poke v_lite33 light_on 1
+149 poke v_lite32 light_on 1
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+160 dump mc v_lite114.message_field
+# listing: 8 minus one per lit hit light (v_lite33 only)
+161 expect v_lite114.message_field == 7
+700 event s_oneway2 ControlCollision
+700 expect text info_text_box display id 3047
+5691 expect mode == 9
+5721 expect mode != 9
+5800 quit

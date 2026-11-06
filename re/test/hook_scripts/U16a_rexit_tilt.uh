@@ -1,0 +1,23 @@
+# TRampExit (1035) switches layers while the table is tilted (no TiltLockFlag test, part_1035 4.1
+# point 4). New game, ball fed at frame ~105 (MultiballCount 1, so FT nudges work), bump_left held and
+# re-pressed every 30 frames (key up would un-nudge) until tilt_lock == 1, then the
+# s_rexit18 forward crossing of U16a_rexit18.uh.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch s_rexit18.group_a s_rexit18.group_b
+10 key down new_game
+11 key up new_game
+200 key down bump_left
+230 key down bump_left
+260 key down bump_left
+290 key up bump_left
+300 expect tilt_lock == 1
+300 place 0 -1.0814 -12.7914 0.37 -0.2834 -0.9590 10 0x2
+300 expect n_ball0_mask == 2
+301 expect tilt_lock == 1
+301 expect n_ball0_mask == 8
+301 expect n_ball0_dx ~= -0.2834 0.1
+301 expect n_ball0_dy ~= -0.9590 0.1
+330 quit

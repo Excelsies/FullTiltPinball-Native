@@ -1,0 +1,15 @@
+# R-3: the ramp a_ramp5 has the same ladder with text 3005 (mode 3: 25k, 150k, 275k).
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 3
+200 event a_ramp5 ControlBallToLayer2
+201 expect n_score == 25000
+200 expect text info_text_box display id 3005
+500 event a_ramp5 ControlBallToLayer2
+501 expect n_score == 175000
+800 event a_ramp5 ControlBallToLayer2
+801 expect n_score == 450000
+850 quit

@@ -1,0 +1,61 @@
+# R-6: blocker moves. ControlRampPlaneLayer on a_ramp8 lowers a_blocg (TBlockerSetFrame -1), a_ramp13 layer 2 lowers a_blocc (-1),
+# s_trip1 raises a_bloce (frame 1) with light 504 on / 505 off; s_trip2 in mode 2 (and 12, 13) lowers it (frame 0) with 504 off / 505 on,
+# in mode 3 it does nothing, in mode 4 it calls ResetLduggTargets (observed through a_drop5.message_field: poked to 7, reset to 0 only in mode 4).
+# Both blockers are preset to frame 0 first (they start at -1, so a bare expect -1 could not fail); a_ramp5 has no 0x54 branch.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_blocg.blocker_state a_blocc.blocker_state a_bloce.blocker_state v_lite504.light_on v_lite505.light_on a_drop5.message_field
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 3
+160 msg a_blocg TBlockerSetFrame 0.0
+162 expect a_blocg.blocker_state == 0
+170 msg a_blocc TBlockerSetFrame 0.0
+172 expect a_blocc.blocker_state == 0
+200 event a_ramp8 ControlRampPlaneLayer
+202 expect a_blocg.blocker_state == -1
+202 expect a_blocc.blocker_state == 0
+210 event a_ramp13 ControlBallToLayer2
+212 expect a_blocc.blocker_state == -1
+215 msg a_blocg TBlockerSetFrame 0.0
+216 expect a_blocg.blocker_state == 0
+217 event a_ramp5 ControlRampPlaneLayer
+218 expect a_blocg.blocker_state == 0
+219 event a_ramp8 ControlBallToLayer2
+219 expect a_blocg.blocker_state == 0
+220 event s_trip1 ControlCollision
+222 expect a_bloce.blocker_state == 1
+222 expect v_lite504.light_on == 1
+222 expect v_lite505.light_on == 0
+226 poke a_drop5 message_field 7
+228 expect a_drop5.message_field == 7
+230 event s_trip2 ControlCollision
+232 expect a_bloce.blocker_state == 1
+232 expect v_lite504.light_on == 1
+232 expect a_drop5.message_field == 7
+240 poke info_text_box message_field 2
+250 event s_trip2 ControlCollision
+252 expect a_bloce.blocker_state == 0
+252 expect v_lite504.light_on == 0
+252 expect v_lite505.light_on == 1
+260 event s_trip1 ControlCollision
+262 expect a_bloce.blocker_state == 1
+270 poke info_text_box message_field 12
+280 event s_trip2 ControlCollision
+282 expect a_bloce.blocker_state == 0
+290 event s_trip1 ControlCollision
+292 expect a_bloce.blocker_state == 1
+300 poke info_text_box message_field 13
+310 event s_trip2 ControlCollision
+312 expect a_bloce.blocker_state == 0
+320 event s_trip1 ControlCollision
+330 poke info_text_box message_field 4
+340 event s_trip2 ControlCollision
+342 expect a_bloce.blocker_state == 1
+342 expect a_drop5.message_field == 0
+344 poke a_drop5 message_field 7
+346 poke info_text_box message_field 5
+348 event s_trip2 ControlCollision
+350 expect a_drop5.message_field == 7
+360 quit

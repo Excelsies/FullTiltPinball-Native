@@ -1,0 +1,15 @@
+# skill-shot window: P1, launch, a_spot4 collision in mode 10 -> mode 2, targets_hit 1 (MissionControl pre-hook),
+# jackpot +50,000 in that frame. The ball is held out of play in the plunger lane so no natural contact precedes the event.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 expect mode == 10
+200 event a_spot4 ControlCollision
+201 expect mode == 2
+201 expect targets_hit == 1
+201 expect jackpot == 50000 delta 199
+201 expect ball_held == 0
+300 quit

@@ -1,0 +1,18 @@
+# L4 (listing 3294-3328, mode 10 branch): a_spot10 in mode 10 ORs 8 into a_spot8->MessageField (the original's extra
+# write at 0x427896) and into the shared counter 0x435cf8, flashes v_lite548 and calls CheckLavaBankMode10 /
+# CheckMode10Banks (pirates_modes_b.cpp; the counter and the mode 10 scoring are not checked here). No
+# ScorePart in this branch: the score stays unchanged by the target itself; a_spot11 is untouched.
+init fixed_dt 10
+init seed 1
+init watch a_spot11.message_field a_spot8.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 10
+210 event a_spot10 ControlCollision
+210 expect a_spot8.message_field == 8
+210 expect a_spot11.message_field == 0
+210 expect mode == 10
+220 event a_spot11 ControlCollision
+220 expect a_spot8.message_field == 8
+220 expect a_spot11.message_field == 0
+260 quit

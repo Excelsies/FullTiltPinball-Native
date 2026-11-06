@@ -1,0 +1,81 @@
+# Leakage of plain rule globals. The treasure-dig state 0x435d10..0x435d28 (DigTreasure
+# pirates_treasure.cpp:209), mode-11-done 0x43abb0 (pirates_treasure.cpp:473) and the mode counter 0x435cf8 (mode 6 target counter,
+# pirates_modes_a.cpp:339-358) are plain globals, not per player (they are reset by NewGame / mode start only): the value set by player 1
+# carries over to player 2 and back, as in the original. Observables, all through real callers:
+#  - dig: P1 digs 3 steps (a_roll9 in mode 8, text 3040 each); after SwitchToNextPlayer P2's first dig is step 3 (text 3034,
+#    ShowTreasureBuried with no lit treasure), not step 0 (3040).
+#  - mode 11: P2 ends mode 11 (timer expiry): mode11_done 1; after the switch back to P1 it is still 1.
+#  - mode counter: P1 starts mode 6 (ControlMissionComplete, 8 targets at 0 lit lights, 10,000 each) and hits a_drop5 twice (counter 2); P2 is
+#    switched in mode 6 (poked, no start, so no cleanup) and the 6th hit there is the 8th overall: AwardJackpot (score != 10,000), where a
+#    per-player counter would score 10,000.
+#  - Treasure X index 0x435d04: the mode-8 orbit sink a_sink9 calls LightNextTreasureX (pirates_orbits.cpp:55-58,
+#    pirates_treasure.cpp:135-170), which flashes one light per index and advances the index, with no mode start in between (so the
+#    mode-start cleanup does not reset it). P2 (current) hits a_sink9: index 0 -> v_mlite110 flashes; after the switch to P1 the sink
+#    a_sink12 flashes v_mlite107 (index 1), where a per-player index would flash v_mlite110 again.
+# Not checked here: 0x43abac (the buried-batch flag; it is 0 again at the end of CollectBuriedTreasure, so it cannot be observed across a
+# player switch).
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 10
+init watch v_mlite110.flasher_on v_mlite107.flasher_on v_mlite104.flasher_on
+10 key down new_game
+11 key up new_game
+# --- dig: player 1
+190 poke info_text_box message_field 8
+200 event a_roll9 ControlCollision
+200-201 expect text info_text_box display id 3040
+210 event a_roll9 ControlCollision
+210-211 expect text info_text_box display id 3040
+220 event a_roll9 ControlCollision
+220-221 expect text info_text_box display id 3040
+# switch to player 2: the dig step (3) is not per player
+250 msg table SwitchToNextPlayer 0
+260 poke info_text_box message_field 8
+270 event a_roll9 ControlCollision
+270-271 expect text info_text_box display id 3034
+# --- mode 11: player 2 ends mode 11
+300 poke info_text_box message_field 2
+301 event info_text_box ControlMissionComplete
+310 poke info_text_box message_field 11
+311 event info_text_box ControlMissionComplete
+312 expect mode == 11
+320 expect mode11_done == 0
+400 event mode_timer ControlTimerExpired
+402 expect mode11_done == 1
+402 expect mode == 2
+# back to player 1: still 1
+420 msg table SwitchToNextPlayer 0
+440 expect mode11_done == 1
+# --- mode counter: player 1 starts mode 6 and hits twice
+500 poke info_text_box message_field 6
+501 event info_text_box ControlMissionComplete
+501 expect mode == 6
+510 event a_drop5 ControlCollision
+510 expect n_score == 10000 delta 509
+511 event a_drop5 ControlCollision
+511 expect n_score == 10000 delta 510
+# switch to player 2 (mode 6 poked again, no start): hits 3..7 overall score 10,000, the 8th is the jackpot
+540 msg table SwitchToNextPlayer 0
+550 poke info_text_box message_field 6
+560 event a_drop5 ControlCollision
+561 event a_drop5 ControlCollision
+562 event a_drop5 ControlCollision
+563 event a_drop5 ControlCollision
+564 event a_drop5 ControlCollision
+564 expect n_score == 10000 delta 563
+565 event a_drop5 ControlCollision
+565 expect n_score != 10000 delta 564
+# --- Treasure X index 0x435d04: current player 2 (mode 8 poked, no start), then back to player 1
+600 poke info_text_box message_field 8
+601 msg v_mlite110 TLightFlasherStartTimed -1.0
+602 msg v_mlite107 TLightResetAndTurnOff 0
+605 event a_sink9 ControlCollision
+606 expect v_mlite110.flasher_on == 1
+606 expect v_mlite107.flasher_on == 0
+620 msg table SwitchToNextPlayer 0
+630 poke info_text_box message_field 8
+631 msg v_mlite104 TLightFlasherStartTimed -1.0
+635 event a_sink12 ControlCollision
+636 expect v_mlite107.flasher_on == 1
+650 quit

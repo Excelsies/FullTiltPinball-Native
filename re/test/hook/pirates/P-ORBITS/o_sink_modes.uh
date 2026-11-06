@@ -1,0 +1,42 @@
+# O-1 (listing 3837-3918): the orbit sinks a_sink9 / a_sink12.
+# Mode 8 with the treasure light (v_mlite110 / v_mlite104) not flashing: ScorePart 0 = 40,000, text 3002, tabb11 (id 10),
+# HideawayExit (one draw: 3 = 2 engine + 1 rule). Any mode but 8/0xb (here 4): the sink's ActiveFlag goes to 0, no score, no text,
+# no rule draw (the engine draw count is not asserted there: it grows with the balls in play and with light-group animation). Mode 0xb: AwardNextSpecialTreasure (first treasure 100,000, tabb84 id 56, text 3019) + HideawayExit (a rule draw, not asserted, same reason), no tabb11.
+# Sound ids: tabb11 = 10 and tabb84 = 56 as in the P-HIDEAWAY scripts (info field of sounds.jsonl names the control function).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_sink9.active a_sink12.active
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 8
+220 event a_sink9 ControlCollision
+220 expect n_rand_draws == 3 delta 219
+221 expect n_score == 40000 delta 219
+220 expect text info_text_box display id 3002
+220 expect sound 10
+232 event a_sink12 ControlCollision
+232 expect n_rand_draws == 3 delta 231
+233 expect n_score == 40000 delta 231
+232 expect text info_text_box display id 3002
+232 expect sound 10
+300 poke info_text_box message_field 4
+301 poke a_sink9 active 1
+302 poke a_sink12 active 1
+310 event a_sink9 ControlCollision
+311 expect a_sink9.active == 0
+311 expect a_sink12.active == 1
+311 expect n_score == 0 delta 309
+310 expect none text info_text_box display
+310 expect none sound 10
+320 event a_sink12 ControlCollision
+321 expect a_sink12.active == 0
+321 expect n_score == 0 delta 319
+320 expect none sound 10
+400 poke info_text_box message_field 11
+410 event a_sink9 ControlCollision
+411 expect n_score == 100000 delta 409
+410 expect text info_text_box display id 3019
+410 expect sound 56
+410 expect none sound 10
+500 quit

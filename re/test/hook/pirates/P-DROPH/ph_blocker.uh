@@ -1,0 +1,34 @@
+# BlockerTargetControl1/2 (a_spot4, a_spot5): the first hit sets bit 1 / 2 of v_lite522's MessageField and scores ScorePart 0 = 5,000;
+# when both bits are set the bank is complete: the field is cleared and ScorePart 1 = 20,000 (listing 3329-3385).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite522.message_field a_blocf.blocker_state v_lite522.flasher_on v_lite779.flasher_on
+10 key down new_game
+11 key up new_game
+300 event a_spot4 ControlCollision
+310 event a_spot5 ControlCollision
+300 expect v_lite522.message_field == 1
+300 expect sound 4
+300 expect n_score == 5000 delta 299
+310 expect v_lite522.message_field == 0
+310 expect n_score == 20000 delta 309
+320 event a_spot5 ControlCollision
+330 event a_spot4 ControlCollision
+320 expect v_lite522.message_field == 2
+320 expect n_score == 5000 delta 319
+330 expect v_lite522.message_field == 0
+330 expect n_score == 20000 delta 329
+300 expect a_blocf.blocker_state == 0
+300 expect v_lite522.flasher_on == 1
+310 expect a_blocf.blocker_state == -1
+310 expect v_lite522.flasher_on == 1
+310 expect v_lite779.flasher_on == 1
+320 expect a_blocf.blocker_state == -1
+320 expect v_lite779.flasher_on == 1
+330 expect a_blocf.blocker_state == -1
+330 expect v_lite522.flasher_on == 1
+330 expect v_lite779.flasher_on == 1
+440 expect v_lite522.flasher_on == 0
+440 expect v_lite779.flasher_on == 0
+450 quit

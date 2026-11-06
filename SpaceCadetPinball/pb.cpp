@@ -23,6 +23,7 @@
 #include "GroupData.h"
 #include "partman.h"
 #include "score.h"
+#include "tables.h"
 #include "TFlipper.h"
 #include "TPinballTable.h"
 #include "TTextBox.h"
@@ -54,10 +55,17 @@ int pb::init()
 	auto useBmpFont = 0;
 	get_rc_int(Msg::TextBoxUseBitmapFont, &useBmpFont);
 	if (useBmpFont)
+	{
 		score::load_msg_font("pbmsg_ft");
+		score::load_msg_font("font2", 1); // silent no-op when the DAT has no font2 (CADET.DAT)
+	}
 
 	if (!record_table)
 		return 1;
+
+	/*Full Tilt: the original's rand() starts at state 1 at process start and is never reseeded*/
+	if (IsFullTiltTable())
+		ft_rand::ResetForTable();
 
 	auto plt = (ColorRgba*)record_table->field_labeled("background", FieldTypes::Palette);
 	gdrv::display_palette(plt);
@@ -101,6 +109,7 @@ int pb::init()
 	timer::init(150);
 	score::init();
 
+	control::Rules = control::CreateRules();
 	MainTable = new TPinballTable();
 
 	high_score::read();
@@ -126,6 +135,7 @@ int pb::uninit()
 	high_score::write();
 	delete MainTable;
 	MainTable = nullptr;
+	control::DestroyRules(); // after the table dtor's ClearLinks
 	timer::uninit();
 	render::uninit();
 	return 0;
@@ -133,52 +143,7 @@ int pb::uninit()
 
 void pb::SelectDatFile(const std::vector<const char*>& dataSearchPaths)
 {
-	DatFileName.clear();
-	FullTiltDemoMode = FullTiltMode = false;
-
-	std::string datFileNames[3]
-	{
-		"CADET.DAT",
-		"PINBALL.DAT",
-		"DEMO.DAT",
-	};
-
-	// Default game data test order: CADET.DAT, PINBALL.DAT, DEMO.DAT
-	if (options::Options.Prefer3DPBGameData)
-	{
-		std::swap(datFileNames[0], datFileNames[1]);
-	}
-	for (auto path : dataSearchPaths)
-	{
-		if (!path)
-			continue;
-
-		BasePath = path;
-		for (const auto& datFileName : datFileNames)
-		{
-			auto fileName = datFileName;
-			for (int i = 0; i < 2; i++)
-			{
-				if (i == 1)
-					std::transform(fileName.begin(), fileName.end(), fileName.begin(),
-					               [](unsigned char c) { return std::tolower(c); });
-
-				auto datFilePath = make_path_name(fileName);
-				auto datFile = fopenu(datFilePath.c_str(), "r");
-				if (datFile)
-				{
-					fclose(datFile);
-					DatFileName = fileName;
-					if (datFileName == "CADET.DAT")
-						FullTiltMode = true;
-					if (datFileName == "DEMO.DAT")
-						FullTiltDemoMode = FullTiltMode = true;
-					printf("Loading game from: %s\n", datFilePath.c_str());
-					return;
-				}
-			}
-		}
-	}
+	tables::Select(dataSearchPaths);
 }
 
 void pb::reset_table()
@@ -195,7 +160,7 @@ void pb::firsttime_setup()
 
 void pb::mode_change(GameModes mode)
 {
-	if (CreditsActive && MissTextBox)
+	if (CreditsActive && !control::TextEvent(0x69) && MissTextBox)
 		MissTextBox->Clear(true);
 	CreditsActive = false;
 	IdleTimerMs = 0;
@@ -247,8 +212,13 @@ void pb::toggle_demo()
 		demo_mode = false;
 		MainTable->Message(MessageCode::Reset, 0.0);
 		mode_change(GameModes::GameOver);
-		MissTextBox->Clear();
-		InfoTextBox->Display(get_rc_string(Msg::STRING125), -1.0);
+		if (control::TextEvent(0x57))
+			control::TextEvent(0x5c);
+		else
+		{
+			MissTextBox->Clear();
+			InfoTextBox->Display(get_rc_string(Msg::STRING125), -1.0);
+		}
 	}
 	else
 	{
@@ -272,7 +242,7 @@ void pb::ballset(float dx, float dy)
 
 	for (auto ball : MainTable->BallList)
 	{
-		if (ball->ActiveFlag)
+		if (ball->ActiveFlag && !ball->HasGroupFlag)
 		{
 			ball->Direction.X = dx * sensitivity;
 			ball->Direction.Y = dy * sensitivity;
@@ -282,7 +252,10 @@ void pb::ballset(float dx, float dy)
 	}
 }
 
-void pb::frame(float dtMilliSec)
+// maxSliceMs <= 0: one physics step of the whole frame time (upstream behaviour, used by hook runs).
+// maxSliceMs > 0: the physics step (timed_frame, tick counter, timers) runs in
+// ceil(dt / maxSliceMs) slices, at most MaxPhysicsSlices; idle timer, nudge, render and score update run once.
+void pb::frame(float dtMilliSec, float maxSliceMs)
 {
 	if (dtMilliSec > 100)
 		dtMilliSec = 100;
@@ -294,19 +267,40 @@ void pb::frame(float dtMilliSec)
 		IdleTimerMs += dtMilliSec;
 		if (IdleTimerMs >= 60000 && !CreditsActive)
 		{
-			PushCheat("credits");
+			// FT: the engine starts the credits ticker itself (0x68); upstream types the "credits" cheat.
+			if (control::TextEvent(0x68))
+				CreditsActive = true;
+			else
+				PushCheat("credits");
 		}
 	}
 
-	float dtSec = dtMilliSec * 0.001f;
-	time_next = time_now + dtSec;
-	timed_frame(dtSec);
-	time_now = time_next;
+	int slices = 1;
+	if (maxSliceMs > 0)
+	{
+		slices = static_cast<int>(std::ceil(dtMilliSec / maxSliceMs));
+		if (slices < 1)
+			slices = 1;
+		if (slices > MaxPhysicsSlices)
+			slices = MaxPhysicsSlices;
+	}
+	const float sliceMs = dtMilliSec / static_cast<float>(slices);
+	const float dtSec = dtMilliSec * 0.001f;
+	for (int i = 0; i < slices; i++)
+	{
+		float stepMs = sliceMs;
+		float stepSec = stepMs * 0.001f;
+		time_next = time_now + stepSec;
+		timed_frame(stepSec);
+		time_now = time_next;
 
-	dtMilliSec += time_ticks_remainder;
-	auto dtWhole = static_cast<int>(dtMilliSec);
-	time_ticks_remainder = dtMilliSec - static_cast<float>(dtWhole);
-	time_ticks += dtWhole;
+		stepMs += time_ticks_remainder;
+		auto dtWhole = static_cast<int>(stepMs);
+		time_ticks_remainder = stepMs - static_cast<float>(dtWhole);
+		time_ticks += dtWhole;
+		if (i < slices - 1)
+			timer::check();
+	}
 
 	if (nudge::nudged_left || nudge::nudged_right || nudge::nudged_up)
 	{
@@ -326,7 +320,8 @@ void pb::frame(float dtMilliSec)
 	{
 		if (nudge::nudge_count > 0.5f)
 		{
-			InfoTextBox->Display(get_rc_string(Msg::STRING126), 2.0);
+			if (!control::TextEvent(0x5d))
+				InfoTextBox->Display(get_rc_string(Msg::STRING126), 2.0);
 		}
 		if (nudge::nudge_count > 1.0f)
 			MainTable->tilt(time_now);
@@ -400,8 +395,9 @@ void pb::timed_frame(float timeDelta)
 		}
 	}
 
-	float deltaAngle[4]{};
-	int flipperSteps[4]{};
+	// sized from the table's flipper list: no fixed bound on the DAT's flipper count
+	std::vector<float> deltaAngle(MainTable->FlipperList.size());
+	std::vector<int> flipperSteps(MainTable->FlipperList.size());
 	for (auto index = 0u; index < MainTable->FlipperList.size(); index++)
 	{
 		auto flipStep = MainTable->FlipperList[index]->GetFlipperStepAngle(timeDelta, &deltaAngle[index]) - 1;
@@ -486,13 +482,20 @@ void pb::timed_frame(float timeDelta)
 void pb::pause_continue()
 {
 	winmain::single_step ^= true;
-	InfoTextBox->Clear();
-	MissTextBox->Clear();
+	const bool textHandled = control::TextEvent(0x57);
+	if (!textHandled)
+	{
+		InfoTextBox->Clear();
+		MissTextBox->Clear();
+	}
 	if (winmain::single_step)
 	{
 		if (MainTable)
 			MainTable->Message(MessageCode::Pause, time_now);
-		InfoTextBox->Display(get_rc_string(Msg::STRING123), -1.0);
+		if (textHandled)
+			control::TextEvent(0x59);
+		else
+			InfoTextBox->Display(get_rc_string(Msg::STRING123), -1.0);
 		midi::music_stop();
 		Sound::Deactivate();
 	}
@@ -500,7 +503,11 @@ void pb::pause_continue()
 	{
 		if (MainTable)
 			MainTable->Message(MessageCode::Resume, 0.0);
-		if (!demo_mode)
+		if (!demo_mode && textHandled)
+		{
+			control::TextEvent(game_mode == GameModes::GameOver ? 0x5c : 0x5b);
+		}
+		else if (!demo_mode)
 		{
 			const char* text;
 			float textTime;
@@ -533,6 +540,15 @@ void pb::InputUp(GameInput input)
 	if (game_mode != GameModes::InGame || winmain::single_step || demo_mode)
 		return;
 
+	// FT keyup (0x412370): idle reset and credits stop, before the flipper/plunger handling. Space Cadet keeps upstream.
+	if (IsFullTiltTable())
+	{
+		IdleTimerMs = 0;
+		if (CreditsActive && !control::TextEvent(0x69) && MissTextBox)
+			MissTextBox->Clear(true);
+		CreditsActive = false;
+	}
+
 	const auto bindings = options::MapGameInput(input);
 	for (const auto binding : bindings)
 	{
@@ -561,6 +577,51 @@ void pb::InputUp(GameInput input)
 	}
 }
 
+namespace
+{
+	// FT 0x411f50: the engine's own `hidden<Tab>test` detector (a state machine over upper-case VKs; Tab, not space).
+	// Reaching the end sets cheat mode (it does not toggle) and the table's CheatsUsed flag.
+	int HiddenTestState = 0;
+
+	void FtHiddenTest(int vk)
+	{
+		const int s = HiddenTestState;
+		int next = 0;
+		switch (vk)
+		{
+		case 'H': next = s == 0 ? 1 : 0; break;
+		case 'I': next = s == 1 ? 2 : 0; break;
+		case 'D': next = (s == 2 || s == 3) ? s + 1 : 0; break;
+		case 'E': next = (s == 4 || s == 8) ? s + 1 : 0; break;
+		case 'N': next = s == 5 ? 6 : 0; break;
+		case 9: next = s == 6 ? 7 : 0; break;
+		case 'S': next = s == 9 ? 10 : 0; break;
+		case 'T':
+			next = (s == 7 || s == 10) ? s + 1 : 0;
+			if (next == 11)
+			{
+				pb::cheat_mode = true;
+				pb::MainTable->CheatsUsed = 1;
+			}
+			break;
+		default: break;
+		}
+		HiddenTestState = next;
+	}
+
+	// FT keydown 0x412120 order: the rules' key hook first (VK + flipper-side flags), then the hidden-test detector.
+	// The VK is the key's ASCII value with letters upper-cased; keys outside ASCII (arrows, F-keys) have no VK here
+	// and pass 0, the flipper flags still say which side they are.
+	void FtKeyHook(int keyValue, bool isLeftFlip, bool isRightFlip)
+	{
+		int vk = (keyValue >= 0 && keyValue < 128) ? keyValue : 0;
+		if (vk >= 'a' && vk <= 'z')
+			vk -= 'a' - 'A';
+		control::pbctrl_bdoor_controller(static_cast<char>(vk), isLeftFlip, isRightFlip);
+		FtHiddenTest(vk);
+	}
+}
+
 void pb::InputDown(GameInput input)
 {
 	if (options::WaitingForInput())
@@ -578,13 +639,26 @@ void pb::InputDown(GameInput input)
 	if (game_mode != GameModes::InGame || winmain::single_step || demo_mode)
 		return;
 
-	if (CreditsActive)
+	if (CreditsActive && !control::TextEvent(0x69))
 		MissTextBox->Clear(true);
 	CreditsActive = false;
 	IdleTimerMs = 0;
 
 	if (input.Type == InputTypes::Keyboard)
-		control::pbctrl_bdoor_controller(static_cast<char>(input.Value));
+	{
+		if (IsFullTiltTable())
+		{
+			bool isLeftFlip = false, isRightFlip = false;
+			for (const auto binding : bindings)
+			{
+				isLeftFlip |= binding == GameBindings::LeftFlipper;
+				isRightFlip |= binding == GameBindings::RightFlipper;
+			}
+			FtKeyHook(static_cast<int>(input.Value), isLeftFlip, isRightFlip);
+		}
+		else
+			control::pbctrl_bdoor_controller(static_cast<char>(input.Value));
+	}
 
 	for (const auto binding : bindings)
 	{
@@ -600,15 +674,15 @@ void pb::InputDown(GameInput input)
 			MainTable->Message(MessageCode::PlungerInputPressed, time_now);
 			break;
 		case GameBindings::LeftTableBump:
-			if (!MainTable->TiltLockFlag)
+			if (!MainTable->TiltLockFlag && (!IsFullTiltTable() || MainTable->MultiballCount != 0))
 				nudge::nudge_right();
 			break;
 		case GameBindings::RightTableBump:
-			if (!MainTable->TiltLockFlag)
+			if (!MainTable->TiltLockFlag && (!IsFullTiltTable() || MainTable->MultiballCount != 0))
 				nudge::nudge_left();
 			break;
 		case GameBindings::BottomTableBump:
-			if (!MainTable->TiltLockFlag)
+			if (!MainTable->TiltLockFlag && (!IsFullTiltTable() || MainTable->MultiballCount != 0))
 				nudge::nudge_up();
 			break;
 		default: break;
@@ -727,7 +801,7 @@ void pb::high_scores()
 
 void pb::tilt_no_more()
 {
-	if (MainTable->TiltLockFlag)
+	if (MainTable->TiltLockFlag && !control::TextEvent(0x5f))
 		InfoTextBox->Clear();
 	MainTable->TiltLockFlag = 0;
 	nudge::nudge_count = -2.0;
@@ -748,7 +822,12 @@ bool pb::chk_highscore()
 void pb::PushCheat(const std::string& cheat)
 {
 	for (auto ch : cheat)
-		control::pbctrl_bdoor_controller(ch);
+	{
+		if (IsFullTiltTable())
+			FtKeyHook(static_cast<unsigned char>(ch), false, false);
+		else
+			control::pbctrl_bdoor_controller(ch);
+	}
 }
 
 LPCSTR pb::get_rc_string(Msg uID)

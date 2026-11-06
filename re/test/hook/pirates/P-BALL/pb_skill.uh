@@ -1,0 +1,46 @@
+# Skill-shot outcomes 0..8, all in one game. Outcome k leaves mode 2 / 4..8, so the
+# mode (info_text_box message_field) is poked back to 3 before each following shot. Each outcome: the wheel is poked to the outcome and the one-way event
+# arrives; whatever the outcome the controller clears the info text box (checked for each). The mode result of each
+# outcome is checked in pb_skill_gate_o<k>.uh (one game per outcome, because a started mode takes over).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 poke s_launcher1 message_field 0
+200 event s_oneway3 ControlCollision
+200 expect text info_text_box clear
+220 poke info_text_box message_field 3
+220 poke s_launcher1 message_field 1
+220 event s_oneway3 ControlCollision
+220 expect text info_text_box clear
+240 poke info_text_box message_field 3
+240 poke s_launcher1 message_field 2
+240 event s_oneway3 ControlCollision
+240 expect text info_text_box clear
+260 poke info_text_box message_field 3
+260 poke s_launcher1 message_field 3
+260 event s_oneway3 ControlCollision
+260 expect text info_text_box clear
+280 poke info_text_box message_field 3
+280 poke s_launcher1 message_field 4
+280 event s_oneway3 ControlCollision
+280 expect text info_text_box clear
+300 poke info_text_box message_field 3
+300 poke s_launcher1 message_field 5
+300 event s_oneway3 ControlCollision
+300 expect text info_text_box clear
+320 poke info_text_box message_field 3
+320 poke s_launcher1 message_field 6
+320 event s_oneway3 ControlCollision
+320 expect text info_text_box clear
+340 poke info_text_box message_field 3
+340 poke s_launcher1 message_field 7
+340 event s_oneway3 ControlCollision
+340 expect text info_text_box clear
+360 poke info_text_box message_field 3
+360 poke s_launcher1 message_field 8
+360 event s_oneway3 ControlCollision
+360 expect text info_text_box clear
+400 quit

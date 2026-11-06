@@ -1,0 +1,14 @@
+# QUOTE cheat, variant stop (QUOTE then Z stops the ticker). tools/check_quote.py compares the shots of the three variants.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 type hidden\ttest
+150 type QUOTE
+260 shot b_quote
+270 type Z
+330 shot c_after_z
+520 shot d_late
+700 shot e_later
+760 quit

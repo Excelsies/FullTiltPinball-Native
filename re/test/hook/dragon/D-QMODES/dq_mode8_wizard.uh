@@ -1,0 +1,29 @@
+# Mode 8 (listing 4995-5072). Entry text 3038, sound tabc55 (id 45); sweep 4 ends at frame 927 (measured): countdown text 3037,
+# timer 30.69 s -> expiry at 927 + 3069 = 3996 (mode 3) with both balls held.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 event a_spot4 ControlCollision
+410 poke a_kout2 message_field 8
+420 type NMAX
+470 expect mode == 8
+470 expect ball_held == 1
+423 expect text info_text_box display id 3038
+423 expect sound 45
+# Track slot identity (0x439ae4/ae8/aec/af4) is pinned by the disassembly, not by this run: the run only shows that a track event is logged at the entry frame (slot 0).
+423 expect track 0
+# Entry ScoreValue(0,100000) (port_listing_dragon.c); gem amounts are not asserted (a gem event's n_score also holds the sink and part scores of the same frame).
+423 expect n_score == 100000 delta 422
+927 expect text info_text_box display id 3037
+926 expect ball_held == 1
+940 place 0 3.0 8.0 0.37 0 1 5 0x1
+940 place 1 -3.0 8.0 0.37 0 1 5 0x1
+941 hold 0 on
+941 hold 1 on
+3995 expect mode == 8
+3997 expect mode == 3
+4100 quit

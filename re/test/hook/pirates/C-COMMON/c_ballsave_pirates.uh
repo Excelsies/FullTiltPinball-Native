@@ -1,0 +1,16 @@
+# Ball save 10 s lit + 5 s flashing. P1 prologue (ball fed at frame 105, measured
+# in d_nmax/U29 timelines); f = 200: event s_oneway3 ControlCollision (LaunchOneWayControl, ft_common.cpp 237).
+# Transitions at f+1000 +-1 (2 -> 1) and f+1500 +-1 (1 -> 0), written f+998 == 2, f+1001 == 1, f+1498 == 1, f+1501 == 0 (native measures f+999 / f+1499).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 expect ball_save == 3
+200 event s_oneway3 ControlCollision
+200 expect ball_save == 2
+1198 expect ball_save == 2
+1201 expect ball_save == 1
+1698 expect ball_save == 1
+1701 expect ball_save == 0
+1750 quit

@@ -1,0 +1,66 @@
+# Sword (listing SetSwordState 700-759, SwordTargetControl1-3 1903-1983).
+# SetSwordState is called only with -1, 3, 2 and 1, never with 0: FT 0x4238d0 callers at export lines 23791, 24788 (-1),
+# 23927, 24083, 27876 (3), 24742 (2) and 24766 (1); the port's callers: dragon_quests.cpp:276/342/352/363,
+# dragon_ball.cpp:117, dragon_slay.cpp:182, dragon_rules.cpp:178. State 0 is therefore unreachable in play; its
+# lights/targets are not checked here, and the script walks the sword through the real chain 3 -> 2 -> 1 -> -1.
+# Sound ids (loader sound_list index) resolved from DRAGON.DAT: `re/dat_dump.py sounds` lists the A_SOUND records; the
+# index used by the engine is the listed position minus 4 (cross-checked with D-CORE's tabc21wave = 27, tabc61wave = 49).
+# tabc13wave = 8 (tabc13.wav), tabc16wave = 11 (tabc16.wav), tabc47wave = 40 (tabc47.wav), tabc96wave = 50 (tabc96.wav).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_spot19.active a_spot26.active a_spot28.active v_lite16.light_on v_lite16.flasher_on v_lite17.light_on v_lite17.flasher_on v_lite18.light_on v_lite18.flasher_on v_lite76.flasher_on
+10 key down new_game
+11 key up new_game
+# NewGame -> SetSwordState(3) (no Play in the original; the table's own NewGame sound shares id 8 at frame 10 and expect cannot filter by source, so the absence is read from sounds.jsonl 'info' in the report): spot19 enabled, spot26/28 disabled
+200 expect a_spot19.active == 1
+200 expect a_spot26.active == 0
+200 expect a_spot28.active == 0
+# state 3 (NewGame): v_lite16 flashes, which arms a_spot19 below
+205 expect v_lite16.flasher_on == 1
+# mode 2, a_spot19 with v_lite16 flashing: state 2, +20,000, glyph text
+215 poke info_text_box message_field 2
+220 event a_spot19 ControlCollision
+220-221 expect sound 8   # state 2
+221 expect n_score == 20000 delta 219
+221 expect a_spot19.active == 0
+221 expect a_spot26.active == 1
+221 expect a_spot28.active == 0
+221 expect v_lite16.light_on == 1
+221 expect v_lite17.flasher_on == 1
+221 expect v_lite18.light_on == 0
+221 expect v_lite18.flasher_on == 0
+220 expect text info_text_box display
+# a_spot19 again: v_lite16 no longer flashes -> nothing
+230 event a_spot19 ControlCollision
+230-231 expect none sound   # light not flashing: nothing
+231 expect n_score == 0 delta 229
+# a_spot26 with v_lite17 flashing: state 1, +50,000
+240 event a_spot26 ControlCollision
+240-241 expect sound 8   # state 1
+241 expect n_score == 50000 delta 239
+241 expect a_spot26.active == 0
+241 expect a_spot28.active == 1
+241 expect v_lite17.light_on == 1
+241 expect v_lite18.flasher_on == 1
+# a_spot28 with v_lite18 flashing: shortcut, state -1, mode 9; no score from the target, the Mode 9 start scores 500,000
+249 expect selected_quest != 0   # NewGame selected a quest; SwordTargetControl3 cancels it (CancelQuestSelection, 0x425830)
+250 event a_spot28 ControlCollision
+250-251 expect none sound 8   # SetSwordState(-1) has no Play (tabc13); the mode-9 start plays its own sound 47 below
+250-251 expect sound 47   # Mode9Controller (dragon_slay.cpp), real MissionControl(MissionComplete) caller of SwordTargetControl3
+251 expect mode == 9
+251 expect selected_quest == 0
+251 expect n_score == 500000 delta 249   # SwordTargetControl3 itself scores nothing; the real Mode 9 start (dragon_slay.cpp:255) scores 500,000
+251 expect a_spot28.active == 0
+251 expect v_lite16.light_on == 0
+251 expect v_lite16.flasher_on == 0
+251 expect v_lite17.light_on == 0
+251 expect v_lite18.light_on == 0
+251 expect v_lite18.flasher_on == 0
+251 expect v_lite76.flasher_on == 1
+# outside mode 2 the targets do nothing
+265 poke info_text_box message_field 1
+270 event a_spot19 ControlCollision
+270-271 expect none sound   # mode 1: nothing
+271 expect n_score == 0 delta 269
+280 quit

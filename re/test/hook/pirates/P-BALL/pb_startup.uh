@@ -1,0 +1,17 @@
+# start-up state after the start-up wait and the first NewGame (replay_level at tick 200, ball fed
+# 0.96 s later). Wine "loaded" peek (t = 3.07 s): mode 3, ball_save 3, jackpot 1,000,000, no_hold_start 1, 1 player, 3 balls.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 50
+init startup_wait 1
+330 dump startup
+330 expect mode == 3
+330 expect ball_save == 3
+330 expect no_hold_start == 1
+330 expect player_count == 1
+330 expect ball_count == 3
+330 expect jackpot == 1000000
+330 expect targets_hit == 0
+330 expect drain_state == 0
+340 quit

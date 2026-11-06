@@ -99,17 +99,23 @@ public:
 	static int material(int groupIndex, visualStruct* visual);
 	static int kicker(int groupIndex, visualKickerStruct* kicker);
 	static int state_id(int groupIndex, int groupIndexOffset);
-	static int query_visual(int groupIndex, int groupIndexOffset, visualStruct* visual);
+	// bitmapIndex selects the n-th bitmap of the current resolution (Full Tilt ball groups have two).
+	static int query_visual(int groupIndex, int groupIndexOffset, visualStruct* visual, int bitmapIndex = 0);
 	static char* query_name(int groupIndex);
 	static float* query_float_attribute(int groupIndex, int groupIndexOffset, int firstValue);
 	static float query_float_attribute(int groupIndex, int groupIndexOffset, int firstValue, float defVal);
+	// Optional attribute: nullptr without an error box when the id is absent (FT 0x40d8d0).
+	// A bad group or state still raises the usual error.
+	static float* query_float_attribute_opt(int groupIndex, int groupIndexOffset, int firstValue);
 	static int16_t* query_iattribute(int groupIndex, int firstValue, int* arraySize);
 	static float play_sound(int soundIndex, TPinballComponent *soundSource, const char* info);
+	// Duration in seconds of a loaded sound, no playback (FT 0x40da40); 0 for id <= 0.
+	static float sound_duration(int soundIndex);
 	static DatFile* loader_table;
 private:
 	static errorMsg loader_errors[];
 	static DatFile* sound_record_table;
 	static int sound_count;
 	static int loader_sound_count;
-	static soundListStruct sound_list[65];
+	static soundListStruct sound_list[70];
 };

@@ -111,6 +111,9 @@ public:
 	static void uninit();
 	static const std::string& GetSetting(const std::string& key, const std::string& defaultValue);
 	static void SetSetting(const std::string& key, const std::string& value);
+	// Unlike GetSetting these neither create the key nor mark the ini dirty.
+	static bool PeekSetting(const std::string& key, std::string& value);
+	static void EraseSetting(const std::string& key);
 	static int get_int(LPCSTR lpValueName, int defaultValue);
 	static void set_int(LPCSTR lpValueName, int data);
 	static float get_float(LPCSTR lpValueName, float defaultValue);
@@ -209,6 +212,28 @@ struct BoolOption : OptionBaseT<bool>
 	using OptionBaseT::operator=;
 };
 
+// String option that is absent from the ini while empty (so a default run writes no new key).
+struct OptionalStringOption : OptionBaseT<std::string>
+{
+	OptionalStringOption(LPCSTR name) : OptionBaseT(name, std::string())
+	{
+	}
+
+	void Load() override
+	{
+		V = DefaultValue;
+		options::PeekSetting(Name, V);
+	}
+
+	void Save() const override
+	{
+		if (V.empty())
+			options::EraseSetting(Name);
+		else
+			options::SetSetting(Name, V);
+	}
+};
+
 struct ControlOption : OptionBase
 {
 	const Msg Description;
@@ -289,4 +314,5 @@ struct optionsStruct
 	StringOption FontFileName;
 	StringOption Language;
 	BoolOption HideCursor;
+	OptionalStringOption Table; // catalogue id of the table to start (tables.h); empty = historic order
 };

@@ -1,0 +1,17 @@
+# DRAGON loads with DragonRules, links every tag, NewGame runs table_control_handler, a ball is launched.
+# Expected values are literals from the port listing (table_control_handler NewGame case): ball save 3,
+# jackpot 1,000,000, super jackpot 2,500,000. The mode is 10: NewGame (Mode10LaunchBallController) starts in mode 10
+# with the ball on the plunger; Wine's first sample after NewGame is mode 10 too.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+30 expect ball_save == 3
+30 expect mode == 10
+30 expect jackpot == 1000000
+30 expect super_jackpot == 2500000
+200 key down plunger
+300 key up plunger
+800 dump after_launch
+800 quit

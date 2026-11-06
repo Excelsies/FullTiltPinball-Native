@@ -1,0 +1,214 @@
+{
+ "name": "ft_two_player",
+ "description": "Options > Select Players > 2 Players by keyboard (alt+o, p, 2), New Game, then four balls (P1, P2, P1, P2) plunged with no flipper input; on P1's first ball the NMAX cheat is typed 4 s after the plunge (starts the selected quest/mode if the table is in idle mode 2; the x key is also a nudge).",
+ "steps": [
+  {
+   "wait": 3.0
+  },
+  {
+   "tap": "alt+o"
+  },
+  {
+   "wait": 0.7
+  },
+  {
+   "rootshot": "00_menu_options"
+  },
+  {
+   "tap": "p"
+  },
+  {
+   "wait": 0.7
+  },
+  {
+   "rootshot": "01_menu_players"
+  },
+  {
+   "tap": "2"
+  },
+  {
+   "wait": 0.7
+  },
+  {
+   "rootshot": "02_menu_closed"
+  },
+  {
+   "tap": "new_game"
+  },
+  {
+   "wait": 2.0
+  },
+  {
+   "shot": "03_new_game",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "new_game"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 4.0
+  },
+  {
+   "peek": "p1b1_before_cheat"
+  },
+  {
+   "tap": "n",
+   "hold": 0.08
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "m",
+   "hold": 0.08
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "a",
+   "hold": 0.08
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "x",
+   "hold": 0.08
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "shot": "p1b1_a",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p1b1_after"
+  },
+  {
+   "burst": "p1b1",
+   "count": 26,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p1b1_end"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 4.0
+  },
+  {
+   "peek": "p2b1_before_cheat"
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "shot": "p2b1_a",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p2b1_after"
+  },
+  {
+   "burst": "p2b1",
+   "count": 26,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p2b1_end"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 4.0
+  },
+  {
+   "peek": "p1b2_before_cheat"
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "shot": "p1b2_a",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p1b2_after"
+  },
+  {
+   "burst": "p1b2",
+   "count": 26,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p1b2_end"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 4.0
+  },
+  {
+   "peek": "p2b2_before_cheat"
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "shot": "p2b2_a",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p2b2_after"
+  },
+  {
+   "burst": "p2b2",
+   "count": 26,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "p2b2_end"
+  }
+ ]
+}

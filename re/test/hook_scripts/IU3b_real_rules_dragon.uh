@@ -1,0 +1,47 @@
+# Engine checks against the real DragonRules: the score multiplier factor, the per-player super jackpot value and
+# the cheat key byte. Expected values are literals from the rule specs / sibling scripts, never recomputed here.
+# Multiplier (Rules set: ScoreMultiplier is the factor): NewGame leaves 1; s_oneway5 step 1 is 25,000 (D-CORE dc_superjackpot.uh), step 2 is
+#   75,000. The real WellSinkControl (mode 8, state 1; D-SHOP shop_well_s1.uh) writes the factor 5, so step 2 scores 75,000 x 5 = 375,000
+#   (a value the rules write directly, not an index into Space Cadet's 5-entry table), while AddSuperJackpot (+200,000 per hit) is not multiplied.
+# Super jackpot: per-player save / restore across SwitchToNextPlayer (player 2 starts at 20,000, dm_two.uh M3;
+#   player 1 keeps 2,500,000 + 2 x 200,000, player 2 220,000 after one hit). The AddScore accumulate branch (flag on, cap 20,000,000
+#   by AddScore) is not reachable here: Dragon never sets the flag; only IU3b_rules_dragon.uh's stub rules do.
+# Key byte: `type 1MAX` reaches DragonRules::BackdoorKey (extra ball, text 3011), the same VK path as D-G1/d_1max.uh.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch super_jackpot
+init option Players 2
+2 key down new_game
+3 key up new_game
+20 expect multiplier == 1
+20 expect super_jackpot == 2500000
+50 poke info_text_box message_field 2
+60 event s_oneway5 ControlCollision
+63 expect n_score == 25000 delta 59
+63 expect super_jackpot == 200000 delta 59
+100 poke info_text_box message_field 8
+101 poke a_sink4 message_field 1
+105 event a_sink4 ControlCollision
+106 expect multiplier == 5
+110 poke info_text_box message_field 2
+120 event s_oneway5 ControlCollision
+123 expect n_score == 375000 delta 119
+123 expect super_jackpot == 200000 delta 119
+130 msg table SwitchToNextPlayer 0
+140 expect current_player == 1
+140 expect super_jackpot == 20000
+150 poke info_text_box message_field 2
+160 event s_oneway5 ControlCollision
+163 expect super_jackpot == 200000 delta 159
+170 msg table SwitchToNextPlayer 0
+180 expect current_player == 0
+180 expect super_jackpot == 2900000
+190 msg table SwitchToNextPlayer 0
+200 expect current_player == 1
+200 expect super_jackpot == 220000
+210 type 1MAX
+250 expect extra_balls == 1
+213 expect text info_text_box display id 3011
+300 quit

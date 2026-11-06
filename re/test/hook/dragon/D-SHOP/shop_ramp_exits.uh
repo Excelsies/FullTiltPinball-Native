@@ -1,0 +1,33 @@
+# Ramp exits (0x426be0 / 0x426c20), s_rexit19 (2 eggs, gates a_dvtrca/a_dvtrcb) and s_rexit18 (1 egg, gates a_dvtrba/a_dvtrbb):
+# mode 2 enables the first gate and disables the second; any other mode leaves the gates alone.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_dvtrca.active a_dvtrcb.active a_dvtrba.active a_dvtrbb.active v_lite80.light_on v_lite81.light_on v_lite82.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+201 poke a_dvtrca active 0
+201 poke a_dvtrcb active 1
+201 poke a_dvtrba active 0
+201 poke a_dvtrbb active 1
+205 event s_rexit19 ControlBallToLayer1
+206 expect a_dvtrca.active == 1
+206 expect a_dvtrcb.active == 0
+206 expect a_dvtrba.active == 0
+206 expect a_dvtrbb.active == 1
+210 event s_rexit18 ControlBallToLayer1
+211 expect a_dvtrba.active == 1
+211 expect a_dvtrbb.active == 0
+220 poke info_text_box message_field 7
+221 poke a_dvtrca active 0
+221 poke a_dvtrcb active 1
+221 poke a_dvtrba active 0
+221 poke a_dvtrbb active 1
+225 event s_rexit19 ControlBallToLayer1
+226 expect a_dvtrca.active == 0
+226 expect a_dvtrcb.active == 1
+230 event s_rexit18 ControlBallToLayer1
+231 expect a_dvtrba.active == 0
+231 expect a_dvtrbb.active == 1
+260 quit

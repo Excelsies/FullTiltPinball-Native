@@ -1,0 +1,25 @@
+# Further mode 9 globals: jaw 0x439b18 -> dm_leak_D-SLAY_jaw.uh, fire 0x439b0c -> dm_leak_D-SLAY_fire.uh, each with a negative control *_ctl.uh.
+# Mode 9 time 0x434cf8 is not reset per ball or per player (listing: Mode9Time written only by the
+# ControlMissionComplete intro, read by ControlModeResume as Mode9Time / 2). Player 1: items lit -> Mode9Time = 50.
+# Switch to player 2 (info_text_box.message_field set to mode 9 there), ControlModeResume: the mode timer is armed with
+# 50 / 2 = 25 s, the value carried over from player 1 (not 30 / 2 = 15 s). The timer expiry leaves mode 9 25 s later:
+# mode still 9 at frame 2000 (15 s would have expired at 1820), left by 2900 (320 + 2500 = 2820).
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+10 key down new_game
+11 key up new_game
+148 poke v_lite37 light_on 1
+148 poke v_lite38 light_on 1
+148 poke v_lite39 light_on 1
+149 poke v_lite32 light_on 1
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+300 msg table SwitchToNextPlayer 0
+310 poke info_text_box message_field 9
+320 event info_text_box ControlModeResume
+# listing: ControlModeResume arms mode_timer with Mode9Time / 2
+2000 expect mode == 9
+2900 expect mode != 9
+3000 quit

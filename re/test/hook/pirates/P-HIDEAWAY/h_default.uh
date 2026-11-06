@@ -1,0 +1,28 @@
+# H-1: a hideaway sink hit outside modes 2/5/6/8/11 scores 40,000 (ScorePart 0),
+# shows string 3002, draws exactly once (HideawayExit: RandIndex(3)); the engine itself draws 2 per frame from the shared stream, so the one-frame window of the event expects 2 + rule draws
+# and flashes the sink light (v_lite519, listing 3459).
+# Sound: HideawaySinkControl plays tabb11 (id 10). The id is read from sounds.jsonl (info field) after the global-to-tag mapping of the
+# PIRATES.EXE disassembly; it is not resolved independently from the DAT.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite519.flasher_on v_lite521.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 4
+220 event a_sink17 ControlCollision
+220 expect n_rand_draws == 3 delta 219
+221 expect n_score == 40000 delta 219
+220 expect text info_text_box display id 3002
+220 expect sound 10
+221 expect v_lite519.flasher_on == 1
+232 event a_sink15 ControlCollision
+232 expect n_rand_draws == 3 delta 231
+232 expect sound 10
+233 expect n_score == 40000 delta 231
+244 event a_sink14 ControlCollision
+244 expect n_rand_draws == 3 delta 243
+244 expect sound 10
+245 expect n_score == 40000 delta 243
+245 expect v_lite521.flasher_on == 1
+250 quit

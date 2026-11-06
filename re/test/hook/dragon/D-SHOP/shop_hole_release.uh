@@ -1,0 +1,18 @@
+# HoleControl ControlBallReleased (0x426ee0): tabc34 only in mode 2 with the hole's field 0; field 1 or another mode: no sound.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+201 poke s_hole118 message_field 0
+205 event s_hole118 ControlBallReleased
+205-205 expect sound 32
+210 poke s_hole118 message_field 1
+215 event s_hole118 ControlBallReleased
+215-215 expect none sound 32
+220 poke s_hole118 message_field 0
+221 poke info_text_box message_field 7
+225 event s_hole118 ControlBallReleased
+225-225 expect none sound 32
+260 quit

@@ -1,0 +1,13 @@
+# TLightSweeps: a sweep (DRAGON state 3) is stopped by SetTiltLock at the frame of its 5th ring.
+# Expectation: Reset stops the sweep (part_1038.md 5.1): timer == 0 from that frame, no later new
+# rising edge of *.override (checked by re/test/u16c_sweep_check.py --tilt-frame 30).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch *.override light_sweeps.radius light_sweeps.repeats_left light_sweeps.timer
+10 msg light_sweeps ft:0x1b@TLightSweeps 3
+30 msg light_sweeps SetTiltLock 0
+30 expect light_sweeps.timer == 0
+60 expect light_sweeps.timer == 0
+150 expect light_sweeps.timer == 0
+200 quit

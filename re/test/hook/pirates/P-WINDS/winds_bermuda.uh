@@ -1,0 +1,22 @@
+# Check winds_bermuda; sound ids = DAT sound order offset 4 (tabb12=11, tabb43=29, tabb44=30); scores from acceptance_pirates.md rows WINDS / island lanes
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+init watch v_lite600.light_on v_lite608.flasher_on v_lite608.light_on v_lite603.flasher_on
+140 poke info_text_box message_field 5
+160 event a_roll2 ControlCollision
+161 expect n_score == 50000
+160-161 expect sound 11
+170 msg v_lite622 TLightFlasherStartTimed -1.0
+180 event a_roll2 ControlCollision
+181 expect n_score == 175000
+180-181 expect text info_text_box display id 3003
+181 expect v_lite600.light_on == 1
+181 expect v_lite608.flasher_on == 1
+190 event a_roll2 ControlCollision
+191 expect n_score == 425000
+191 expect v_lite608.light_on == 1
+191 expect v_lite603.flasher_on == 1
+260 quit

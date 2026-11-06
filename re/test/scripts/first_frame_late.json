@@ -1,0 +1,16 @@
+{
+  "name": "first_frame_late",
+  "description": "first_frame with a LATE plunger press: new game at 3.2 s, plunger pressed 10.0 s later when the fed ball rests on the launcher (the early press of first_frame.json lands while the ball still bounces, which launches it in about 10 of 12 Wine runs and 0 of 7 native runs: statistics of diag P-ball-launched, not measured by this unit; ball motion, not rules). Markers loaded and new_game are those of first_frame.json (same times); ball_launched_late replaces ball_launched.",
+  "steps": [
+    {"wait": 3.0},
+    {"shot": "loaded", "crops": ["score", "panel"]},
+    {"wait": 0.2},
+    {"tap": "new_game"},
+    {"wait": 2.0},
+    {"shot": "new_game", "crops": ["score", "panel"]},
+    {"wait": 8.0},
+    {"tap": "plunger", "hold": 1.0},
+    {"wait": 1.5},
+    {"shot": "ball_launched_late", "crops": ["score", "panel"]}
+  ]
+}

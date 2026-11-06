@@ -1,0 +1,37 @@
+# M1 (listing 5380-5673, FT 0x42a470..0x42a740): MagnetControl1-6 on ControlCollision: sound, light v_lite56x
+# ResetAndTurnOff 2.0, magnet disabled (FtPartDisable: ActiveFlag 0), ScoreValue(caller, 100000), string 3003 with the added
+# score, 2.0 s. Each magnet scores 100,000 once.
+init fixed_dt 10
+init seed 1
+init watch s_magnet1.active s_magnet2.active s_magnet3.active s_magnet4.active s_magnet5.active s_magnet6.active
+10 key down new_game
+11 key up new_game
+200 event s_magnet1 ControlCollision
+200 expect n_score == 100000 delta 199
+200 expect text info_text_box display id 3003
+200 expect sound 59
+200 expect s_magnet1.active == 0
+210 event s_magnet2 ControlCollision
+210 expect sound 59
+210 expect n_score == 100000 delta 209
+210 expect s_magnet2.active == 0
+220 event s_magnet3 ControlCollision
+220 expect sound 59
+220 expect n_score == 100000 delta 219
+220 expect s_magnet3.active == 0
+230 event s_magnet4 ControlCollision
+230 expect sound 59
+230 expect n_score == 100000 delta 229
+230 expect s_magnet4.active == 0
+240 event s_magnet5 ControlCollision
+240 expect sound 59
+240 expect n_score == 100000 delta 239
+240 expect s_magnet5.active == 0
+250 event s_magnet6 ControlCollision
+250 expect sound 59
+250 expect n_score == 100000 delta 249
+250 expect s_magnet6.active == 0
+# other codes do nothing
+260 event s_magnet1 ControlTimerExpired
+260 expect n_score == 0 delta 259
+300 quit

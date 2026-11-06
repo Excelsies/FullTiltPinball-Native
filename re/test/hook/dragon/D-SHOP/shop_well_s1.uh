@@ -1,0 +1,21 @@
+# WellSinkControl mode 8 state 1: ScoreMultiplier 5, v_lite33..36 lit, text 3045 (2 s) then 3039+next state (4 s); next state in {0,2,3,4}; one RandIndex(4) draw.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_sink4.message_field multiplier v_lite33.flasher_on v_lite34.flasher_on v_lite35.flasher_on v_lite36.flasher_on n_rand_draws
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 8
+201 poke a_sink4 message_field 1
+205 event a_sink4 ControlCollision
+206 expect multiplier == 5
+206 expect v_lite33.flasher_on == 1
+206 expect v_lite34.flasher_on == 1
+206 expect v_lite35.flasher_on == 1
+206 expect v_lite36.flasher_on == 1
+206 expect a_sink4.message_field in 0 4
+206 expect a_sink4.message_field != 1
+205 expect n_rand_draws == 2 delta 204
+205 expect text info_text_box display id 3045
+205 expect text info_text_box display id 3039
+260 quit

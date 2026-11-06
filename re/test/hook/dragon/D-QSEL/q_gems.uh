@@ -1,0 +1,53 @@
+# GemCollected (listing 4429-4445, FT 0x428a20) through the real mode-4 caller (Mode4Controller,
+# dragon_quest_modes.cpp:Mode4Collision / ControlBallToLayer2). In the original each of the nine gems has
+# its own bit, in v_lite88.message_field: bumper 1, a_spot4 2, a_spot3 4, a_ramp6 8 (ControlBallToLayer2), a_spot10 0x10,
+# a_sink1 0x20, s_oneway5 0x40, a_ramp103 0x80 (ControlBallToLayer2), a_accl1 0x100. Each gem but the last plays tabc47wave
+# (sound index 40) and adds its gem score (the a_sink1 gem also its sink ScorePart, +5,000); the ninth gem (0x1ff) gives the
+# extra ball (tabc21wave, 27) and no tabc47 sound.
+# Sound ids (loader sound_list index) resolved from DRAGON.DAT: `re/dat_dump.py sounds` lists the A_SOUND records; the
+# index used by the engine is the listed position minus 4 (cross-checked with D-CORE's tabc21wave = 27, tabc61wave = 49).
+# tabc13wave = 8 (tabc13.wav), tabc16wave = 11 (tabc16.wav), tabc47wave = 40 (tabc47.wav), tabc96wave = 50 (tabc96.wav).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite88.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 4
+210 event a_bump1 ControlCollision
+210-211 expect sound 40
+211 expect v_lite88.message_field == 1
+211 expect n_score == 10000 delta 209
+220 event a_spot4 ControlCollision
+220-221 expect sound 40
+221 expect v_lite88.message_field == 3
+221 expect n_score == 50000 delta 219
+230 event a_spot3 ControlCollision
+230-231 expect sound 40
+231 expect v_lite88.message_field == 7
+231 expect n_score == 60000 delta 229
+240 event a_ramp6 ControlBallToLayer2
+240-241 expect sound 40
+241 expect v_lite88.message_field == 15
+241 expect n_score == 200000 delta 239
+250 event a_spot10 ControlCollision
+250-251 expect sound 40
+251 expect v_lite88.message_field == 31
+251 expect n_score == 70000 delta 249
+260 event a_sink1 ControlCollision
+260-261 expect sound 40
+261 expect v_lite88.message_field == 63
+261 expect n_score == 105000 delta 259   # 100,000 gem + 5,000 the sink's own ScorePart (LizardSink, dragon_quests.cpp:158)
+270 event s_oneway5 ControlCollision
+270-271 expect sound 40
+271 expect v_lite88.message_field == 127
+280 event a_ramp103 ControlBallToLayer2
+280-281 expect sound 40
+281 expect v_lite88.message_field == 255
+281 expect n_score == 250000 delta 279
+290 event a_accl1 ControlCollision
+290-291 expect none sound 40   # 0x1ff: extra ball, no tabc47 Play
+290-291 expect sound 27   # table_add_extra_ball plays tabc21wave (dragon_core.cpp, 0x4231e0)
+291 expect v_lite88.message_field == 511
+291 expect n_score == 100000 delta 289
+300 quit

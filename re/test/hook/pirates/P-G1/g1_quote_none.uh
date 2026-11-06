@@ -1,0 +1,12 @@
+# QUOTE cheat, variant none (no QUOTE: control). tools/check_quote.py compares the shots of the three variants.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 type hidden\ttest
+260 shot b_quote
+330 shot c_after_z
+520 shot d_late
+700 shot e_later
+760 quit

@@ -21,11 +21,11 @@ public:
 	int RampPlaneCount;
 	float BallFieldMult;
 	ramp_plane_type* RampPlane;
-	TEdgeSegment* Line2;
-	TEdgeSegment* Line3;
-	TEdgeSegment* Line1;
-	int Wall1CollisionGroup;
-	int Wall2CollisionGroup;
-	float Wall1BallOffset;
-	float Wall2BallOffset;
+	TEdgeSegment* Line2{};
+	TEdgeSegment* Line3{};
+	TEdgeSegment* Line1{};
+	int Wall1CollisionGroup{};
+	int Wall2CollisionGroup{};
+	float Wall1BallOffset{};
+	float Wall2BallOffset{};
 };

@@ -1,0 +1,18 @@
+# WindowRolloverControl (0x427860): each of v_wlite96..99 scores ScorePart(.., 0) = 1,500.
+# A game starts in mode 10 (Mode10LaunchBallController, dragon_ball.cpp:239-320); the first collision of any part ends
+# the skill shot: ScoreValue(nullptr, 15000) (dragon_ball.cpp:319) and mode 10 -> 2, then the rollover's own 1,500 is
+# scored. So the first hit adds 16,500; hits 2-4 are 1,500.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 event v_wlite96 ControlCollision
+110 event v_wlite97 ControlCollision
+120 event v_wlite98 ControlCollision
+130 event v_wlite99 ControlCollision
+100 expect n_score == 16500 delta 99
+101 expect mode == 2
+110 expect n_score == 1500 delta 109
+120 expect n_score == 1500 delta 119
+130 expect n_score == 1500 delta 129
+150 quit

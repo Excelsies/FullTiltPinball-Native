@@ -7,6 +7,7 @@
 #include "render.h"
 #include "timer.h"
 #include "TPinballTable.h"
+#include "pb.h"
 
 TLight::TLight(TPinballTable* table, int groupIndex) : TPinballComponent(table, groupIndex, true)
 {
@@ -27,10 +28,17 @@ int TLight::Message(MessageCode code, float value)
 {
 	int bmpIndex;
 
+	// FT 0x40a490 entry: an inactive light answers only Reset and PlayerChanged. Reset() sets ActiveFlag
+	// (below), and no Space Cadet code clears it on a light, so the gate never fires there.
+	if (!ActiveFlag && code != MessageCode::Reset && code != MessageCode::PlayerChanged)
+		return 0;
+
 	switch (code)
 	{
 	case MessageCode::Reset:
 		Reset();
+		if (pb::IsFullTiltTable())
+			ResetPlayerState(); // FT 0x413550
 		for (auto index = 0; index < PinballTable->PlayerCount; ++index)
 		{
 			auto playerPtr = &PlayerData[index];
@@ -41,6 +49,39 @@ int TLight::Message(MessageCode code, float value)
 		}
 		break;
 	case MessageCode::PlayerChanged:
+		if (pb::IsFullTiltTable())
+		{
+			// FT 0x40a490 case 0x3fe: stop the timers before saving, then restore through ResetTimed.
+			const auto current = PinballTable->CurrentPlayer;
+			if (TimeoutTimer)
+			{
+				timer::kill(TimeoutTimer);
+				FlasherOnFlag = false;
+			}
+			TimeoutTimer = 0;
+			if (FlashTimer)
+				timer::kill(FlashTimer);
+			FlashTimer = 0;
+			if (TurnOffAfterFlashingFg)
+				LightOnFlag = false;
+			auto savePtr = &PlayerData[current];
+			savePtr->FlasherOnFlag = FlasherOnFlag;
+			savePtr->LightOnBmpIndex = LightOnBmpIndex;
+			savePtr->LightOnFlag = LightOnFlag;
+			SwapPlayerState(value); // FT 0x413570
+			Reset();
+
+			auto restorePtr = &PlayerData[static_cast<int>(floor(value))];
+			FlasherOnFlag = restorePtr->FlasherOnFlag;
+			LightOnBmpIndex = restorePtr->LightOnBmpIndex;
+			LightOnFlag = restorePtr->LightOnFlag;
+			if (LightOnBmpIndex)
+				Message(MessageCode::TLightSetOnStateBmpIndex, static_cast<float>(LightOnBmpIndex));
+			Message(MessageCode::TLightResetTimed, 0.0);
+			if (FlasherOnFlag)
+				Message(MessageCode::TLightFlasherStart, 0.0);
+			break;
+		}
 		{
 			auto playerPtr = &PlayerData[PinballTable->CurrentPlayer];
 			playerPtr->FlasherOnFlag = FlasherOnFlag;
@@ -184,17 +225,12 @@ int TLight::Message(MessageCode code, float value)
 		SetSpriteBmp(BmpArr[LightOnFlag]);
 		break;
 	case MessageCode::TLightFlasherStartTimedThenStayOn:
+		// FT 0x40a490 case 0xf leaves UndoOverrideTimer running
 		TurnOffAfterFlashingFg = false;
-		if (UndoOverrideTimer)
-			timer::kill(UndoOverrideTimer);
-		UndoOverrideTimer = 0;
 		Message(MessageCode::TLightTurnOn, 0.0);
 		Message(MessageCode::TLightFlasherStartTimed, value);
 		break;
 	case MessageCode::TLightFlasherStartTimedThenStayOff:
-		if (UndoOverrideTimer)
-			timer::kill(UndoOverrideTimer);
-		UndoOverrideTimer = 0;
 		Message(MessageCode::TLightFlasherStartTimed, value);
 		TurnOffAfterFlashingFg = true;
 		break;
@@ -229,9 +265,9 @@ int TLight::Message(MessageCode code, float value)
 		if (UndoOverrideTimer)
 			timer::kill(UndoOverrideTimer);
 		UndoOverrideTimer = 0;
+		TemporaryOverrideFlag = true; // FT sets the flag whatever the value
 		if (value > 0)
 		{
-			TemporaryOverrideFlag = true;
 			UndoOverrideTimer = timer::set(value, this, UndoTmpOverride);
 		}
 		break;
@@ -251,6 +287,7 @@ int TLight::Message(MessageCode code, float value)
 
 void TLight::Reset()
 {
+	ActiveFlag = 1; // FT 0x40a310; pairs with the inactive-light gate at the top of Message
 	if (TimeoutTimer)
 		timer::kill(TimeoutTimer);
 	if (UndoOverrideTimer)
@@ -270,7 +307,8 @@ void TLight::Reset()
 	BmpArr[0] = -1;
 	BmpArr[1] = 0;
 	SetSpriteBmp(BmpArr[0]);
-	MessageField = 0;
+	if (!pb::IsFullTiltTable())
+		MessageField = 0; // FT Reset leaves +6 alone; PlayerChanged swaps it, Message(Reset) clears it
 }
 
 void TLight::schedule_timeout(float time)

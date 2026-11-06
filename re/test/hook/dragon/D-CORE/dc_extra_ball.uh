@@ -1,0 +1,11 @@
+# table_add_extra_ball via the 1MAX cheat: extra ball, text 3011, sound tabc21wave (loader sound index from a native run).
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+30 type 1MAX
+70 expect extra_balls == 1
+30-70 expect text info_text_box display id 3011
+30-70 expect sound 27
+80 quit

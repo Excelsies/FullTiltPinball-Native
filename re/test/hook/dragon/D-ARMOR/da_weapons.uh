@@ -1,0 +1,85 @@
+# AwardNextWeapon (FT 0x423330; listing lines 444-484) through its real caller: BumperControl
+# (0x424bc0, dragon_playfield.cpp:183) counts contacts of a_bump1..4 in a_bump1.message_field and calls
+# AwardNextWeapon() on the 10th, so each award is driven by 10 a_bump1 ControlCollision events (the same events the
+# physics sends).
+# Each contact scores the bumper's 1,500 times the multiplier in force (ScorePart); the 10th contact scores first, then
+# AwardNextWeapon lights the next of v_lite33..36, sets ScoreMultiplier 2..5 and adds 25000/35000/45000/55000 through
+# SpecialAddScore (multiplier-free); the fifth award (all lit) only plays the sound: no multiplier change, no award score.
+# Per-round delta = 10 x 1500 x multiplier-before + award: 15000+25000, 30000+35000, 45000+45000, 60000+55000, 75000+0.
+# Round 1 also carries +15000: the first contact after a new game arrives in mode 10 (waiting for the launch to end), where
+# Mode10LaunchBallController (dragon_ball.cpp:319) scores 15000 and moves to mode 2 before the contact is counted.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite33.flasher_on v_lite33.light_on v_lite34.light_on v_lite35.light_on v_lite36.light_on
+10 key down new_game
+11 key up new_game
+200 event a_bump1 ControlCollision
+201 event a_bump1 ControlCollision
+202 event a_bump1 ControlCollision
+203 event a_bump1 ControlCollision
+204 event a_bump1 ControlCollision
+205 event a_bump1 ControlCollision
+206 event a_bump1 ControlCollision
+207 event a_bump1 ControlCollision
+208 event a_bump1 ControlCollision
+209 event a_bump1 ControlCollision
+211 expect multiplier == 2
+211 expect n_score == 55000 delta 199
+211 expect v_lite33.flasher_on == 1
+350 expect v_lite33.light_on == 1
+350 expect v_lite34.light_on == 0
+400 event a_bump1 ControlCollision
+401 event a_bump1 ControlCollision
+402 event a_bump1 ControlCollision
+403 event a_bump1 ControlCollision
+404 event a_bump1 ControlCollision
+405 event a_bump1 ControlCollision
+406 event a_bump1 ControlCollision
+407 event a_bump1 ControlCollision
+408 event a_bump1 ControlCollision
+409 event a_bump1 ControlCollision
+411 expect multiplier == 3
+411 expect n_score == 65000 delta 399
+550 expect v_lite34.light_on == 1
+550 expect v_lite35.light_on == 0
+600 event a_bump1 ControlCollision
+601 event a_bump1 ControlCollision
+602 event a_bump1 ControlCollision
+603 event a_bump1 ControlCollision
+604 event a_bump1 ControlCollision
+605 event a_bump1 ControlCollision
+606 event a_bump1 ControlCollision
+607 event a_bump1 ControlCollision
+608 event a_bump1 ControlCollision
+609 event a_bump1 ControlCollision
+611 expect multiplier == 4
+611 expect n_score == 90000 delta 599
+750 expect v_lite35.light_on == 1
+750 expect v_lite36.light_on == 0
+800 event a_bump1 ControlCollision
+801 event a_bump1 ControlCollision
+802 event a_bump1 ControlCollision
+803 event a_bump1 ControlCollision
+804 event a_bump1 ControlCollision
+805 event a_bump1 ControlCollision
+806 event a_bump1 ControlCollision
+807 event a_bump1 ControlCollision
+808 event a_bump1 ControlCollision
+809 event a_bump1 ControlCollision
+811 expect multiplier == 5
+811 expect n_score == 115000 delta 799
+950 expect v_lite36.light_on == 1
+1000 event a_bump1 ControlCollision
+1001 event a_bump1 ControlCollision
+1002 event a_bump1 ControlCollision
+1003 event a_bump1 ControlCollision
+1004 event a_bump1 ControlCollision
+1005 event a_bump1 ControlCollision
+1006 event a_bump1 ControlCollision
+1007 event a_bump1 ControlCollision
+1008 event a_bump1 ControlCollision
+1009 event a_bump1 ControlCollision
+1011 expect multiplier == 5
+1011 expect n_score == 75000 delta 999
+1200 quit

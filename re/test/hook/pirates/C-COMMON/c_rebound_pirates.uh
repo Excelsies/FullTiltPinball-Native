@@ -1,0 +1,9 @@
+# Rebounder a_rebo1 scores 350 (RebounderControl1 -> Rebound, ft_common.cpp 189).
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 event a_rebo1 ControlCollision
+200 expect n_score == 350 delta 199
+210 expect n_score == 350 delta 199
+250 quit

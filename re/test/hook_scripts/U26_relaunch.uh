@@ -1,0 +1,34 @@
+# PIRATES, part_1034 3.2 and 3.3: PlungerRelaunchBall after a ball was in play and drained.
+# New game, a ball is in play, a test ball placed in the drain wall drains it. The new game lights the ball save
+# (PlungerControl StartFeedTimer, pirates_ball.cpp:114-129, ball_save 3), so the drain is a saved drain: BallDrainControl
+# (pirates_ball.cpp:141-203; saved path :160-172, drain_state 3) itself sends PlungerRelaunchBall 0.96 s later (the
+# ControlTimerExpired branch, :145-155). Drain at 126; the feed comes 95 frames after the drain (ball at 221, first
+# contact 285). The relaunch branch of TPlunger kicks at MaxPullback
+# regardless of Boost (ball speed 114.5 after the kick at tick 285, clamped to 0.37 x 200 = 74 on the next tick); the launcher flag leaves
+# PullbackIncrement at 0, so Boost never grows from the pull-back chain. No poke: nothing here sets a precondition.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch s_launcher1.boost s_launcher1.pullback_started
+10 key down new_game
+11 key up new_game
+120 place 0 0 15.6 0.37 0 1 5 0x1
+# the placed captive ball (U29_captive.uh) stays (n_placed_balls 1), so the counts are one higher than without it
+160 expect n_placed_balls == 1
+# the saved drain at frame 126 (observed, a = b) removes the test ball and arms the relaunch
+160 expect n_active_balls == 1
+160 expect drain_state == 3
+160 expect ball_save == 3
+160 expect s_launcher1.boost == 0
+160 expect s_launcher1.pullback_started == 1
+# 0.96 s after the drain the relaunch feeds a ball (frame 221)
+220 expect n_active_balls == 1
+221 expect n_active_balls == 2
+240 expect s_launcher1.boost == 0
+# first contact at tick 285 (observed): ball speed 114.5 after the kick, clamped to 0.37 x 200 = 74 on the next tick, with Boost still 0
+284 expect s_launcher1.boost == 0
+286 expect n_ball0_speed in 73.9 74.1
+300 expect s_launcher1.boost == 0
+300 expect n_active_balls == 2
+400 quit

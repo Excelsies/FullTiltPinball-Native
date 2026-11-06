@@ -1,0 +1,20 @@
+# CloseDragonJaw(0) (listing 952-985) on the mode_timer expiry path (ControlTimerExpired, Mode9Ramp == 0, frame 3700):
+# lights 113/114/115, s_bwal170 and a_ramp107 inactive, a_jaw back to frame 0.
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+700 event s_oneway2 ControlCollision
+3690 dump open v_lite113.active a_ramp107.active a_jaw.blocker_state
+3691 expect a_jaw.blocker_state == 7
+3900 dump closed v_lite113.active v_lite114.active v_lite115.active a_ramp107.active s_bwal170.active a_jaw.blocker_state
+3901 expect v_lite113.active == 0
+3901 expect v_lite114.active == 0
+3901 expect v_lite115.active == 0
+3901 expect a_ramp107.active == 0
+3901 expect s_bwal170.active == 0
+3901 expect a_jaw.blocker_state == 0
+4000 quit

@@ -24,11 +24,13 @@ struct score_msg_font_type
 class score
 {
 public:
-	static score_msg_font_type* msg_fontp;
+	// Message font slots: 0 = pbmsg_ft, 1 = font2 (Full Tilt tables). Space Cadet only ever uses slot 0.
+	static const int MsgFontCount = 2;
+	static score_msg_font_type* msg_fonts[MsgFontCount];
 	static int init();
 	static scoreStruct* create(LPCSTR fieldName, gdrv_bitmap8* renderBgBmp);
 	static scoreStruct* dup(scoreStruct* score, int scoreIndex);
-	static void load_msg_font(LPCSTR lpName);
+	static void load_msg_font(LPCSTR lpName, int slot = 0);
 	static void unload_msg_font();
 	static void erase(scoreStruct* score, int blitFlag);
 	static void set(scoreStruct* score, int value);

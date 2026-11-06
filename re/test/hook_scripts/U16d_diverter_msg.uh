@@ -1,0 +1,87 @@
+# TDiverter (1043) on DRAGON: enable/disable/FT codes, per-player active flag, start-up Reset, flash_time.
+# Expected values: part_1043.md 4.1-4.3 and 6.
+# The rules' NewGame (dragon_ball.cpp, the TGateEnable / TGateDisable block, run at the new game of frame 0 and
+# again at the F2 of frame 70) enables a_dvtraa, a_dvtrbb, a_dvtrcb and a_dvtrda and disables a_dvtrab, a_dvtrba,
+# a_dvtrca, a_dvtrdb, so the expects at 5 and 80 list that rules state (1 for aa, bb, cb, da; 0 for the rest), not the
+# engine-only Reset state (all off). The Reset check: only a_dvtrba (the one diverter with a non-zero saved flag for
+# player 1 before the Reset) discriminates the Reset at frame 91 / 93. a_dvtrbb is listed for the rules' state: its
+# 0 at frame 91 does NOT prove the Reset (player 1's saved bb flag was already 0 before the Reset; bb is never enabled
+# for player 1 earlier in the script) and its 1 at frame 93 only shows that player 0's own flag is restored.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init option Players 2
+init watch a_dvtraa.active a_dvtrab.active a_dvtrba.active a_dvtrbb.active a_dvtrca.active a_dvtrcb.active a_dvtrda.active a_dvtrdb.active a_dvtraa.flash_time a_dvtrab.flash_time a_dvtrba.flash_time a_dvtrbb.flash_time a_dvtrca.flash_time a_dvtrcb.flash_time a_dvtrda.flash_time a_dvtrdb.flash_time a_dvtrba.bitmap a_dvtrdb.bitmap a_dvtraa.bitmap
+5 expect a_dvtraa.active == 1
+5 expect a_dvtraa.flash_time ~= 0.1 0.000001
+5 expect a_dvtrab.active == 0
+5 expect a_dvtrab.flash_time ~= 0.1 0.000001
+5 expect a_dvtrba.active == 0
+5 expect a_dvtrba.flash_time ~= 0.1 0.000001
+5 expect a_dvtrbb.active == 1
+5 expect a_dvtrbb.flash_time ~= 0.1 0.000001
+5 expect a_dvtrca.active == 0
+5 expect a_dvtrca.flash_time ~= 0.1 0.000001
+5 expect a_dvtrcb.active == 1
+5 expect a_dvtrcb.flash_time ~= 0.1 0.000001
+5 expect a_dvtrda.active == 1
+5 expect a_dvtrda.flash_time ~= 0.1 0.000001
+5 expect a_dvtrdb.active == 0
+5 expect a_dvtrdb.flash_time ~= 0.1 0.000001
+10 msg a_dvtrba TGateEnable 0
+10 expect a_dvtrba.active == 1
+10 expect a_dvtrba.bitmap == 0
+20 msg a_dvtrba TGateDisable 0
+20 expect a_dvtrba.active == 0
+20 expect a_dvtrba.bitmap == -1
+30 msg a_dvtrba ft:0x4b@TDiverter 0
+30 expect a_dvtrba.active == 1
+30 expect a_dvtrba.bitmap == 0
+40 msg a_dvtrba ft:0x4c@TDiverter 0
+40 expect a_dvtrba.active == 0
+40 expect a_dvtrba.bitmap == -1
+# a part without bitmaps (a_dvtraa) toggles its flag only
+45 msg a_dvtraa TGateEnable 0
+45 expect a_dvtraa.active == 1
+45 expect a_dvtraa.bitmap == -1
+46 msg a_dvtraa TGateDisable 0
+46 expect a_dvtraa.active == 0
+# per-player flag through the table's own PlayerChanged broadcast (part_1043 4.1, 4.3)
+50 key down new_game
+51 key up new_game
+60 expect a_dvtrba.active == 0
+61 msg a_dvtrba TGateEnable 0
+61 expect a_dvtrba.active == 1
+62 msg table SwitchToNextPlayer 0
+63 expect current_player == 1
+63 expect a_dvtrba.active == 0
+63 expect a_dvtrba.bitmap == -1
+# player 1 gets its own saved flag: enable it there too, so the later new-game Reset has a non-zero saved flag to clear
+64 msg a_dvtrba TGateEnable 0
+65 expect a_dvtrba.active == 1
+66 msg table SwitchToNextPlayer 0
+67 expect current_player == 0
+67 expect a_dvtrba.active == 1
+67 expect a_dvtrba.bitmap == 0
+# a table Reset (new game) clears the saved per-player flags (the rules' NewGame then re-enables
+# aa, bb, cb, da on the active player, see the header): the switch to player 1 at frame 90 loads player 1's saved
+# a_dvtrba flag, which was 1 before the Reset, so a_dvtrba at frame 91 fails if Reset does not clear the saved
+# flags (a_dvtrbb at 91 does not discriminate: its saved flag was already 0)
+70 key down new_game
+71 key up new_game
+80 expect a_dvtraa.active == 1
+80 expect a_dvtrab.active == 0
+80 expect a_dvtrba.active == 0
+80 expect a_dvtrbb.active == 1
+80 expect a_dvtrca.active == 0
+80 expect a_dvtrcb.active == 1
+80 expect a_dvtrda.active == 1
+80 expect a_dvtrdb.active == 0
+90 msg table SwitchToNextPlayer 0
+91 expect a_dvtrba.active == 0
+91 expect a_dvtrbb.active == 0
+92 msg table SwitchToNextPlayer 0
+93 expect a_dvtrba.active == 0
+93 expect a_dvtrbb.active == 1
+100 quit

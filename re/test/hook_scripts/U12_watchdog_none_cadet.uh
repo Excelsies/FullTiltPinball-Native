@@ -1,0 +1,16 @@
+# Space Cadet has no demo watchdog: with a ball held mid-table and the demo running,
+# no flipper sound and no flipper-driven event in 505-515 and 1005-1015. Run: --table cadet.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down demo
+11 key up demo
+12 place 0 -2.0 0.0 0.37 1 0 0
+12 hold 0 on
+505 dump tick1_before
+515 dump tick1_after
+1005 dump tick2_before
+1015 dump tick2_after
+1005-1015 expect none sound
+505-515 expect none sound
+1600 quit

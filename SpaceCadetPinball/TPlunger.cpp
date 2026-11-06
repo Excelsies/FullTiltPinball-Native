@@ -11,8 +11,9 @@
 #include "timer.h"
 #include "TPinballTable.h"
 
-TPlunger::TPlunger(TPinballTable* table, int groupIndex) : TCollisionComponent(table, groupIndex, true)
+TPlunger::TPlunger(TPinballTable* table, int groupIndex, bool isLauncher) : TCollisionComponent(table, groupIndex, true)
 {
+	IsLauncher = isLauncher;
 	visualStruct visual{};
 
 	loader::query_visual(groupIndex, 0, &visual);
@@ -24,17 +25,22 @@ TPlunger::TPlunger(TPinballTable* table, int groupIndex) : TCollisionComponent(t
 	HardHitSoundId = visual.Kicker.HardHitSoundId;
 	Threshold = 1000000000.0;
 
-    // FT:MaxPullback = 50; 3DPB: MaxPullback = 100, PullbackIncrement is floored.
-    if (pb::FullTiltMode)
-    {
-        MaxPullback = 50;
-        PullbackIncrement = MaxPullback / (ListBitmap->size() * 8.0f);
-    }
-    else
-    {
-        MaxPullback = 100;
-        PullbackIncrement = std::floor(MaxPullback / (ListBitmap->size() * 8.0f));
-    }
+	// FT: MaxPullback = DAT attribute 402, default 50 (FT 0x418800). 3DPB: 100, increment floored.
+	// No bitmaps (Skulduggery's launcher): increment = MaxPullback instead of a ListBitmap null deref.
+	const bool hasBitmaps = ListBitmap && !ListBitmap->empty();
+	if (pb::FullTiltMode)
+	{
+		auto maxPullbackAttr = loader::query_float_attribute_opt(groupIndex, 0, 402);
+		MaxPullback = maxPullbackAttr ? *maxPullbackAttr : 50.0f;
+		PullbackIncrement = hasBitmaps ? MaxPullback / (ListBitmap->size() * 8.0f) : MaxPullback;
+		if (IsLauncher)
+			PullbackIncrement = 0.0f; // FT 0x418800 skips the increment for the launcher flag
+	}
+	else
+	{
+		MaxPullback = 100;
+		PullbackIncrement = hasBitmaps ? std::floor(MaxPullback / (ListBitmap->size() * 8.0f)) : MaxPullback;
+	}
 
 	Elasticity = 0.5f;
 	Smoothness = 0.5f;
@@ -69,6 +75,12 @@ int TPlunger::Message(MessageCode code, float value)
 		if (!PullbackStartedFlag && (!pb::FullTiltMode || PinballTable->MultiballCount > 0 && !PinballTable->
 			TiltLockFlag))
 		{
+			if (IsLauncher)
+			{
+				// FT 0x418950 case 0x3ec with the launcher flag: fire at once
+				Message(MessageCode::PlungerLaunchBall, 0.0f);
+				break;
+			}
 			PullbackStartedFlag = true;
 			Boost = 0.0;
 			Threshold = 1000000000.0;
@@ -106,9 +118,14 @@ int TPlunger::Message(MessageCode code, float value)
 		timer::set(value, this, BallFeedTimer);
 		loader::play_sound(SoundIndexP1, this, "TPlunger2_1");
 		PullbackStartedFlag = true;
-		PullbackTimer(0, this);
+		// FT arms the pull-back chain here too; with the launcher flag its increment is 0 and it would re-arm
+		// forever without changing Boost, so it is not armed
+		if (!IsLauncher)
+			PullbackTimer(0, this);
 		break;
 	case MessageCode::PlayerChanged:
+		if (pb::IsFullTiltTable())
+			SwapPlayerState(value); // FT 0x418950 case 0x3fe: swap first, then the resets
 		PullbackStartedFlag = false;
 		Boost = 0.0f;
 		Threshold = 1000000000.0f;
@@ -132,12 +149,17 @@ int TPlunger::Message(MessageCode code, float value)
 				timer::kill(PullbackTimer_);
 			PullbackTimer_ = 0;
 			loader::play_sound(SoundIndexP2, this, "TPlunger3");
-			SpriteSet(0);
-			timer::set(PullbackDelay, this, ReleasedTimer);
+			if (!IsLauncher)
+				SpriteSet(0);
+			// FT 0x418950: 0.2 s (0x3e4ccccd); also for Space Cadet on the Full Tilt data (CADET.EXE keeps the boost on
+			// for 0.2 s, which decides the early-press launch); 3D Pinball data keeps upstream's PullbackDelay
+			timer::set(pb::FullTiltMode ? 0.2f : PullbackDelay, this, ReleasedTimer);
 		}
 		break;
 	case MessageCode::Reset:
 	{
+		if (pb::IsFullTiltTable())
+			ResetPlayerState(); // FT case 0x402: base reset before the resets
 		PullbackStartedFlag = false;
 		Boost = 0.0f;
 		Threshold = 1000000000.0f;
@@ -147,7 +169,8 @@ int TPlunger::Message(MessageCode code, float value)
 		timer::kill(PullbackTimer);
 		timer::kill(ReleasedTimer);
 
-		SpriteSet(0);
+		if (!IsLauncher)
+			SpriteSet(0);
 		break;
 	}
 	default:
@@ -157,6 +180,18 @@ int TPlunger::Message(MessageCode code, float value)
 	control::handler(code, this);
 	return 0;
 }
+
+#ifdef FT_TEST_HOOK
+bool TPlunger::HookGet(const std::string& field, double& out) const
+{
+	if (field == "boost")
+	{
+		out = Boost;
+		return true;
+	}
+	return TCollisionComponent::HookGet(field, out);
+}
+#endif
 
 void TPlunger::BallFeedTimer(int timerId, void* caller)
 {
@@ -185,10 +220,14 @@ void TPlunger::PullbackTimer(int timerId, void* caller)
 		plunger->Boost = plunger->MaxPullback;
 	}
 
-	int index = static_cast<int>(floor(
-		static_cast<float>(plunger->ListBitmap->size() - 1) *
-		(plunger->Boost / plunger->MaxPullback)));
-	plunger->SpriteSet(index);
+	// FT guards the sprite update with ListBitmap != 0
+	if (plunger->ListBitmap)
+	{
+		int index = static_cast<int>(floor(
+			static_cast<float>(plunger->ListBitmap->size() - 1) *
+			(plunger->Boost / plunger->MaxPullback)));
+		plunger->SpriteSet(index);
+	}
 }
 
 void TPlunger::ReleasedTimer(int timerId, void* caller)

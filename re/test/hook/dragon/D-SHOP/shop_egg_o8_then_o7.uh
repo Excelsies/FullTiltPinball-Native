@@ -1,0 +1,34 @@
+# Offer 8 buy gives an extra ball (ExtraBalls 1); with 8 eggs again the next capture lowers the offer 8 -> 7 (ExtraBalls != 0): text for 7.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch extra_balls v_lite57.light_on s_hole118.message_field v_lite80.light_on v_lite87.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event s_rexit19 ControlBallToLayer1
+213 event s_rexit19 ControlBallToLayer1
+216 event s_rexit19 ControlBallToLayer1
+219 event s_rexit19 ControlBallToLayer1
+240 event s_hole118 ControlBallCaptured
+240 expect text info_text_box display id 3052
+260 key down left_flipper
+260 key up left_flipper
+262 expect extra_balls == 1
+265 expect mode == 2
+400 expect v_lite80.light_on == 0
+410 event s_rexit19 ControlBallToLayer1
+413 event s_rexit19 ControlBallToLayer1
+416 event s_rexit19 ControlBallToLayer1
+419 event s_rexit19 ControlBallToLayer1
+420 expect v_lite87.light_on == 1
+440 event s_hole118 ControlBallCaptured
+441 expect mode == 12
+440 expect text info_text_box display id 3053
+440 expect none text info_text_box display id 3052
+440-440 expect sound 31
+460 key down right_flipper
+460 key up right_flipper
+462 expect s_hole118.message_field == 0
+465 expect mode == 2
+500 quit

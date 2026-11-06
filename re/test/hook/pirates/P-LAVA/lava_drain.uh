@@ -1,0 +1,16 @@
+# L5 (listing 7102-7150): Mode12 on ControlBallDrained with MultiballCount == 1 ends mode 12: text cleared, mode 2
+# (MessageField = 2), SetLavaLights(1) clears the bank state a_spot11->MessageField, MissionControl(ControlMissionComplete).
+# Precondition: the plain new game has one ball in play (multiball == 1). Mode forced to 12 by poke; the bank state is seeded to 5.
+init fixed_dt 10
+init seed 1
+init watch a_spot11.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 12
+200 poke a_spot11 message_field 5
+200 expect multiball == 1
+210 event drain ControlBallDrained
+210 expect mode == 2
+210 expect a_spot11.message_field == 0
+210 expect text info_text_box clear
+260 quit

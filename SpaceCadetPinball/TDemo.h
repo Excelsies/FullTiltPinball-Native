@@ -16,6 +16,10 @@ public:
 	static void FlipRight(int timerId, void* caller);
 	static void FlipLeft(int timerId, void* caller);
 	static void NewGameRestartTimer(int timerId, void* caller);
+	// Full Tilt tables only (FT 0x417c40)
+	static void Watchdog(int timerId, void* caller);
+	static bool BallInsidePlunger(TBall* ball, TCollisionComponent* plunger);
+	static constexpr float WatchdogPeriod = 5.0f;
 
 	float FlipTimerTime1;
 	float FlipTimerTime2;
@@ -27,6 +31,7 @@ public:
 	int FlipRightTimer;
 	int PlungerFlag;
 	int RestartGameTimer;
+	vector2 SavedBallPosition;
 	TEdgeSegment* Edge1;
 	TEdgeSegment* Edge2;
 	TEdgeSegment* Edge3;

@@ -1,0 +1,15 @@
+# L2 (listing 3192-3225): one lava hit in mode 2 sets bit 1 and starts v_lite551's timed flasher that stays on
+# (TLightFlasherStartTimedThenStayOn, 1.0 s); the other three lights stay off.
+init fixed_dt 10
+init seed 1
+init watch a_spot11.message_field v_lite551.light_on v_lite550.light_on v_lite549.light_on v_lite548.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event a_spot11 ControlCollision
+210 expect a_spot11.message_field == 1
+330 expect v_lite551.light_on == 1
+330 expect v_lite550.light_on == 0
+330 expect v_lite549.light_on == 0
+330 expect v_lite548.light_on == 0
+340 quit

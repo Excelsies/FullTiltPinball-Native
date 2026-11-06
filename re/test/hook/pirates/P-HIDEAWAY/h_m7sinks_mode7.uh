@@ -1,0 +1,26 @@
+# H-5 (listing 3951-4034): in mode 7 a mode 7 sink whose light is dark scores nothing (sound tabb08 only) and
+# leaves the bit field alone; a sink whose light flashes (FlasherOnFlag) calls RandomMode7Award (pirates_modes_b.cpp).
+# Both release the held ball (ReleaseHoldSink, pirates_core.cpp).
+# Sound: the dark hit plays tabb08 (id 9; id read from sounds.jsonl after the disassembly global-to-tag mapping, not from the DAT).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite547.message_field v_lite547.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 7
+210 event a_sink6 ControlCollision
+211 expect n_score == 0 delta 209
+211 expect v_lite547.message_field == 0
+210 expect n_rand_draws == 2 delta 209
+210 expect none text info_text_box display id 3003
+210 expect sound 9
+220 poke info_text_box message_field 4
+230 event a_sink5 ControlCollision
+231 expect v_lite547.message_field == 1
+231 expect v_lite547.flasher_on == 1
+240 poke info_text_box message_field 7
+250 event a_sink5 ControlCollision
+# n_score after the lit hit is deliberately not asserted: RandomMode7Award awards a random prize.
+251 expect v_lite547.message_field == 1
+300 quit

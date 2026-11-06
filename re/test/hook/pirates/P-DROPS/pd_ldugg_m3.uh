@@ -1,0 +1,24 @@
+# LduggTargetBank in a non-special mode (default body). P1; the five LDUGG targets are hit in turn.
+# Expected: ScorePart index 0 = 3,000 per hit, index 1 (bank complete) = 25,000, bank reset.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop5.message_field v_lite1.message_field
+10 key down new_game
+11 key up new_game
+300 event a_drop5 ControlCollision
+310 event a_drop6 ControlCollision
+320 event a_drop7 ControlCollision
+330 event a_drop8 ControlCollision
+340 event a_drop9 ControlCollision
+350 dump end
+300 expect a_drop5.message_field == 1
+300 expect n_score == 3000 delta 299
+310 expect a_drop5.message_field == 3
+310 expect n_score == 3000 delta 309
+330 expect a_drop5.message_field == 15
+340 expect a_drop5.message_field == 0
+340 expect n_score == 25000 delta 339
+300 expect sound 15
+340 expect sound 17
+360 quit

@@ -1,0 +1,49 @@
+# LizardSinkBank in mode 2 starts the selected quest on the second sink hit (StartSelectedQuest 1024-1040);
+# CompleteQuest (935-951).
+# CompleteQuest is reached through its real caller, the end of the started quest: `event info_text_box
+# ControlModeEnd` runs Mode4Controller's ControlModeEnd (Mode4End, dragon_quest_modes.cpp:149-156), the
+# same event the mode-timer / drain paths send. CancelQuestSelection is checked by its real callers: q_sword (SwordTargetControl3,
+# a_spot28 shortcut) and D-BONUS/dq_bonus_clear.uh (bonus step 1: selected_quest and the v_lite72..75 flashers). The last block (CompleteQuest with nothing selected) uses two
+# poked preconditions (mode 4, a_kout2 = 0) because no real play path ends a quest with the selection already cancelled.
+# Sound ids (loader sound_list index) resolved from DRAGON.DAT: `re/dat_dump.py sounds` lists the A_SOUND records; the
+# index used by the engine is the listed position minus 4 (cross-checked with D-CORE's tabc21wave = 27, tabc61wave = 49).
+# tabc13wave = 8 (tabc13.wav), tabc16wave = 11 (tabc16.wav), tabc47wave = 40 (tabc47.wav), tabc96wave = 50 (tabc96.wav).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite63.message_field v_lite71.light_on v_lite71.flasher_on v_lite46.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 seed 1
+210 event a_spot27 ControlCollision
+210-211 expect sound 50
+211 expect selected_quest == 4
+# first sink hit: counter 1, +5,000, no start
+220 event a_sink1 ControlCollision
+220-221 expect sound 11   # first mode-2 hit
+221 expect v_lite63.message_field == 1
+221 expect n_score == 5000 delta 219
+221 expect mode == 2
+# second: counter back to 0, quest starts: mode = 4, ball_held 0
+230 event a_sink2 ControlCollision
+230-231 expect none sound 11   # second hit starts the quest, no Play
+231 expect v_lite63.message_field == 0
+231 expect n_score == 105000 delta 229   # 5,000 sink ScorePart + 100,000 of the real Mode4 start (ControlMissionComplete, dragon_quest_modes.cpp:268)
+231 expect mode == 4
+231 expect ball_held == 0
+231 expect selected_quest == 4
+# end of the started quest (real Mode4 ControlModeEnd) -> CompleteQuest: +500,000 jackpot, quests_done 1, v_lite71 stays on, new quest among 5..8
+240 event info_text_box ControlModeEnd
+241 expect jackpot == 500000 delta 239
+241 expect quests_done == 1
+241 expect v_lite71.light_on == 1
+241 expect selected_quest in 5 8
+# nothing selected: CompleteQuest only picks (no jackpot, no count)
+270 poke a_kout2 message_field 0
+271 poke info_text_box message_field 4
+280 event info_text_box ControlModeEnd
+281 expect jackpot == 0 delta 279
+281 expect quests_done == 1
+281 expect selected_quest in 5 8   # a quest is picked even though nothing was selected (CompleteQuest's tail SelectRandomQuest)
+290 quit

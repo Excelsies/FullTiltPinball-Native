@@ -1,0 +1,14 @@
+# Mode14Controller, ControlBallDrained with MultiballCount 1: v_lite77 on, mode := 2, v_lite63/64 off (0x42b3c0).
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+init watch v_lite77.light_on v_lite63.light_on v_lite64.light_on
+100 poke info_text_box message_field 14
+110 event info_text_box ControlBallDrained
+110 expect mode == 2
+110 expect multiball == 1
+110 expect v_lite77.light_on == 1
+110 expect v_lite63.light_on == 0
+110 expect v_lite64.light_on == 0
+130 quit

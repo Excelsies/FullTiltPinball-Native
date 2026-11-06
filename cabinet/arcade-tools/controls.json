@@ -1,0 +1,58 @@
+{
+  "title": "Cabinet buttons",
+  "sections": [
+    {
+      "heading": "In the menus",
+      "rows": [
+        ["A", "Play / select"],
+        ["B", "Back"],
+        ["X", "Jump to a random game"],
+        ["Y", "Add to favourites"],
+        ["START", "Main menu"],
+        ["COIN", "Game list options"],
+        ["STICK LEFT / RIGHT", "Change system"],
+        ["TOP-RIGHT / BOTTOM-RIGHT", "Page up / down"],
+        ["PLAY", "Random game (system list: random system)"],
+        ["ANY BUTTON AT LAUNCH", "Launch options & game controls"],
+        ["HOLD MODE 2s", "This button guide"],
+        ["HOLD MENU 2s", "Cabinet settings"],
+        ["HOLD EXIT 3s", "Shut down"],
+        ["HOLD BOTH STARTs 3s", "Shut down"]
+      ]
+    },
+    {
+      "heading": "In a game",
+      "rows": [
+        ["EXIT", "Quit the game"],
+        ["MENU (tap)", "Emulator menu"],
+        ["PLAY", "Pause / resume"],
+        ["LEFT / RIGHT SIDE", "Pinball flippers (L2 / R2)"],
+        ["COIN or MODE + START", "Quit the game"],
+        ["COIN or MODE + X", "Emulator menu"],
+        ["COIN or MODE + B", "Reset the game"],
+        ["COIN or MODE + TOP-RIGHT", "Load saved state"],
+        ["COIN or MODE + BOTTOM-RIGHT", "Save state"],
+        ["HOLD MODE 2s", "This button guide"],
+        ["HOLD MENU 2s", "Cabinet settings"],
+        ["HOLD BOTH STARTs 3s", "Shut down"]
+      ]
+    }
+  ],
+  "footer": "Press any button to close",
+  "toast": "Hold MODE for the button guide",
+  "theme_hints": {
+    "system": [
+      ["HOLD MODE", "Button guide"],
+      ["PLAY", "Random system"],
+      ["HOLD MENU", "Settings"],
+      ["HOLD EXIT", "Shut down"]
+    ],
+    "games": [
+      ["HOLD MODE", "Button guide"],
+      ["PLAY", "Random game"],
+      ["HOLD MENU", "Settings"],
+      ["ANY BUTTON AT LAUNCH", "Game controls"]
+    ]
+  },
+  "launch_toast": "Press any button now for launch options & game controls"
+}

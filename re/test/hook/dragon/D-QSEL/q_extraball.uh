@@ -1,0 +1,23 @@
+# A lit v_lite57 makes a_spot27 give an extra ball (table_add_extra_ball, dragon_core.cpp), no score, no selection.
+# SelectRandomQuest (dragon_quests.cpp:257, called by the new-ball setup dragon_ball.cpp:134) has already selected a
+# quest before the event (timeline.jsonl of this script: 6 at load, 7 from frame 10 on). The extra-ball branch of
+# QuestSelectTargetControl (dragon_quests.cpp:277-282) returns before the selection code, so the selection must not
+# move (delta 0) and the extra ball is granted (extra_balls +1).
+# Sound ids (loader sound_list index) resolved from DRAGON.DAT: `re/dat_dump.py sounds` lists the A_SOUND records; the
+# index used by the engine is the listed position minus 4 (cross-checked with D-CORE's tabc21wave = 27, tabc61wave = 49).
+# tabc13wave = 8 (tabc13.wav), tabc16wave = 11 (tabc16.wav), tabc47wave = 40 (tabc47.wav), tabc96wave = 50 (tabc96.wav).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite57.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 poke v_lite57 light_on 1
+210 event a_spot27 ControlCollision
+210-211 expect none sound 50   # extra-ball branch returns before the Play
+211 expect v_lite57.light_on == 0
+211 expect n_score == 0 delta 209
+211 expect selected_quest == 0 delta 209
+211 expect extra_balls == 1 delta 209
+220 quit

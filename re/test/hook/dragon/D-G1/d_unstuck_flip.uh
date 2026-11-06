@@ -1,0 +1,21 @@
+# UnstuckBall, early-return branch: a ball held at (1.7, 14.0), inside the
+# pivot/tip box of a_flip1 read from the DAT (group 629), counts as in control bounds: UnstuckBall returns before throw_ball
+# or the disable, so no throw happens after the 500 ms stationary window (exactly one random draw per frame, the idle rate, from 460 to 900, where a throw makes three),
+# the ball keeps the held resting speed (gravity pull, 0.19177), and the multiball count stays 1. Positive counterpart: d_unstuck.uh (ball outside all parts).
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 place 0 1.7 14.0 0.37 0 0 0 0x1
+401 hold 0 on
+460 dump u460
+900 dump u900
+460 expect n_ball0_speed ~= 0.19177 0.01
+900 expect n_ball0_speed ~= 0.19177 0.01
+900 expect n_rand_draws == 440 delta 460
+900 expect multiball == 1
+900 expect n_ball0_active == 1
+950 quit

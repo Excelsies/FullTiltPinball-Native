@@ -1,0 +1,17 @@
+# PROBE-ONLY: AwardExtraBall (FT 0x4239d0, listing 842-863), reached through a test-only ShipSinkControl stub of a
+# probe build (not part of the tree; run_p_core.py --probe). In normal play the real ShipSinkControl answers the same
+# event in mode 2 with v_lite568 lit. Expect: sound tabb00 (info "AwardExtraBall"), ExtraBalls = 1, text 3014 at t + 2.0.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+200 poke v_lite568 light_on 1
+210 expect extra_balls == 0
+220 event a_sink4 ControlCollision
+230 expect extra_balls == 1
+220-230 expect text info_text_box display id 3014
+220-230 expect sound 2   # tabb00wave (sounds.jsonl info AwardExtraBall)
+230 dump after_extra_ball
+300 quit

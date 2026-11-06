@@ -1,0 +1,64 @@
+# Nudges: alternate bump_left / bump_right every 25 frames after the launch, each key
+# held 10 frames (0.1 s at fixed_dt 10, the Wine reference's hold in re/test/scripts/ft_tilt_pause.json): pb::InputUp releases the
+# nudge, so a shorter hold never lets the nudge count reach the 0.5 / 1.0 thresholds. FT text 0x5d (code 93, id 2005) at the
+# first warning, then 0x5e (code 94, id 2006) with tilt_lock 1 at the tilt. The Wine side is compared separately.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 key down bump_left
+410 key up bump_left
+411 dump n0
+425 key down bump_right
+435 key up bump_right
+436 dump n1
+450 key down bump_left
+460 key up bump_left
+461 dump n2
+475 key down bump_right
+485 key up bump_right
+486 dump n3
+500 key down bump_left
+510 key up bump_left
+511 dump n4
+525 key down bump_right
+535 key up bump_right
+536 dump n5
+550 key down bump_left
+560 key up bump_left
+561 dump n6
+575 key down bump_right
+585 key up bump_right
+586 dump n7
+600 key down bump_left
+610 key up bump_left
+611 dump n8
+625 key down bump_right
+635 key up bump_right
+636 dump n9
+650 key down bump_left
+660 key up bump_left
+661 dump n10
+675 key down bump_right
+685 key up bump_right
+686 dump n11
+700 key down bump_left
+710 key up bump_left
+711 dump n12
+725 key down bump_right
+735 key up bump_right
+736 dump n13
+750 key down bump_left
+760 key up bump_left
+761 dump n14
+775 key down bump_right
+785 key up bump_right
+786 dump n15
+400-480 expect text info_text_box display code 93 id 2005
+481 expect text info_text_box display code 94 id 2006
+486 expect tilt_lock == 1
+461 expect tilt_lock == 0
+810 quit

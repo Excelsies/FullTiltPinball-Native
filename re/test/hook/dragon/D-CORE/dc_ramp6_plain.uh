@@ -1,0 +1,13 @@
+# Ramp6Control without the flurry: v_lite70 dark -> sound tabc09wave (loader sound index from a native run), no spell, v_lite70 lit; mode stays 2.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite70.light_on
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+200 event a_ramp6 ControlBallToLayer2
+195-205 expect sound 7
+205 expect v_lite70.light_on == 1
+205 expect mode == 2
+250 quit

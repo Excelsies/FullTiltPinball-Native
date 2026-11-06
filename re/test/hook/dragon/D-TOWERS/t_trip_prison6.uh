@@ -1,0 +1,16 @@
+# PrisonWindowTripwireControl, mode 6 (0x4279ba): lit windows 0 -> ScoreValue 250,000, 1 -> 500,000 (listing
+# 3736-3770); the group is then reset-and-turned-on (+1 lit). Lit count 2 would call AwardJackpot: not driven here.
+# Lit count 3 is t_trip_prison6_lit3.uh.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 6
+110 event s_trip6 ControlCollision
+120 event s_trip5 ControlCollision
+110 expect n_score == 250000 delta 109
+120 expect n_score == 500000 delta 119
+110 expect text info_text_box display id 3008
+# tabc51 = sound id 43 (pinned from this run)
+110 expect sound 43
+150 quit

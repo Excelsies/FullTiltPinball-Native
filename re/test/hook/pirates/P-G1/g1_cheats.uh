@@ -1,0 +1,14 @@
+# Cheats (pbctrl_bdoor_controller 0x42a830 reached through the engine's `hidden<Tab>test` detector): GMAX toggles
+# the alternate-ball index, FMAX does nothing, NMAX outside mode 2 does nothing. Only "the cheat detector fired and nothing
+# crashed" is asserted here (n_cheat). QUOTE: g1_quote_*.uh. 1MAX (table_add_extra_ball): P-CORE/pc_1max.uh.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 type hidden\ttest
+140 expect n_cheat == 1
+150 type GMAX
+190 type FMAX
+230 type NMAX
+300 quit

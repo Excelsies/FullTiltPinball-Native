@@ -1,0 +1,86 @@
+# Quest selection (listing SelectRandomQuest 871-934, QuestSelectTargetControl 1852-1902).
+# index = (rand*n)>>15 over the n quests whose light is off; first draw after "seed S" is ((S*214013+2531011)>>16)&0x7fff
+# (seeds found with that formula: n=5 idx 0..4 -> 1, 1996, 4003, 6009, 8016; n=4 idx 0..3 -> 1, 2497, 5006, 7514).
+# Quest q = 4 + light index, text id 3071 + (q-4); target score 5,000.
+# The last block (all five quests done) adds +500,000 on top of the target's 5,000: the
+# SelectRandomQuest -> SetMode(9) -> MissionControl(MissionComplete) chain enters mode 9 with ScoreValue(nullptr, 500000)
+# (dragon_slay.cpp:255).
+# Sound ids (loader sound_list index) resolved from DRAGON.DAT: `re/dat_dump.py sounds` lists the A_SOUND records; the
+# index used by the engine is the listed position minus 4 (cross-checked with D-CORE's tabc21wave = 27, tabc61wave = 49).
+# tabc13wave = 8 (tabc13.wav), tabc16wave = 11 (tabc16.wav), tabc47wave = 40 (tabc47.wav), tabc96wave = 50 (tabc96.wav).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite71.flasher_on v_lite72.flasher_on v_lite73.flasher_on v_lite74.flasher_on v_lite75.flasher_on a_rockb.message_field v_lite76.flasher_on v_lite16.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 seed 1
+210 event a_spot27 ControlCollision
+210-211 expect sound 50
+211 expect selected_quest == 4
+211 expect a_rockb.message_field == 0
+211 expect v_lite71.flasher_on == 1
+211 expect n_score == 5000 delta 209
+210 expect text info_text_box display id 3071
+230 seed 1996
+230 event a_spot27 ControlCollision
+230-231 expect sound 50
+231 expect selected_quest == 5
+231 expect a_rockb.message_field == 1
+231 expect v_lite71.flasher_on == 0
+231 expect v_lite72.flasher_on == 1
+230 expect text info_text_box display id 3072
+250 seed 4003
+250 event a_spot27 ControlCollision
+250-251 expect sound 50
+251 expect selected_quest == 6
+251 expect v_lite73.flasher_on == 1
+250 expect text info_text_box display id 3073
+270 seed 6009
+270 event a_spot27 ControlCollision
+270-271 expect sound 50
+271 expect selected_quest == 7
+271 expect v_lite74.flasher_on == 1
+270 expect text info_text_box display id 3074
+290 seed 8016
+290 event a_spot27 ControlCollision
+290-291 expect sound 50
+291 expect selected_quest == 8
+291 expect a_rockb.message_field == 4
+291 expect v_lite75.flasher_on == 1
+290 expect text info_text_box display id 3075
+# v_lite71 done: four candidates (quests 5..8)
+300 poke v_lite71 light_on 1
+310 seed 1
+310 event a_spot27 ControlCollision
+310-311 expect sound 50
+311 expect selected_quest == 5
+330 seed 2497
+330 event a_spot27 ControlCollision
+331 expect selected_quest == 6
+350 seed 5006
+350 event a_spot27 ControlCollision
+351 expect selected_quest == 7
+370 seed 7514
+370 event a_spot27 ControlCollision
+371 expect selected_quest == 8
+# outside mode 2 the target selects nothing but still scores
+380 poke info_text_box message_field 1
+390 event a_spot27 ControlCollision
+391 expect selected_quest == 8
+391 expect n_score == 5000 delta 389
+# all five quests done (a_kout2 cleared first: SelectRandomQuest cancels the old selection, which turns its light off): sword hidden, v_lite76 flashes, mode 9, nothing selected
+399 poke a_kout2 message_field 0
+400 poke info_text_box message_field 2
+401 poke v_lite72 light_on 1
+402 poke v_lite73 light_on 1
+403 poke v_lite74 light_on 1
+404 poke v_lite75 light_on 1
+410 event a_spot27 ControlCollision
+411 expect mode == 9
+411 expect selected_quest == 0
+411 expect v_lite76.flasher_on == 1
+411 expect v_lite16.light_on == 0
+411 expect n_score == 505000 delta 409
+420 quit

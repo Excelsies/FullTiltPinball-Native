@@ -1,0 +1,19 @@
+# DragonMouthSinkControl (listing 3917-4060), a_sink19 ControlCollision in mode 9 with no fire light on:
+# v_lite114 8 -> 7, score text 3008 = 100000 (RandIndex(6) draw, count 0 case), mode stays 9. Not a jaw check
+# (the jaw is d_slay_jaw.uh). The sink draws and the award repeat are d_slay_draws.uh.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+160 event a_sink19 ControlCollision
+165 dump hit v_lite114.message_field
+# listing: v_lite114->MessageField = MessageField - 1 (8 -> 7), then the remaining-hits text 3049
+166 expect v_lite114.message_field == 7
+166 expect mode == 9
+# listing: sprintf(string 3008, score), Display(.., 2.0); sprintf(string 3049, remaining hits), Display(.., 5.0)
+160 expect text info_text_box display id 3008
+160 expect text info_text_box display id 3049
+200 quit

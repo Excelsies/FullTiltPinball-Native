@@ -1,0 +1,35 @@
+# PROBE-ONLY: needs a probe build with test-only HoldSinkControl / KickoutControl stubs (not part of the tree;
+# run_p_core.py --probe); on a normal build it fails, because the real a_sink8 / a_kout1 controls do not call
+# ModeStartCleanup / ModeEndRestoreLights. Both halves are checked through real callers: the start half (v_lite504 on,
+# v_lite505 off, a_bloce frame 1) by pd_lights.uh (mode-4 start, poked beforehand, none of the three is written by the
+# mode body: pirates_modes_a.cpp), the end half (v_lite520 / v_lite521 off) by pd_restore.uh (mode-4 end).
+# ModeStartCleanup (FT 0x42aad0, listing 5808-5828) and ModeEndRestoreLights (0x42ab40, 5829-5846). Stubs:
+# HoldSinkControl (ControlCollision -> ModeStartCleanup) and KickoutControl (ControlCollision -> ModeEndRestoreLights).
+# a_bloce is set to frame 0 first (msg 313 = TBlockerSetFrame) so the state 1 expect discriminates.
+# Cleanup: v_lite504 on, v_lite505 off, a_bloce frame 1. End: v_lite520 / v_lite521 off. The calls out to the
+# hideaway, lava and drop-bank light helpers are checked in target.log ("FT rules: pending <name>" for each callee); their
+# light effects are not checked here.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite504.light_on v_lite505.light_on v_lite520.light_on v_lite521.light_on a_bloce.blocker_state
+10 key down new_game
+11 key up new_game
+200 poke v_lite504 light_on 0
+200 poke v_lite505 light_on 1
+205 msg a_bloce 313 0
+207 expect a_bloce.blocker_state == 0
+210 dump before_cleanup
+220 event a_sink8 ControlCollision
+230 dump after_cleanup
+230 expect v_lite504.light_on == 1
+230 expect v_lite505.light_on == 0
+230 expect a_bloce.blocker_state == 1
+240 poke v_lite520 light_on 1
+240 poke v_lite521 light_on 1
+250 dump before_end
+260 event a_kout1 ControlCollision
+270 dump after_end
+270 expect v_lite520.light_on == 0
+270 expect v_lite521.light_on == 0
+300 quit

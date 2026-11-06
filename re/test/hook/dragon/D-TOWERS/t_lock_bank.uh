@@ -1,0 +1,28 @@
+# TowerLockTargetBank (0x4250e0) + TowerLockTargetControl1-3 + EnableTowerLock + UpdateTowerLocks, mode 2.
+# Tower-lock targets a_spot3/a_spot2/a_spot1 score [2,000, 10,000]; bank complete in mode 2 -> text 3003.
+# Targets are TSoloTargets: MissionControl adds the 50,000 jackpot, not score.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 2
+110 event a_spot3 ControlCollision
+120 event a_spot2 ControlCollision
+130 event a_spot1 ControlCollision
+140 dump after_bank v_lite8.light_on v_lite9.light_on v_lite10.light_on v_lite27.light_on v_lite47.light_on v_lite48.flasher_on v_lite48.message_field a_sink18.active a_sink17.active
+110 expect n_score == 2000 delta 109
+# sound ids are pinned from a run: tabc06 = 5 (bank hit), tabc07 = 25 (lock enabled)
+110 expect sound 5
+130 expect sound 25
+130 expect sound 5
+120 expect n_score == 2000 delta 119
+130 expect n_score == 10000 delta 129
+130 expect text info_text_box display id 3003
+140 expect mode == 2
+140 expect v_lite48.flasher_on == 1
+140 expect v_lite48.message_field == 1
+140 expect a_sink18.active == 1
+140 expect a_sink17.active == 0
+140 expect v_lite27.light_on == 1
+140 expect v_lite47.light_on == 1
+150 quit

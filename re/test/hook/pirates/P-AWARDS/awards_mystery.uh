@@ -1,0 +1,66 @@
+# RandomMysteryAward 0x425c50 / CollectMysteryAward 0x425d10 through the real route: the draw happens when a lit
+# mystery (v_lite529) is collected by WindsRolloverControl1 (a_roll3, pirates_winds.cpp:253-270). Mode poked to 5,
+# a_sink17 lights the mystery (HideawaySinkControl1 case 5), a_roll3 collects it. One draw per collect:
+# index = (n_rand_last * 6) >> 15 (ft_common.h RandIndex). The ball and the lights consume draws every frame
+# (n_rand_draws 567 at frame 150, 655 at 181), so the index a given collect frame produces is a measured value:
+# collects at frames 180 / 310 / 440 draw index 0 each time (first special treasure, then the second, then the third:
+# 3019, 3020, 3021, scores 100k, 250k, 500k on top of the 40,000 mode 5 sink score each round); a collect one to four
+# frames later draws other indexes (text ids 3003, 3007, 3014, 3015, 3026, 3044 seen).
+# The mystery light needs its 1.0 s StayOff flash to end before the next relight, hence 120-frame rounds.
+# Rounds 4-6 cover the other RandomMysteryAward outcomes (0x425c50 switch, RandIndex(6)) through the
+# same real route, one outcome per round, at collect frames measured by a serial scan (seed 1; the prefix of rounds fixes the stream,
+# so each frame was scanned after the rounds before it): frame 574 draws index 4 AwardMapPiece (text 3015, map_pieces 0 -> 1, +1,000,000);
+# frame 700 draws index 1 AwardExtraBall (text 3014, extra_balls 0 -> 1); frame 841 draws index 3 AdvanceFathom (multiplier 1 -> 7;
+# AdvanceFathom shows no text in this call). Last, so the x7 does not scale the other rounds' scores.
+# Index 0 is round 1-3, index 2 (3044) is asserted in awards_collect, index 5 (buried treasure) in dig_collect. Rounds 4-6 assert the
+# award text, counters and the mystery light off 1.1 s after the last collect (the StayOff flash is 1.0 s), not n_score (the demo ball adds points between rounds).
+# The a_sink8 event is a check that HoldSinkControl (pirates_brig.cpp:173-185) draws nothing and scores nothing
+# (n_score 0): it only restarts the sink timer on ControlCollision.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_lite529.light_on
+10 key down new_game
+11 key up new_game
+140 poke info_text_box message_field 5
+150 dump d0
+160 event a_sink8 ControlCollision
+161 dump d1
+161 expect n_score == 0
+170 event a_sink17 ControlCollision
+171 expect v_lite529.light_on == 1
+180 event a_roll3 ControlCollision
+181 dump r1
+180-181 expect text info_text_box display id 3019
+181 expect n_score == 140000
+300 event a_sink17 ControlCollision
+310 event a_roll3 ControlCollision
+311 dump r2
+310-311 expect text info_text_box display id 3020
+311 expect n_score == 430000
+430 event a_sink17 ControlCollision
+440 event a_roll3 ControlCollision
+441 dump r3
+440-441 expect text info_text_box display id 3021
+441 expect n_score == 970000
+560 expect v_lite529.light_on == 0
+564 event a_sink17 ControlCollision
+574 event a_roll3 ControlCollision
+575 dump r4
+574-575 expect text info_text_box display id 3015
+575 expect map_pieces == 1
+575 expect multiplier == 1
+690 event a_sink17 ControlCollision
+700 event a_roll3 ControlCollision
+701 dump r5
+700-701 expect text info_text_box display id 3014
+701 expect extra_balls == 1
+701 expect multiplier == 1
+831 event a_sink17 ControlCollision
+841 event a_roll3 ControlCollision
+842 dump r6
+842 expect multiplier == 7
+842 expect extra_balls == 1
+842 expect map_pieces == 1
+960 expect v_lite529.light_on == 0
+980 quit

@@ -1,0 +1,25 @@
+# TAccelerator check, DRAGON a_accl1 (part type 1036): fields at load, then a ball crossing the line is stopped for
+# the frame (CollisionDisabledFlag) and thrown in the next frame along the kicker direction at the Boost
+# speed, clamped to the ball max speed (0.37 x 200 = 74). The throw makes 2 rand draws (d = 1 other draw per
+# frame in this run: frames 10 -> 11 show +1).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_accl1.speed_mult1 a_accl1.speed_mult2 a_accl1.dir_x a_accl1.dir_y
+0 expect a_accl1.speed_mult1 == 300
+0 expect a_accl1.speed_mult2 ~= 0.05 1e-6
+0 expect a_accl1.dir_x ~= -0.3415 1e-4
+0 expect a_accl1.dir_y ~= -0.9399 1e-4
+10 place 0 -5.5541 3.6525 0.37 -0.3415 -0.9399 10 0x1
+# frame 11 = crossing frame N: the ball stops on the line (moved < 0.02 since frame 10), not thrown yet
+11 expect n_ball0_speed in 9 10
+11 expect n_ball0_y ~= -0.0161 0.005 delta 10
+11 expect n_rand_draws ~= 1 0 delta 10
+# frame 12 = N+1: thrown
+12 expect n_ball0_speed ~= 74 1e-3
+12 expect n_ball0_dx ~= -0.3415 0.01
+12 expect n_ball0_dy ~= -0.9399 0.01
+12 expect n_rand_draws ~= 3 0 delta 11
+40 dump end
+50 quit

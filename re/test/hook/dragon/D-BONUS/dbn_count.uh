@@ -1,0 +1,44 @@
+# Mode11BonusController: 9 targets hit + v_lite37 lit -> step texts 3012 (value 18,000) and 3014 (value 50,000),
+# no other step: texts 2.0 s apart (200 frames), total 68,000 added to the score at the last text (3017).
+# The game starts in mode 10, where the first a_spot4 contact would be Mode10LaunchBallController's skill shot
+# (dragon_ball.cpp:239-: a_spot4 -> AwardSpell, +120,000, mode 2) and add a spell step (3015, 75,000). The subject
+# here is Mode11BonusController, so `50 poke info_text_box message_field 2` sets mode 2 before the targets are hit; the
+# nine contacts are SpellTargetControl1 hits (dragon_spells.cpp, 2,500 each) and count targets_hit == 9. The score is
+# therefore not 0 before the count (nine contacts x 2,500 = 22,500): the n_score check before the last text is
+# written as `delta 299`.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+200 poke v_lite37 light_on 1
+210 event a_spot4 ControlCollision
+211 event a_spot4 ControlCollision
+212 event a_spot4 ControlCollision
+213 event a_spot4 ControlCollision
+214 event a_spot4 ControlCollision
+215 event a_spot4 ControlCollision
+216 event a_spot4 ControlCollision
+217 event a_spot4 ControlCollision
+218 event a_spot4 ControlCollision
+219 expect targets_hit == 9
+220 poke info_text_box message_field 11
+300 event info_text_box ControlMissionComplete
+300 expect text info_text_box display id 3012
+300 expect bonus_step == 1
+498 expect bonus_step == 1
+499-500 expect text info_text_box display id 3014
+699-700 expect text info_text_box display id 3017
+700 expect n_score == 68000 delta 299
+701 expect held_bonus == 0
+499 expect bonus_step == 3
+698 expect bonus_step == 3
+698 expect n_score == 0 delta 299
+699 expect bonus_step == 8
+898 expect bonus_step == 8
+898 expect ball_count == 3
+899 expect bonus_step == 9
+899 expect ball_count == 2
+1200 expect ball_count == 2
+1300 quit

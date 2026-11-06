@@ -1,0 +1,28 @@
+init window 960 666
+init fixed_dt 10
+init seed 1
+# AwardRandomArmor (FT 0x4234b0, lines 485-534) kickback branch: only v_lite37 unlit (v_lite38/39 poked on), one draw
+# index 0 -> AwardArmorKickback(1) (FT 0x423240: a_kick1 armed, v_lite37 flash, outlane group flash, glyph text, sound) then
+# ScoreValue 25000. Caller is the real Kickout1Control (a_kout1 ControlCollision, dragon_ball.cpp:196-203).
+# The game starts in mode 10 (PlungerControl, dragon_ball.cpp:136, after SelectRandomQuest). The first part collision in
+# mode 10 is the skill shot (Mode10LaunchBallController, ScoreValue 15000, then mode 2), which would add to this script's
+# own award, so the script pokes info_text_box message_field 2 (mode 2) at 190; the skill-shot sum is checked by
+# da_skill_armor.uh.
+init dump_period 10
+init watch a_kick1.active v_lite37.message_field v_lite38.light_on v_lite39.light_on a_center_post.message_field a_bloce.message_field v_lite37.flasher_on v_lite41.flasher_on v_lite44.flasher_on
+10 key down new_game
+11 key up new_game
+190 poke a_kick1 active 0
+190 poke info_text_box message_field 2
+190 poke v_lite38 light_on 1
+190 poke v_lite39 light_on 1
+200 event a_kout1 ControlCollision
+201 expect n_score == 25000 delta 199
+201 expect a_kick1.active == 1
+201 expect v_lite37.message_field == 0
+201 expect a_center_post.message_field == 0
+201 expect a_bloce.message_field == 0
+201 expect v_lite37.flasher_on == 1
+201 expect v_lite41.flasher_on == 1
+201 expect v_lite44.flasher_on == 1
+300 quit

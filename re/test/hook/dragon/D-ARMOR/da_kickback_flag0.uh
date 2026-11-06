@@ -1,0 +1,28 @@
+init window 960 666
+init fixed_dt 10
+init seed 1
+# AwardArmorKickback() flag-0 form (FT 0x423240 with [esp+4] == 0; the only form WellSinkControl 0x426444 and
+# Mode9Controller 0x42a574 / 0x42a76f use): a_kick1 armed, v_lite37 flashes, outlane group flashes, NO kickback
+# glyph text, NO kickback sound (tabc41).
+# Driven through the real caller: WellSinkControl (a_sink4, dragon_shop.cpp:75) calls the
+# flag-0 form in mode 8 when the well's state a_sink4.message_field is 2 (FT 0x426444); it also plays its
+# own tabc24 sound (28) and shows text 3044, so the absence of the kickback form's sound is asserted by tabc41's id (36).
+# The kickback glyph text has no text id and shares the box with text 3044, so its absence is not asserted here.
+# Preconditions poked (not the behaviour under test): mode 8, well state 2, a_kick1 disarmed.
+init dump_period 10
+init watch a_kick1.active v_lite37.message_field v_lite37.flasher_on v_lite41.flasher_on v_lite44.flasher_on a_sink4.message_field
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 8
+191 poke a_sink4 message_field 2
+192 poke a_kick1 active 0
+200 event a_sink4 ControlCollision
+201 expect a_kick1.active == 1
+201 expect v_lite37.message_field == 0
+201 expect v_lite37.flasher_on == 1
+201 expect v_lite41.flasher_on == 1
+201 expect v_lite44.flasher_on == 1
+200-201 expect sound 28
+200-201 expect text info_text_box display id 3044
+200-201 expect none sound 36   # tabc41 = AwardArmorKickback(1)'s sound (id 36, seen in da_armor_kick)
+300 quit

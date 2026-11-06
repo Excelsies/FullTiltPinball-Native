@@ -1,0 +1,14 @@
+# WellSinkControl (0x426140) mode 8, state 0: extra ball, one RandIndex(4) draw, next state 1..4, TSinkResetTimer.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_sink4.message_field s_hole118.message_field a_kout3.message_field a_kout3.active info_text_box.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 8
+201 poke a_sink4 message_field 0
+205 event a_sink4 ControlCollision
+210 expect a_sink4.message_field in 1 4
+# baseline run without the event reads 393 at frame 210 (the rules' ball-jitter draws included); the event adds exactly one RandIndex(4) draw
+210 expect n_rand_draws == 394
+260 quit

@@ -1,0 +1,30 @@
+# PIRATES: the 1037 placed ("captive") ball. Expected values from part_1037 section 8:
+# 408 = [4.6526, -9.1079, 0.0584, 0.0], position Z = v[3] + radius; the ball
+# rests in the lane on the posts (x 4.22..5.08, y -9.2..-8.3) and a new game (Reset) does not touch it.
+# New game: 310 leaves the demo (idle attract mode runs from the start), 330 starts the game; the ball is fed ~430.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+0 expect n_placed_balls == 1
+0 expect n_active_balls == 1
+0 expect n_ball1_placed == 1
+0 expect n_ball1_x ~= 4.6526 1e-3
+# frame 0's dump is taken after the first physics tick: gravity moved the ball 1.9e-3 toward +Y (observed -9.10598)
+0 expect n_ball1_y ~= -9.1079 3e-3
+0 expect n_ball1_z ~= 0.37 1e-3
+300 expect n_ball1_active == 1
+300 expect n_ball1_x in 4.22 5.08
+300 expect n_ball1_y in -9.2 -8.3
+310 key down new_game
+311 key up new_game
+# the first press ends the attract-mode demo (its ball is removed), the second starts the game
+330 key down new_game
+331 key up new_game
+500 expect n_placed_balls == 1
+500 expect multiball == 1
+500 expect n_active_balls == 2
+500 expect n_ball1_active == 1
+500 expect n_ball1_x in 4.22 5.08
+500 expect n_ball1_y in -9.2 -8.3
+520 quit

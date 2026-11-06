@@ -1,0 +1,33 @@
+# RightFlipperControl (FT 0x426c60, lines 2852-2877): a_flip2 extend with a_kout3 armed (field 1) disarms it, restarts
+# its timer and flashes v_lite29/30: mode != 9 -> flash then stay off; mode 9 -> plain timed flash (a lit light returns lit).
+# The mode-9 half reaches Mode9Controller through MissionControl.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_kout3.message_field v_lite29.flasher_on v_lite30.flasher_on v_lite29.light_on v_lite30.light_on
+10 key down new_game
+11 key up new_game
+190 poke a_kout3 message_field 1
+190 poke v_lite29 light_on 1
+190 poke v_lite30 light_on 1
+200 event a_flip2 TFlipperExtend
+201 expect a_kout3.message_field == 0
+201 expect v_lite29.flasher_on == 1
+201 expect v_lite30.flasher_on == 1
+250 event a_flip2 TFlipperExtend
+251 expect a_kout3.message_field == 0
+400 expect v_lite29.flasher_on == 0
+400 expect v_lite29.light_on == 0
+400 expect v_lite30.light_on == 0
+500 poke info_text_box message_field 9
+500 poke a_kout3 message_field 1
+500 poke v_lite29 light_on 1
+500 poke v_lite30 light_on 1
+510 event a_flip2 TFlipperExtend
+511 expect a_kout3.message_field == 0
+511 expect v_lite29.flasher_on == 1
+700 expect v_lite29.flasher_on == 0
+700 expect v_lite29.light_on == 1
+700 expect v_lite30.light_on == 1
+750 quit

@@ -1,0 +1,31 @@
+# LduggTargetBank mode 4 (listing 2550-2653): 10,000 per hit (ScoreValue), 25,000 on the fifth plus the jackpot; bank resets.
+# AwardJackpot (pirates_core.cpp:83-93: SpecialAddScore of TableG->JackpotScore) is called by LduggTargetBank
+# before the 25,000 (pirates_drop_banks.cpp:183-189). The jackpot at that moment is 1,000,000 + 8 x 20,000 = 1,160,000: the MissionControl
+# pre-hook adds 20,000 for each of the five hits' own TPopupTarget caller and again for each ControlScorerReplaced of the previous
+# scorer (hits 2, 3 and 4; the replacement caused by the fifth hit's ScoreValue comes after AwardJackpot) - the original's behaviour per the
+# decompile, not measured on Wine. The fifth hit therefore adds 25,000 + 1,160,000 = 1,185,000.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop5.message_field v_lite1.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 4
+300 event a_drop5 ControlCollision
+310 event a_drop6 ControlCollision
+320 event a_drop7 ControlCollision
+330 event a_drop8 ControlCollision
+340 event a_drop9 ControlCollision
+300 expect n_score == 10000 delta 299
+310 expect n_score == 10000 delta 309
+320 expect n_score == 10000 delta 319
+330 expect n_score == 10000 delta 329
+340 expect n_score == 1185000 delta 339
+340 expect a_drop5.message_field == 0
+300 expect sound 15
+# AwardJackpot, positive-time branch: the fifth hit's AwardJackpot(2.0) plays tabb85 (sound id 57)
+# and shows the glyph text "G" (time 2, font 1) at 340. The jackpot is not reset by the award: 1,160,000 at the award + 20,000 from the scorer replacement of the fifth hit = 1,180,000 at 340.
+338-345 expect sound 57
+338-345 expect text info_text_box display
+340 expect jackpot == 1180000
+400 quit

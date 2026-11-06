@@ -1,0 +1,298 @@
+{
+ "name": "ft_tilt_pause",
+ "description": "New game, plunge, pause (F3) and resume, then 16 alternating nudges (x / period, 0.25 s apart) to tilt; 45 s of shots through the tilted drain and bonus skip; plunge the next ball.",
+ "steps": [
+  {
+   "wait": 3.0
+  },
+  {
+   "tap": "new_game"
+  },
+  {
+   "wait": 2.0
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 3.0
+  },
+  {
+   "shot": "10_play",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "play"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "pause"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "shot": "11_paused",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "paused"
+  },
+  {
+   "wait": 3.0
+  },
+  {
+   "shot": "12_paused_3s",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "paused_3s"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "tap": "pause"
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "shot": "13_resumed",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "resumed"
+  },
+  {
+   "wait": 2.0
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump01",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump03",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump05",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump07",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump09",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump11",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump13",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "tap": "bump_left",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "tap": "bump_right",
+   "hold": 0.1
+  },
+  {
+   "wait": 0.15
+  },
+  {
+   "shot": "20_bump15",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 0.05
+  },
+  {
+   "peek": "after_bumps"
+  },
+  {
+   "burst": "30_tilted",
+   "count": 30,
+   "interval": 1.5,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "after_wait"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "burst": "40_next",
+   "count": 6,
+   "interval": 1.0,
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "end"
+  }
+ ]
+}

@@ -1,0 +1,25 @@
+init window 960 666
+init fixed_dt 10
+init seed 1
+# AwardRandomArmor center-post branch: only v_lite38 unlit, one draw index 1 -> sound, CenterPostControl(Enable),
+# glyph text, sound, ScoreValue 50000. Then the post times out: ControlTimerExpired twice (field 1 -> 2 -> 0).
+# The game starts in mode 10 (PlungerControl, dragon_ball.cpp:136, after SelectRandomQuest). The first part collision in
+# mode 10 is the skill shot (Mode10LaunchBallController, ScoreValue 15000, then mode 2), which would add to this script's
+# own award, so the script pokes info_text_box message_field 2 (mode 2) at 190; the skill-shot sum is checked by
+# da_skill_armor.uh. The caller is the real Kickout1Control (a_kout1 ControlCollision).
+init dump_period 10
+init watch a_kick1.active a_center_post.message_field a_center_post.blocker_state a_bloce.message_field v_lite38.flasher_on v_lite39.flasher_on
+10 key down new_game
+11 key up new_game
+190 poke a_kick1 active 0
+190 poke info_text_box message_field 2
+190 poke v_lite37 light_on 1
+190 poke v_lite39 light_on 1
+200 event a_kout1 ControlCollision
+201 expect n_score == 50000 delta 199
+201 expect a_center_post.message_field == 1
+201 expect a_kick1.active == 0
+201 expect a_bloce.message_field == 0
+201 expect v_lite38.flasher_on == 1
+201 expect v_lite39.flasher_on == 0
+1500 quit

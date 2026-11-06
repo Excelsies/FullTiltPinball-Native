@@ -1,0 +1,21 @@
+# LduggTargetBank mode 6: no score at all; the fifth hit only resets the bank.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop5.message_field v_lite1.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 6
+300 event a_drop5 ControlCollision
+310 event a_drop6 ControlCollision
+320 event a_drop7 ControlCollision
+330 event a_drop8 ControlCollision
+340 event a_drop9 ControlCollision
+300 expect n_score == 0 delta 299
+310 expect n_score == 0 delta 309
+320 expect n_score == 0 delta 319
+330 expect n_score == 0 delta 329
+340 expect n_score == 0 delta 339
+330 expect a_drop5.message_field == 15
+340 expect a_drop5.message_field == 0
+400 quit

@@ -1,0 +1,33 @@
+# B5 (listing 3386-3443, 631-643, 7151-7207): the jail target a_spot6 in mode 2. Hits 1 and 2 score 5,000 each (a_spot6 score
+# table), set a_spot6->MessageField 1, 2 and start the timed flasher (stays on) of v_lite530 / v_lite531. The third hit scores 5,000,
+# clears the field and starts mode 13; with no ball locked Mode13 returns to mode 2 at once (no 100,000), SetJailLights(1)
+# leaves the three lights off after their timed flash. Sound tabb02wave on hits 1 and 2.
+# Sound id: tabb02wave 4 (sounds.jsonl).
+init fixed_dt 10
+init seed 1
+init watch a_spot6.message_field v_lite530.light_on v_lite531.light_on v_lite532.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event a_spot6 ControlCollision
+210 expect a_spot6.message_field == 1
+210 expect n_score == 5000 delta 209
+210 expect sound 4
+330 expect v_lite530.light_on == 1
+330 expect v_lite531.light_on == 0
+340 event a_spot6 ControlCollision
+340 expect a_spot6.message_field == 2
+340 expect n_score == 5000 delta 339
+340 expect sound 4
+460 expect v_lite531.light_on == 1
+470 event a_spot6 ControlCollision
+470 expect a_spot6.message_field == 0
+470 expect mode == 2
+470 expect n_score == 5000 delta 469
+470 expect multiball == 1
+470 expect locked == 0
+470 expect none sound 64
+700 expect v_lite530.light_on == 0
+700 expect v_lite531.light_on == 0
+700 expect v_lite532.light_on == 0
+720 quit

@@ -1,0 +1,26 @@
+# TMagnet trigger crossing (part_1042 4.1, 4.3): the ball passes through the centre trigger (radius 0.1 x R) at frame 13.
+# The crossing reaches the real MagnetControl1 (pirates_lower.cpp:68-76, FT 0x42a470): it plays the sound, turns
+# v_lite560 off, scores 100,000 and sends FtPartDisable to the magnet, whose shared tail (TMagnet.cpp:42-48, FT 0x4166c0)
+# kills the hold-off timer and clears HoldOff and Active in the same call. So the hold-off is never visible and the part
+# stays disabled after the first crossing (no re-enable in this script's frames). The 1.0 s hold-off timer clear is not
+# checked here: no real caller leaves the magnet enabled across a crossing; the engine behaviour is covered by
+# U28_magnet_pull.uh / U28_magnet_msg.uh.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch s_magnet1.active s_magnet1.hold_off
+5 msg s_magnet1 ft:0x4b@TMagnet 0
+6 expect s_magnet1.active == 1
+10 place 0 6.8663 -3.426 0.37 -1 0 3
+# the ball crosses the trigger at frame 13: still enabled at 12, disabled with the score at 13
+12 expect s_magnet1.active == 1
+12 expect s_magnet1.hold_off == 0
+13 expect s_magnet1.active == 0
+13 expect s_magnet1.hold_off == 0
+13 expect n_score == 100000 delta 12
+# stays disabled and not held off through the hold-off window (frames 111-114) and beyond
+60 expect s_magnet1.active == 0
+111 expect s_magnet1.hold_off == 0
+114 expect s_magnet1.hold_off == 0
+125 expect s_magnet1.active == 0
+130 quit

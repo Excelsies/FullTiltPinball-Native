@@ -1,0 +1,39 @@
+# BumperControl (listing 1364-1412): in mode 2 each contact scores the bumper's table value (1,500 each, the original's
+# feature table), a_bump3 flashes v_lite65 and a_bump4 v_lite66 (code 7 = TLightFlasherStartTimed, 0.5), and a_bump1's MessageField
+# counts the contacts (10th resets it to 0 and calls AwardNextWeapon: first weapon, multiplier 2 and +25,000, asserted at the 10th contact).
+init fixed_dt 10
+init seed 1
+init watch a_bump1.message_field v_lite65.flasher_on v_lite66.flasher_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+99 expect a_bump1.message_field == 0
+100 event a_bump1 ControlCollision
+100 expect n_score == 1500 delta 99
+100 expect a_bump1.message_field == 1
+100 expect v_lite65.flasher_on == 0
+110 event a_bump2 ControlCollision
+110 expect n_score == 1500 delta 109
+110 expect a_bump1.message_field == 2
+120 event a_bump3 ControlCollision
+120 expect n_score == 1500 delta 119
+120 expect a_bump1.message_field == 3
+120 expect v_lite65.flasher_on == 1
+120 expect v_lite66.flasher_on == 0
+130 event a_bump4 ControlCollision
+130 expect n_score == 1500 delta 129
+130 expect a_bump1.message_field == 4
+130 expect v_lite66.flasher_on == 1
+# contacts 5..9, then the 10th wraps the counter to 0
+140 event a_bump1 ControlCollision
+150 event a_bump1 ControlCollision
+160 event a_bump1 ControlCollision
+170 event a_bump1 ControlCollision
+180 event a_bump1 ControlCollision
+180 expect a_bump1.message_field == 9
+190 event a_bump1 ControlCollision
+190 expect a_bump1.message_field == 0
+190 expect multiplier == 2
+# ten contacts x 1,500 + the first weapon's 25,000 = 40,000 since frame 99
+190 expect n_score == 40000 delta 99
+300 quit

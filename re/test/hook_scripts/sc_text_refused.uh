@@ -1,0 +1,6 @@
+# Hook check: 'text' with control::Rules null (Space Cadet) must exit 3 with the reason in hook.log.
+init window 960 666
+init fixed_dt 16.667
+init expect_exit 3
+10 text 0x5d
+50 quit

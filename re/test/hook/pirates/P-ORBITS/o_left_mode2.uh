@@ -1,0 +1,25 @@
+# O-4 (listing 4446-4583): LeftOrbitTripwireControl in mode 2. The orbit light group (v_lite600..) adds +0/+1/+2 to the
+# ladder index by its on-count and flashes: count 0 -> v_lite600 flashed (index +0); count 1 -> v_lite600 + v_lite601 (+1);
+# count >= 2 -> the whole group (+2). idx = combo step (0/3/6/9) + orbit step.
+# Hit 1: 0+0 = 25,000; hit 2: 3+1 = 175,000; hit 3: 6+2 = 325,000; hit 4: 9+2 = 475,000; hit 5: 475,000 (same).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite600.flasher_on v_lite601.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+220 event s_trip3 ControlCollision
+221 expect n_score == 25000 delta 219
+221 expect v_lite600.flasher_on == 1
+221 expect v_lite601.flasher_on == 0
+240 event s_trip3 ControlCollision
+241 expect n_score == 175000 delta 239
+241 expect v_lite601.flasher_on == 1
+260 event s_trip3 ControlCollision
+261 expect n_score == 325000 delta 259
+280 event s_trip3 ControlCollision
+281 expect n_score == 475000 delta 279
+300 event s_trip3 ControlCollision
+301 expect n_score == 475000 delta 299
+350 quit

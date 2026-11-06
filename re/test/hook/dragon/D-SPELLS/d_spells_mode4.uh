@@ -1,0 +1,24 @@
+# In mode 4 (poked) a target below a complete bank neither scores nor plays the sound
+# (SpellTargetBank: info_text_box MessageField == 4 skips ScorePart / tabc05wave) but its own light is still started by
+# SpellTargetControl1. Mode 4 is Mode4Controller (dragon_quest_modes.cpp:125-127): a_spot4 is a gem target
+# worth 50,000 with its own text, so the check is 'the hit scores exactly the gem (no SpellTargetBank score on top) and
+# the target's own light is still started'. Mode 2 (poked): the completing target also starts v_lite23 (flasher)
+# before CheckMode15Start.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite3.light_on v_lite23.light_on v_lite23.flasher_on
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 4
+200 event a_spot4 ControlCollision
+200 expect n_score == 50000 delta 199
+200 expect text info_text_box display id 3022
+210 expect v_lite3.light_on == 1
+250 poke info_text_box message_field 2
+260 event a_spot5 ControlCollision
+270 event a_spot6 ControlCollision
+280 event a_spot7 ControlCollision
+290 event a_spot22 ControlCollision
+290 expect v_lite23.flasher_on == 1
+300 quit

@@ -1,0 +1,27 @@
+# THole, Space Cadet ramp_hole: R-seed script. Runs unchanged on the baseline and the candidate
+# hook builds (-table cadet) and must give byte-identical outputs (gate off: upstream THole).
+# Ball 0 is placed beside the hole (hole centre from CADET.DAT attr 408[0..1]: 5.87017, 7.60764),
+# is pulled in and captured, held, dropped and released; a second capture follows after a tilt-free
+# Reset message and a PlayerChanged message while held (upstream ignores the latter).
+init window 960 666
+init fixed_dt 10
+init seed 7
+init dump_period 10
+10 key down new_game
+11 key up new_game
+100 place 0 6.05 7.6076 0.3 -1 0 2
+100 dump placed ramp_hole.active
+130 dump captured ramp_hole.active
+200 dump held ramp_hole.active
+260 dump released ramp_hole.active
+300 place 0 6.05 7.6076 0.3 -1 0 2
+360 msg ramp_hole PlayerChanged 0
+361 dump after_playerchanged ramp_hole.active
+380 msg ramp_hole SetTiltLock 0
+381 dump after_tilt ramp_hole.active
+400 msg ramp_hole Reset 0
+420 dump after_reset ramp_hole.active
+500 place 0 6.05 7.6076 0.3 -1 0 2
+520 shot capture
+600 dump end ramp_hole.active
+620 quit

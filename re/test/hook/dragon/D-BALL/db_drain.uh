@@ -1,0 +1,20 @@
+# BallDrainControl, unsaved drain on ball 1 of 3 (listing 1282-1363): ball save off, drain -> drain_state 1, ball_drained 1 (MissionControl
+# pre-hook, MultiballCount 0), mode 11 in the drain frame. Everything after (bonus count, next ball) is Mode11BonusController (D-BONUS).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+360 event s_oneway2 ControlCollision
+# ball save off: the 10 s + 5 s window ends (LaunchOneWay at 360 -> save 2; 1000 and 1500 frames later it is 0)
+1890 expect ball_save == 0
+1900 place 0 0 15.6 0.37 0 1 5 0x1
+1910 expect drain_state == 1
+1910 expect ball_drained == 1
+1910 expect mode == 11
+1910 expect last_ball == 0
+1910 expect tilt_lock == 0
+2000 quit

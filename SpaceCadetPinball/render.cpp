@@ -250,6 +250,7 @@ void render::repaint(const render_sprite& sprite)
 					refSprite->ZMap,
 					clipRect.XPosition + refSprite->ZMapOffestY - refSprite->BmpRect.XPosition,
 					clipRect.YPosition + refSprite->ZMapOffestX - refSprite->BmpRect.YPosition);
+			vscreen->MarkDirty(clipRect.XPosition, clipRect.YPosition, clipRect.Width, clipRect.Height);
 		}
 	}
 }
@@ -286,6 +287,7 @@ void render::paint_balls()
 				xPos - ball->BmpRect.XPosition,
 				yPos - ball->BmpRect.YPosition,
 				ball->Depth);
+			vscreen->MarkDirty(xPos, yPos, dirty->Width, dirty->Height);
 		}
 		else
 		{

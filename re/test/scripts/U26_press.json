@@ -1,0 +1,22 @@
+{
+ "name": "U26_press",
+ "description": "U26 boost timing: wait 4 s, new game, wait 3 s, tap the plunger key for 0.5 s (PIRATES launcher: Boost 0 -> 100 -> 0, the 100 lasting 0.2 s). Table independent.",
+ "steps": [
+  {
+   "wait": 4.0
+  },
+  {
+   "tap": "new_game"
+  },
+  {
+   "wait": 3.0
+  },
+  {
+   "tap": "plunger",
+   "hold": 0.5
+  },
+  {
+   "wait": 2.0
+  }
+ ]
+}

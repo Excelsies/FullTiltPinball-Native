@@ -1,0 +1,48 @@
+{
+ "name": "prehook_pirates_wine",
+ "description": "UTe: pre-hook double count on the original (probe_run.py --anchor window --watch watch_<t>_ute.json)",
+ "steps": [
+  {
+   "wait": 4.0
+  },
+  {
+   "peek": "base"
+  },
+  {
+   "call": "0_a_spot102",
+   "func": "423080",
+   "code": "4a",
+   "part": "43aed4"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "0_a_spot102"
+  },
+  {
+   "call": "1_a_drop5",
+   "func": "423080",
+   "code": "4a",
+   "part": "43ac3c"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "1_a_drop5"
+  },
+  {
+   "call": "2_a_drop10",
+   "func": "423080",
+   "code": "4a",
+   "part": "43acec"
+  },
+  {
+   "wait": 0.4
+  },
+  {
+   "peek": "2_a_drop10"
+  }
+ ]
+}

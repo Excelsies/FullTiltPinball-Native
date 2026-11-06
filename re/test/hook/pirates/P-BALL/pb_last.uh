@@ -1,0 +1,47 @@
+# Skill shot pinned to outcome 1 (coins): the wheel's random outcome 0 (mystery) can award an extra ball, which would
+# make drain 3 not the last ball, and outcomes 3..7 start modes.
+# Three balls, each drained by a ball placed in the drain wall once the ball save has run out (one-way
+# event + 1510 frames). Drain 1 (modes_played 0, targets 0: nothing to count) and 2 go to the next ball; drain 3
+# (BallCount == 1, last player) sets last_ball and tilt_lock and runs mode 17 then mode 16 in the same frame; after the
+# count mode 1 (game over), ball_count 0, the last-ball flag cleared by the final step.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch s_bwal610.active
+10 key down new_game
+11 key up new_game
+206 poke s_launcher1 message_field 1
+207 event s_oneway3 ControlCollision
+1730 place 0 0 15.6 0.37 0 1 5 0x1
+1800 expect ball_count == 2
+1800 expect mode == 3
+1800 expect last_ball == 0
+2599 poke s_launcher1 message_field 1
+2600 event s_oneway3 ControlCollision
+4100 poke s_bwal610 active 1
+4130 place 0 0 15.6 0.37 0 1 5 0x1
+4250 expect ball_count == 1
+4250 expect mode == 3
+4260 expect last_ball == 0
+4261 expect s_bwal610.active == 1
+4299 poke s_launcher1 message_field 1
+4300 event s_oneway3 ControlCollision
+5800 event a_drop5 ControlCollision
+5801 event a_drop6 ControlCollision
+5802 event a_drop7 ControlCollision
+# Mode17's MissionComplete runs in the same frame as the tilt-lock entry (mode 17 then 16) and clears s_bwal610's active flag
+# (the mode 17 transient has no timeline row of its own): poked on before drain 3, off after; the same poke before drain 2 (not the last ball) stays on.
+5810 poke s_bwal610 active 1
+5820 expect s_bwal610.active == 1
+5830 place 0 0 15.6 0.37 0 1 5 0x1
+5840 expect last_ball == 1
+5840 expect tilt_lock == 1
+5840 expect mode == 16
+5840 expect s_bwal610.active == 0
+5836-5840 expect text info_text_box display id 3028
+6330-6340 expect text info_text_box display id 3027
+6500 expect mode == 1
+6500 expect ball_count == 0
+6500 expect last_ball == 0
+6600 quit

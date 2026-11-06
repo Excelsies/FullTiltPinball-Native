@@ -1,0 +1,76 @@
+# Lizard sinks a_sink1 / a_sink2 (listing LizardSinkBank 2139-2268, LizardSinkControl1/2 2269-2356; sink receivers and
+# arguments read from the machine code 0x425c30-0x42612f). Each hit +5,000 (ScorePart); mode 5 adds v_lite91 * 100,000.
+# Sound ids (loader sound_list index) resolved from DRAGON.DAT: `re/dat_dump.py sounds` lists the A_SOUND records; the
+# index used by the engine is the listed position minus 4 (cross-checked with D-CORE's tabc21wave = 27, tabc61wave = 49).
+# tabc13wave = 8 (tabc13.wav), tabc16wave = 11 (tabc16.wav), tabc47wave = 40 (tabc47.wav), tabc96wave = 50 (tabc96.wav).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite63.light_on v_lite63.flasher_on v_lite64.light_on v_lite64.flasher_on v_lite65.flasher_on v_lite66.flasher_on v_lite91.message_field a_sink2.message_field v_lite91.flasher_on
+10 key down new_game
+11 key up new_game
+# A sink hit in mode 10 (the state after NewGame) first runs Mode10LaunchBallController
+# (dragon_ball.cpp:319: +15,000, mode 2), which would turn an other-mode step into the mode-2 branch of LizardSinkBank. The other-mode
+# branch is reached in mode 6 (poked as a precondition: its controller ignores sink collisions).
+205 poke info_text_box message_field 6
+# other mode (6): own light on + flashing, partner light flashing, +5,000
+210 event a_sink1 ControlCollision
+210-211 expect sound 11
+211 expect n_score == 5000 delta 209
+211 expect v_lite63.flasher_on == 1
+211 expect v_lite66.flasher_on == 1
+211 expect v_lite65.flasher_on == 1
+220 event a_sink2 ControlCollision
+220-221 expect sound 11
+221 expect n_score == 5000 delta 219
+221 expect v_lite64.flasher_on == 1
+# mode 5: v_lite91 counts, a_sink2 field steps 0..3, text 3029 shows the awarded score
+230 poke info_text_box message_field 5
+240 event a_sink1 ControlCollision
+240-241 expect sound 11
+241 expect v_lite91.message_field == 1
+241 expect a_sink2.message_field == 1
+241 expect n_score == 105000 delta 239
+240 expect text info_text_box display id 3029
+250 event a_sink2 ControlCollision
+250-251 expect sound 11
+251 expect v_lite91.message_field == 2
+251 expect a_sink2.message_field == 2
+251 expect n_score == 205000 delta 249
+260 event a_sink1 ControlCollision
+260-261 expect sound 11
+261 expect v_lite91.message_field == 3
+261 expect a_sink2.message_field == 3
+261 expect v_lite91.flasher_on == 1
+261 expect n_score == 305000 delta 259
+# step 3: AwardJackpot (tabc43 sound, ScoreValue(JackpotScore), glyph text), counter reset. The jackpot value
+# at the hit is the 1,375,000 of the previous step plus the 75,000 the sink's own ScorePart adds first; the sink's 5,000 comes on top.
+269 expect jackpot == 1375000
+270 event a_sink1 ControlCollision
+270-271 expect sound 11
+271 expect v_lite91.message_field == 4
+271 expect a_sink2.message_field == 0
+271 expect n_score == 1455000 delta 269
+# mode 3: both sinks end the restart window: lights off, mode = saved quest, saved quest cleared
+280 poke info_text_box message_field 3
+281 poke mode_timer message_field 5
+282 poke v_lite63 light_on 1
+283 poke v_lite64 light_on 1
+290 event a_sink1 ControlCollision
+290-291 expect none sound 11   # mode 3 branch has no tabc16 Play (LizardSinkBank is not reached)
+290-291 expect sound 41   # the resumed mode 5 plays its own tabc48 (Mode5Controller ControlModeResume)
+291 expect v_lite63.light_on == 0
+291 expect v_lite64.light_on == 0
+291 expect mode == 5
+291 expect saved_quest == -1
+291 expect n_score == 0 delta 289
+300 poke info_text_box message_field 3
+301 poke mode_timer message_field 6
+302 poke v_lite63 light_on 1
+310 event a_sink2 ControlCollision
+310-311 expect none sound 11
+310-311 expect sound 42   # the resumed mode 6 plays tabc50 (real Mode6Controller ControlModeResume)
+311 expect v_lite63.light_on == 0
+311 expect mode == 6
+311 expect saved_quest == -1
+320 quit

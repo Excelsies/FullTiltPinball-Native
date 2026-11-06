@@ -1,0 +1,117 @@
+{
+ "_comment": "Launcher watch: watch_pirates.json values plus s_launcher1.boost (f32) and s_launcher1.pullback_started (i32); tag 0x43abd8 = s_launcher1 (rest_pirates.json). Addresses only.",
+ "table_global": "0x43ab9c",
+ "values": [
+  {
+   "name": "mode",
+   "tag": "0x43ad38",
+   "field": 6
+  },
+  {
+   "name": "selected_mode",
+   "tag": "0x43beb8",
+   "field": 6
+  },
+  {
+   "name": "modes_played",
+   "tag": "0x43aee8",
+   "field": 6
+  },
+  {
+   "name": "map_pieces",
+   "tag": "0x43af00",
+   "field": 6
+  },
+  {
+   "name": "skill_index",
+   "tag": "0x43abd8",
+   "field": 6
+  },
+  {
+   "name": "letters",
+   "tag": "0x43ad48",
+   "field": 6
+  },
+  {
+   "name": "held_bonus",
+   "tag": "0x43abc0",
+   "field": 6
+  },
+  {
+   "name": "ball_save",
+   "addr": "0x435d90"
+  },
+  {
+   "name": "drain_state",
+   "addr": "0x435d08"
+  },
+  {
+   "name": "last_ball",
+   "addr": "0x43aba8"
+  },
+  {
+   "name": "locked",
+   "addr": "0x435d3c"
+  },
+  {
+   "name": "targets_hit",
+   "addr": "0x435d48"
+  },
+  {
+   "name": "no_hold_start",
+   "addr": "0x435d30"
+  },
+  {
+   "name": "bonus_step",
+   "addr": "0x435d38"
+  },
+  {
+   "name": "mode11_done",
+   "addr": "0x43abb0"
+  },
+  {
+   "name": "player_count",
+   "table": "0x102"
+  },
+  {
+   "name": "current_player",
+   "table": "0x106"
+  },
+  {
+   "name": "multiplier",
+   "table": "0x15e"
+  },
+  {
+   "name": "jackpot",
+   "table": "0x172"
+  },
+  {
+   "name": "ball_count",
+   "table": "0x186"
+  },
+  {
+   "name": "extra_balls",
+   "table": "0x18e"
+  },
+  {
+   "name": "multiball",
+   "table": "0x192"
+  },
+  {
+   "name": "tilt_lock",
+   "table": "0x1b2"
+  },
+  {
+   "name": "s_launcher1.boost",
+   "tag": "0x43abd8",
+   "field": "0x66",
+   "type": "f32"
+  },
+  {
+   "name": "s_launcher1.pullback_started",
+   "tag": "0x43abd8",
+   "field": "0x92",
+   "type": "i32"
+  }
+ ]
+}

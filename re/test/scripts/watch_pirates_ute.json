@@ -1,0 +1,31 @@
+{
+ "_comment": "UTe pre-hook trace: jackpot, targets_hit and the last scorer pointer (make_ute_scripts.py)",
+ "table_global": "0x43ab9c",
+ "values": [
+  {
+   "name": "mode",
+   "tag": "0x43ad38",
+   "field": 6
+  },
+  {
+   "name": "targets_hit",
+   "addr": "0x435d48"
+  },
+  {
+   "name": "jackpot",
+   "table": "0x172"
+  },
+  {
+   "name": "super_jackpot",
+   "table": "0x17a"
+  },
+  {
+   "name": "ball_count",
+   "table": "0x186"
+  },
+  {
+   "name": "last_scorer",
+   "addr": "0x435d44"
+  }
+ ]
+}

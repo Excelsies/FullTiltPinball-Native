@@ -1,0 +1,41 @@
+# Final sink hit (listing 3917-4060, 5230-5290): in mode 9 with v_lite114 = 1 an a_sink19 hit takes the end path:
+# jaw closed, mouth group walks the glyph string at 0.4 s steps after 0.0001 s (entries 0..7 glyphs, entry 8 empty), the
+# entry-9 step shows text 3050 and sets the score multiplier to 5 (then ModeEnd). Not checked here: the AwardJackpot
+# award, the mode change after CompleteQuest, the blocker/post states, the score total.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+# listing: sweep end opens the jaw (blocker_state 7) before the hit; multiplier is 1
+700 dump before a_jaw.blocker_state v_lite114.message_field
+701 expect a_jaw.blocker_state == 7
+701 expect multiplier == 1
+700 poke v_lite114 message_field 1
+701 event a_sink19 ControlCollision
+# listing: Display(glyph entry i, -1.0, font 1) every 0.4 s from the first step at 0.0001 s (+- 1 frame), entries 0..7, entry 8 empty
+701-702 expect text info_text_box display
+741-742 expect text info_text_box display
+781-782 expect text info_text_box display
+821-822 expect text info_text_box display
+861-862 expect text info_text_box display
+901-902 expect text info_text_box display
+941-942 expect text info_text_box display
+981-982 expect text info_text_box display
+1021-1022 expect text info_text_box display
+# no other display between the glyph steps (glyph steps are 0.4 s apart)
+703-739 expect none text info_text_box display
+743-779 expect none text info_text_box display
+983-1019 expect none text info_text_box display
+1023-1058 expect none text info_text_box display
+# listing: i == 9 -> sprintf(string 3050), Display(.., -1.0) at hit + 0.0001 + 9 x 0.4 s = frame 1061 (+- 1)
+701-1058 expect none text info_text_box display id 3050
+1060-1062 expect text info_text_box display id 3050
+# listing: TableG->ScoreMultiplier = 5; CloseDragonJaw closes the jaw (blocker_state 0, v_lite113 off)
+1100 dump after a_jaw.blocker_state v_lite113.active
+1101 expect multiplier == 5
+1101 expect a_jaw.blocker_state == 0
+1101 expect v_lite113.active == 0
+1200 quit

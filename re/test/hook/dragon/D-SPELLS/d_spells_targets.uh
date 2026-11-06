@@ -1,0 +1,29 @@
+# (sound ids: tabc05wave = 4, tabc35wave = 33 in this DAT, as logged in sounds.jsonl)
+# The spell targets a_spot4-7 each score 2,500 (SpellTargetControl1-4 ->
+# SpellTargetBank -> ScorePart(caller, 0)); info_text_box mode is 2 (poked at f190, see the note below), the bank is not complete after four.
+# The fifth target (a_spot22) completes the bank and awards a spell instead (script d_spells_award.uh).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite3.light_on v_lite4.light_on v_lite5.light_on v_lite6.light_on v_lite7.light_on
+10 key down new_game
+11 key up new_game
+# The game starts in mode 10 (PlungerControl, dragon_ball.cpp:136), where the first a_spot4 collision goes to
+# Mode10LaunchBallController and awards a spell (+120,000, spells 0 -> 1, sound AwardSpell, mode 10 -> 2) before
+# SpellTargetControl1 scores 2,500. The script pokes info_text_box message_field 2 (mode 2) at 190 so the
+# spell-target bank itself is tested.
+190 poke info_text_box message_field 2
+200 event a_spot4 ControlCollision
+200 expect n_score == 2500 delta 199
+200 expect sound 4
+210 event a_spot5 ControlCollision
+210 expect n_score == 2500 delta 209
+220 event a_spot6 ControlCollision
+220 expect n_score == 2500 delta 219
+230 event a_spot7 ControlCollision
+230 expect n_score == 2500 delta 229
+230 expect spells == 0
+250 expect v_lite3.light_on == 1
+250 expect v_lite6.light_on == 1
+250 expect v_lite7.light_on == 0
+300 quit

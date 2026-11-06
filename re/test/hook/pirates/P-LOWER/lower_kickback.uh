@@ -1,0 +1,30 @@
+# B1 (listing 5253-5292, FT 0x42a260 / 0x42a2a0): the kickback light's timer with the light dark deactivates a_kick2 and
+# s_bwal610 (ActiveFlag 0); with the light lit it does not. KickbackControl on its timer: v_lite504 on, v_lite505 off,
+# ScorePart(a_kick2, 0) = 5,000, v_lite544 flashes (timed, then off).
+init fixed_dt 10
+init seed 1
+init watch a_kick2.active s_bwal610.active v_lite504.light_on v_lite505.light_on v_lite544.light_on v_lite544.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke a_kick2 active 1
+200 poke s_bwal610 active 1
+200 poke v_lite544 light_on 1
+210 event v_lite544 ControlTimerExpired
+211 expect a_kick2.active == 1
+211 expect s_bwal610.active == 1
+220 poke v_lite544 light_on 0
+230 event v_lite544 ControlTimerExpired
+231 expect a_kick2.active == 0
+231 expect s_bwal610.active == 0
+# other message: nothing
+240 poke a_kick2 active 1
+241 event v_lite544 ControlCollision
+242 expect a_kick2.active == 1
+300 poke v_lite504 light_on 0
+300 poke v_lite505 light_on 1
+310 event a_kick2 ControlTimerExpired
+310 expect n_score == 5000 delta 309
+320 expect v_lite504.light_on == 1
+320 expect v_lite505.light_on == 0
+320 expect v_lite544.flasher_on == 1
+500 quit

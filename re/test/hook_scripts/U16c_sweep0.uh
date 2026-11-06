@@ -1,0 +1,15 @@
+# TLightSweeps (part 1038) sweep state 0 on DRAGON, no game running.
+# Expectations: part_1038.md 5.2. The per-ring light sets are
+# compared by re/test/u16c_sweep_check.py against re/light_sweeps.py --steps 0.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch *.override light_sweeps.radius light_sweeps.repeats_left light_sweeps.timer
+0 dump grid light_sweeps.columns light_sweeps.rows light_sweeps.xmin light_sweeps.ymin light_sweeps.inv_cell_w light_sweeps.inv_cell_h
+0 expect light_sweeps.columns == 15
+0 expect light_sweeps.rows == 25
+0 expect light_sweeps.timer == 0
+10 msg light_sweeps ft:0x1b@TLightSweeps 0
+780 expect light_sweeps.timer == 0
+780 expect light_sweeps.repeats_left == 0
+800 quit

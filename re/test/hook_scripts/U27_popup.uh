@@ -1,0 +1,89 @@
+# PIRATES: TPopupTarget a_drop5 (type 1006, attr 407 TimerTime = 0.25 s = 25 frames at fixed_dt 10).
+# Spec: part_same_as_upstream S2 items 1-3 (FT 0x414990 timer, 0x414a00 Message). Expected values come from the spec
+# rows and the DAT (407 = 0.25; a_drop5 600 polygon spans x 2.0092..2.6687, y -5.4792..-4.998, so (2.33, -5.24) lies inside
+# its AABB); frames marked "observed" were recorded from a run and reproduce exactly.
+# Part A (S2 item 1, retry): Disable at 10, ball placed and held inside the AABB at 12, Enable at 14. The raise
+#   timer expires at 38 (observed); with the ball held it re-arms itself (retry) at 38, 63, 88: active stays 0.
+#   The held ball carries speed 1 (place ... 0 1 1), not 0: the rules' UnstuckBall (FT 0x42c320, pirates_rules.cpp)
+#   throws and relaunches a ball that sits still for 500 ms outside its exempt parts, which would end the hold at
+#   frame 82. UnstuckBall is not called while the held ball's speed stays >= 0.8, so the hold lasts to frame 100.
+#   Ball released at 100 (moved away); the first expiry after that (113, observed) raises: active == 1.
+# Part B (S2 item 2): Enable at 130, Disable at 135 (before the 155 expiry): active stays 0 past TimerTime.
+# Part C (S2 item 3, two-player game): Reset sets all four saved ActiveFlags to 1; PlayerChanged saves the flag of
+#   the current player (0) and restores player n's; restored 1 -> Enable (flag set now, sprite at expiry),
+#   restored 0 -> Disable. Reset sets all four saved flags to 1 again.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 10
+init watch a_drop5.active a_drop5.saved_active0 a_drop5.saved_active1 a_drop5.saved_active2 a_drop5.saved_active3
+# --- start-up Reset: raised, all four saved flags 1
+5 expect a_drop5.active == 1
+5 expect a_drop5.saved_active0 == 1
+5 expect a_drop5.saved_active1 == 1
+5 expect a_drop5.saved_active2 == 1
+5 expect a_drop5.saved_active3 == 1
+# --- A: retry while a ball is inside the AABB
+10 msg a_drop5 TPopupTargetDisable 0
+11 expect a_drop5.active == 0
+12 place 0 2.33 -5.24 0.37 0 1 1
+13 hold 0 on
+14 msg a_drop5 TPopupTargetEnable 0
+37 expect a_drop5.active == 0
+38 expect a_drop5.active == 0
+39 expect a_drop5.active == 0
+62 expect a_drop5.active == 0
+64 expect a_drop5.active == 0
+87 expect a_drop5.active == 0
+89 expect a_drop5.active == 0
+99 expect a_drop5.active == 0
+100 hold 0 off
+100 place 0 -5 5 0.37 0 0 0
+112 expect a_drop5.active == 0
+113 expect a_drop5.active == 1
+120 expect a_drop5.active == 1
+# --- B: Disable cancels a pending raise
+130 msg a_drop5 TPopupTargetDisable 0
+131 msg a_drop5 TPopupTargetEnable 0
+135 msg a_drop5 TPopupTargetDisable 0
+136 expect a_drop5.active == 0
+154 expect a_drop5.active == 0
+156 expect a_drop5.active == 0
+190 expect a_drop5.active == 0
+# --- C: two-player game, per-player ActiveFlag
+200 key down new_game
+201 key up new_game
+400 msg a_drop5 Reset 0
+401 expect a_drop5.active == 1
+401 expect a_drop5.saved_active0 == 1
+401 expect a_drop5.saved_active1 == 1
+401 expect a_drop5.saved_active2 == 1
+401 expect a_drop5.saved_active3 == 1
+# player 0 target down; switching to player 1 restores player 1's saved 1
+410 msg a_drop5 TPopupTargetDisable 0
+411 expect a_drop5.active == 0
+420 msg table SwitchToNextPlayer 0
+421 expect a_drop5.saved_active0 == 0
+421 expect a_drop5.saved_active1 == 1
+421 expect a_drop5.active == 1
+# player 1 target down; back to player 0 restores 0 (stays down, no raise)
+430 msg a_drop5 TPopupTargetDisable 0
+431 expect a_drop5.active == 0
+440 msg table SwitchToNextPlayer 0
+441 expect a_drop5.saved_active1 == 0
+441 expect a_drop5.saved_active0 == 0
+441 expect a_drop5.active == 0
+480 expect a_drop5.active == 0
+# on to player 1: restores its saved 0
+490 msg table SwitchToNextPlayer 0
+491 expect a_drop5.active == 0
+530 expect a_drop5.active == 0
+# Reset: raised again, all four saved flags 1
+540 msg a_drop5 Reset 0
+541 expect a_drop5.active == 1
+541 expect a_drop5.saved_active0 == 1
+541 expect a_drop5.saved_active1 == 1
+541 expect a_drop5.saved_active2 == 1
+541 expect a_drop5.saved_active3 == 1
+600 quit

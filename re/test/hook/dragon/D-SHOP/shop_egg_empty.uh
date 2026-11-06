@@ -1,0 +1,13 @@
+# Mode 12 with no egg lit (offer 0): ControlMissionComplete -> text 3068 (id), s_hole118 eject, mode back to 2.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_sink4.message_field s_hole118.message_field a_kout3.message_field a_kout3.active info_text_box.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 12
+205 event info_text_box ControlMissionComplete
+205 expect text info_text_box display id 3068
+205-205 expect sound 30
+210 expect info_text_box.message_field == 2
+260 quit

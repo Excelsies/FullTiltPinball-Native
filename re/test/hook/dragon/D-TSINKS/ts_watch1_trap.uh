@@ -1,0 +1,25 @@
+# D-TSINKS WatchSinkControl1 (FT 0x427290, listing 3275-3321, code 0x4272de-0x427379), branch A: mode == 2, v_lite49.message_field != 0:
+# tabc10wave, MultiballCount - 1, v_lite49 reset-and-turn-on, plunger relaunch, ScorePart(caller, 0) = 200,000 (acceptance), text 3010,
+# UpdateTowerLocks (a_sink17.active 0, v_lite49.message_field 0).
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+190 poke v_lite49 message_field 1
+190 poke a_sink17 active 1
+199 dump before v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+200 event a_sink13 ControlCollision
+210 dump after v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+210 expect n_score == 200000 delta 199
+210 expect multiball == -1 delta 199
+200 expect sound 51
+200 expect sound 26
+200 expect text info_text_box display id 3010
+200 expect none sound 24
+200 expect none sound 43
+210 expect v_lite49.light_on == 1
+210 expect v_lite49.message_field == 0
+210 expect a_sink17.active == 0
+210 expect v_lite48.light_on == 0
+250 quit

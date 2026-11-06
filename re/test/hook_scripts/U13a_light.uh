@@ -1,0 +1,51 @@
+# TLight on DRAGON: ActiveFlag gate, Reset sets ActiveFlag, tmp override flag, FT PlayerChanged.
+# Expected values from part_tlight_tlightgroup.md (L1, L3, L4, L6).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init watch current_player v_lite113.active v_lite113.light_on v_lite113.override v_lite113.flasher_on
+# The original's NewGame leaves v_lite113 ActiveFlag 0 (Wine rest state: active 0); Reset (frame 12) is what sets it to 1 (L1)
+5 expect v_lite113.active == 0
+# L1: gate -- inactive light ignores everything except Reset / PlayerChanged
+10 poke v_lite113 active 0
+11 msg v_lite113 TLightTurnOn 0
+11 expect v_lite113.light_on == 0
+11 expect v_lite113.active == 0
+12 msg v_lite113 Reset 0
+12 expect v_lite113.active == 1
+# L4: override flag set whatever the value (0)
+13 msg v_lite113 TLightFtTmpOverrideOn 0
+13 expect v_lite113.override == 1
+14 msg v_lite113 TLightFtResetOverride 0
+14 expect v_lite113.override == 0
+# L3: FlasherStartTimedThenStayOn does not kill the undo-override timer (1.0 s)
+20 msg v_lite113 TLightFtTmpOverrideOn 1.0
+20 expect v_lite113.override == 1
+21 msg v_lite113 TLightFlasherStartTimedThenStayOn 0.3
+90 expect v_lite113.override == 1
+125 expect v_lite113.override == 0
+# two players: game started (Reset broadcast), then real two-player switches (msg table SwitchToNextPlayer broadcasts PlayerChanged, CurrentPlayer 0 -> 1 -> 0)
+# (a)+(b): PlayerChanged kills the running timed flash and clears FlasherOnFlag before saving
+130 key down new_game
+131 key up new_game
+200 msg v_lite113 Reset 0
+210 msg v_lite113 TLightFlasherStartTimed 5.0
+211 expect v_lite113.flasher_on == 1
+220 msg table SwitchToNextPlayer 0
+221 expect current_player == 1
+230 msg table SwitchToNextPlayer 0
+231 expect current_player == 0
+231 expect v_lite113.flasher_on == 0
+# (c): flash-then-stay-off: LightOnFlag cleared before saving
+300 msg v_lite113 Reset 0
+310 msg v_lite113 TLightTurnOn 0
+311 expect v_lite113.light_on == 1
+320 msg v_lite113 TLightFlasherStartTimedThenStayOff 5.0
+330 msg table SwitchToNextPlayer 0
+340 msg table SwitchToNextPlayer 0
+341 expect current_player == 0
+341 expect v_lite113.light_on == 0
+341 expect v_lite113.flasher_on == 0
+400 dump end
+410 quit

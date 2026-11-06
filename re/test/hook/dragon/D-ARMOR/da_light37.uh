@@ -1,0 +1,19 @@
+init window 960 666
+init fixed_dt 10
+init seed 1
+# OutlaneKickerLightControl (FT 0x428240, lines 4061-4086): v_lite37's timer steps MessageField 0 -> 1 (on 53 s),
+# 1 -> 2 (flash 5 s then off), 2 -> 0.
+init dump_period 10
+init watch v_lite37.message_field v_lite37.light_on v_lite37.bitmap v_lite37.flasher_on
+10 key down new_game
+11 key up new_game
+200 event v_lite37 ControlTimerExpired
+201 expect v_lite37.message_field == 1
+199 expect v_lite37.bitmap == -1
+201 expect v_lite37.bitmap != -1
+300 event v_lite37 ControlTimerExpired
+301 expect v_lite37.message_field == 2
+301 expect v_lite37.flasher_on == 1
+400 event v_lite37 ControlTimerExpired
+401 expect v_lite37.message_field == 0
+500 quit

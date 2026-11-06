@@ -1,0 +1,13 @@
+# Mode7Controller, ControlMissionStarted (listing 4975-4983; FT 0x429d7f): with the mode timer running, the countdown text
+# 3035 (seconds left = time left / 1000) is shown for 0.5 s; with the timer idle (time left 0) nothing is shown.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 7
+100 event info_text_box ControlMissionStarted
+100 expect none text info_text_box display id 3035
+120 msg mode_timer TTimerResetTimer 30.65
+130 event info_text_box ControlMissionStarted
+130 expect text info_text_box display id 3035
+200 quit

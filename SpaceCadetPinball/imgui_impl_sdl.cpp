@@ -93,6 +93,8 @@ struct ImGui_ImplSDL2_Data
     int             PendingMouseLeaveFrame;
     char*           ClipboardTextData;
     bool            MouseCanUseGlobalState;
+    bool            MouseCaptured;              // last capture state the OS accepted
+    bool            MouseCaptureUnsupported;    // SDL_CaptureMouse() failed once: the video driver has no capture, stop calling it
 
     ImGui_ImplSDL2_Data()   { memset((void*)this, 0, sizeof(*this)); }
 };
@@ -443,7 +445,22 @@ static void ImGui_ImplSDL2_UpdateMouseData()
     // We forward mouse input when hovered or captured (via SDL_MOUSEMOTION) or when focused (below)
 #if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE
     // SDL_CaptureMouse() let the OS know e.g. that our imgui drag outside the SDL window boundaries shouldn't e.g. trigger other operations outside
-    SDL_CaptureMouse((bd->MouseButtonsDown != 0 && ImGui::GetDragDropPayload() == nullptr) ? SDL_TRUE : SDL_FALSE);
+    // Only on a change of the wanted state; a failure (e.g. legacy video drivers) ends the calls and clears SDL's error text,
+    // so the error does not show up again in every frame.
+    if (!bd->MouseCaptureUnsupported)
+    {
+        const bool want_capture = bd->MouseButtonsDown != 0 && ImGui::GetDragDropPayload() == nullptr;
+        if (want_capture != bd->MouseCaptured)
+        {
+            if (SDL_CaptureMouse(want_capture ? SDL_TRUE : SDL_FALSE) == 0)
+                bd->MouseCaptured = want_capture;
+            else
+            {
+                bd->MouseCaptureUnsupported = true;
+                SDL_ClearError();
+            }
+        }
+    }
     SDL_Window* focused_window = SDL_GetKeyboardFocus();
     const bool is_app_focused = (bd->Window == focused_window);
 #else

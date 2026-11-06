@@ -63,12 +63,32 @@ TTableLayer::TTableLayer(TPinballTable* table): TCollisionComponent(table, -1, f
 		GraityMult = *angleMultArr;
 	}
 	else
+	{
 		GraityMult = 0.2f;
+		if (pb::IsFullTiltTable())
+		{
+			auto gravMultArr = loader::query_float_attribute_opt(groupIndex, 0, 703);
+			if (gravMultArr)
+				GraityMult = *gravMultArr;
+		}
+	}
 
 	table->XOffset = bmp->XPosition;
 	table->YOffset = bmp->YPosition;
 	table->Width = bmp->Width;
 	table->Height = bmp->Height;
+	if (pb::IsFullTiltTable())
+	{
+		/*The larger value wins (matches Full Tilt 0x4191b5).*/
+		table->Width = (bmp->Width + 1) & ~1;
+		auto splitArr = loader::query_float_attribute_opt(groupIndex, 0, 704 + fullscrn::GetResolution());
+		if (splitArr)
+		{
+			auto splitWidth = static_cast<int>(splitArr[1]) - table->XOffset;
+			if (splitWidth > table->Width)
+				table->Width = splitWidth;
+		}
+	}
 	Threshold = visual.Kicker.Threshold;
 	Boost = 15.0f;
 

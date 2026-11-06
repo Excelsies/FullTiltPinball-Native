@@ -8,6 +8,7 @@
 #include "TPinballTable.h"
 #include "TBall.h"
 #include "TDrain.h"
+#include "pb.h"
 #include "timer.h"
 
 TSink::TSink(TPinballTable* table, int groupIndex) : TCollisionComponent(table, groupIndex, true)
@@ -25,6 +26,10 @@ TSink::TSink(TPinballTable* table, int groupIndex) : TCollisionComponent(table, 
 	auto floatArr = loader::query_float_attribute(groupIndex, 0, 601);
 	BallPosition.X = floatArr[0];
 	BallPosition.Y = floatArr[1];
+	EjectZ = floatArr[3]; // eject Z offset (601[3]; 0.0 in every CADET sink)
+	// Eject mask = 1 << attr 1301 when present, else the part's collision group
+	auto ejectLayer = loader::query_float_attribute_opt(groupIndex, 0, 1301);
+	EjectMask = ejectLayer ? 1 << static_cast<int>(floor(ejectLayer[0])) : visual.CollisionGroup;
 	TimerTime = *loader::query_float_attribute(groupIndex, 0, 407);
 }
 
@@ -83,9 +88,13 @@ void TSink::TimerExpired(int timerId, void* caller)
 		auto ball = table->AddBall(sink->BallPosition);
 		assertm(ball, "Failure to create ball in sink");
 		ball->CollisionDisabledFlag = true;
+		ball->CollisionMask = sink->EjectMask;
+		ball->Position.Z = sink->EjectZ + ball->Radius;
 		ball->throw_ball(&sink->BallThrowDirection, sink->ThrowAngleMult, sink->ThrowSpeedMult1,
 			sink->ThrowSpeedMult2);
 		if (sink->SoundIndex3)
 			loader::play_sound(sink->SoundIndex3, ball, "TSink2");
+		if (pb::IsFullTiltTable())
+			control::handler(MessageCode::ControlTimerExpired, sink); // FT 0x418640
 	}
 }

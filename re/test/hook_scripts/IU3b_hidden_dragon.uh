@@ -1,0 +1,27 @@
+# The `hidden<Tab>test` cheat and the super jackpot value on DRAGON with the real DragonRules. The engine owns
+# `hidden<Tab>test` on FT tables (a state machine over upper-case VKs: Tab, not space; engine_diff C5). Expected values
+# are literals. The game starts at frame 0: the engine's Reset sets SuperJackpotScore = 20000 (FT 0x402) and the rules'
+# NewGame (dragon_rules.cpp, TableControlHandler new-game case: `control::TableG->SuperJackpotScore = 2500000`, FT value)
+# runs right after it, so frame 20 pins the rules' value 2,500,000. The Reset value 20000 is only observable with the
+# test-only stub rules: IU3b_rules_dragon.uh frame 60 (`super_jackpot == 20000`, player 2 starts with the Reset value).
+init window 960 666
+init fixed_dt 10
+init seed 1
+2 key down new_game
+3 key up new_game
+# Reset leaves the third accumulator at 20000 (FT Reset 0x402); the rules' NewGame then sets 2,500,000.
+20 expect super_jackpot == 2500000
+20 expect n_cheat == 0
+# "hidden test" with a space is not the FT sequence: cheat mode stays off.
+30 type hidden\stest
+70 expect n_cheat == 0
+# A wrong key in the middle resets the machine.
+80 type hiddxn\ttest
+120 expect n_cheat == 0
+# The real sequence turns cheat mode on.
+130 type hidden\ttest
+170 expect n_cheat == 1
+# Upper-case input is the same sequence (VKs): typing it again keeps the mode on (FT sets, it does not toggle).
+180 type HIDDEN\tTEST
+220 expect n_cheat == 1
+230 quit

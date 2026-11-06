@@ -1,0 +1,53 @@
+# SetSkulduggeryLights (listing 935-963).
+# (0) through the real caller ModeStartCleanup (pirates_core.cpp:105-112, FT 0x42aad0), reached by every mode start: here the
+# skill-shot wheel is set to outcome 4 and the one-way event starts Mode4Controller (pirates_modes_a.cpp:184-207),
+# whose ControlMissionComplete runs ModeStartCleanup first. v_lite6 is left out of the check: mode 4 then flashes
+# the LDUGG lights v_lite4-8 itself. The poke of info_text_box.message_field 3 returns the table from the mode 2 of part (1)
+# to the ready state the one-way needs.
+# (1) via CheckSkulduggeryStart: all 11 letters (0x7ff) set, mode 2, one LDUGG hit -> param 1: v_lite1 field cleared,
+#     the three banks reset (hit bits 0). (0) via a real mode start (see above): code 0x14, the SKU and ERY letter lights off.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop5.message_field a_drop13.message_field a_drop10.message_field v_lite1.message_field v_lite2.light_on v_lite6.light_on v_lite10.light_on  v_lite3.light_on v_lite9.light_on v_lite504.light_on v_lite505.light_on a_bloce.blocker_state v_lite548.light_on v_lite549.light_on v_lite550.light_on v_lite551.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 poke v_lite1 message_field 2039
+210 event a_drop5 ControlCollision
+210 expect v_lite1.message_field == 0
+210 expect a_drop5.message_field == 0
+210 expect a_drop13.message_field == 0
+210 expect a_drop10.message_field == 0
+215 poke info_text_box message_field 3
+220 poke v_lite2 light_on 1
+220 poke v_lite3 light_on 1
+220 poke v_lite9 light_on 1
+220 poke v_lite10 light_on 1
+220 poke v_lite504 light_on 0
+220 poke v_lite505 light_on 1
+220 poke v_lite548 light_on 1
+220 poke v_lite549 light_on 1
+220 poke v_lite550 light_on 1
+220 poke v_lite551 light_on 1
+221 msg a_bloce 313 0
+223 expect a_bloce.blocker_state == 0
+223 expect v_lite548.light_on == 1
+222 poke s_launcher1 message_field 4
+225 event s_oneway3 ControlCollision
+230 expect mode == 4
+230 expect v_lite2.light_on == 0
+230 expect v_lite3.light_on == 0
+230 expect v_lite9.light_on == 0
+230 expect v_lite10.light_on == 0
+# ModeStartCleanup's other effects: the same mode start
+# turns v_lite504 on, v_lite505 off, lowers/raises a_bloce to frame 1 and, with info_text_box.message_field 3 (not 12), SetLavaLights(0) turns the lava
+# lights v_lite548-551 off (the mode-12 counterpart, which keeps them, is pd_cleanup_m12.uh). None of these is written by the mode-4 start itself.
+230 expect v_lite504.light_on == 1
+230 expect v_lite505.light_on == 0
+230 expect a_bloce.blocker_state == 1
+230 expect v_lite548.light_on == 0
+230 expect v_lite549.light_on == 0
+230 expect v_lite550.light_on == 0
+230 expect v_lite551.light_on == 0
+240 quit

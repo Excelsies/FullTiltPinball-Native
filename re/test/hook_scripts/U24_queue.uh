@@ -1,0 +1,69 @@
+# DRAGON, part_ttimer_ttextbox X2-X5: Full Tilt text queue, driven by the engine's own displays.
+# Expected values come from the spec formulas (0x41dd30 scheduler, 0x41de40 Display), not from game text:
+#  - pause/resume: the resume text (rules text 0x5b -> 2004) is timed 0.5 s, the nudge warning is timed 2.0 s
+#    (pb::frame, needs MultiballCount != 0 on FT, hence bumps after the ball feed).
+#  - X2: ControlTimerExpired (0x46) only when the queue empties: ctrl46 counts the sends.
+#  - X4: a head with < 0.25 s left is extended to 0.25 s (25 frames at fixed_dt 10) by the next Display.
+#  - X3: an untimed Display clears the queue at once, a timed Display replaces an untimed head.
+# The rules sit on top of the engine queue: DragonRules::TextEvent's display table (dragon_rules.cpp {0x5b, 2004,
+# 0.5f}) times the resume text 0.5 s, and the rules answer ControlTimerExpired 0x46 / mission-started with the
+# untimed 3066 text (dragon_ball.cpp ShowInfoText(3066, -1)), so the queue is not empty after an expiry.
+# Expected values, each from the spec formulas applied to these inputs and then measured:
+#  - resume text (2004) 0.5 s from the F3 at frame 160, so it ends at 210; the bump is at 176 so the
+#    first nudge Display (bump + 12 = 188) finds < 0.25 s left (22 frames) - X4 is exercised:
+#    nudge Displays 188..L (L = 215, a 28-frame run) re-arm it, it leaves at L + 25 = 240,
+#    the nudge text (2.0 s from L) leaves at L + 200 = 415.
+#  - X2: the 0x46 is sent only when the queue empties at 415: ctrl46 0 -> 1. The rules answer it with the
+#    untimed 3066 text, so after it the queue holds that text (queue_len 1, head_time -1, armed 0).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch info_text_box.queue_len info_text_box.head_time info_text_box.ctrl46 info_text_box.pending info_text_box.armed
+10 key down new_game
+11 key up new_game
+150 key down pause
+151 key up pause
+160 key down pause
+161 key up pause
+162 expect info_text_box.queue_len == 1
+162 expect info_text_box.head_time ~= 0.5 1e-6
+162 expect info_text_box.pending == 1
+162 expect info_text_box.armed == 1
+# X4/X2: bump at 176 -> nudge warning displays on frames 188..L (L = 215; see header). The resume text
+# (EndTicks 160 + 50 = 210) has < 0.25 s left at 188, so every nudge Display re-arms it for 0.25 s:
+# it leaves the queue at L + 25 (+-1) = 240 instead of 210. The nudge text (2.0 s from L) leaves at L + 200.
+176 key down bump_left
+194 key up bump_left
+188 expect info_text_box.queue_len == 2
+220 expect info_text_box.queue_len == 2
+239 expect info_text_box.queue_len == 2
+241 expect info_text_box.queue_len == 1
+# X2: nothing was sent to control when the resume text expired (the queue did not empty)
+220 expect info_text_box.ctrl46 == 0
+241 expect info_text_box.ctrl46 == 0
+414 expect info_text_box.queue_len == 1
+414 expect info_text_box.head_time ~= 2 1e-6
+416 expect info_text_box.ctrl46 == 1
+# the rules answer the 0x46 with the untimed text: queue of 1, untimed, not armed
+416 expect info_text_box.queue_len == 1
+416 expect info_text_box.head_time ~= -1 1e-6
+416 expect info_text_box.armed == 0
+# X3: a timed head (nudge warning, bumps from 900) is replaced at once by an untimed Display
+# (SwitchToNextPlayer with one player shows the player text without a Clear): queue of 1, untimed, no 0x46.
+900 key down bump_left
+918 key up bump_left
+945 expect info_text_box.queue_len == 1
+945 expect info_text_box.head_time ~= 2 1e-6
+946 msg table SwitchToNextPlayer 0
+946 expect info_text_box.queue_len == 1
+946 expect info_text_box.head_time ~= -1 1e-6
+946 expect info_text_box.armed == 0
+946 expect info_text_box.ctrl46 == 1
+# X5 / X3: a timed message replaces an untimed head (no Clear in between)
+1020 key down bump_left
+1038 key up bump_left
+1050 expect info_text_box.queue_len == 1
+1050 expect info_text_box.head_time ~= 2 1e-6
+1050 expect info_text_box.armed == 1
+1100 quit

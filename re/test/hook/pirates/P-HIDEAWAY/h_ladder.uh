@@ -1,0 +1,54 @@
+# H-6 (AwardCoins coin ladder 50k, 100k, 200k, 400k, 800k, 1.6M): in mode 2 complete the hideaway set seven times
+# (poke v_lite524 bit 8, then the three sink hits). Each cycle scores 3 x 40,000 (ScorePart 0) plus the ladder step; the 7th cycle shows the
+# step stays at 1,600,000. Expected values are the original's ladder + 120,000, not taken from a run. Per-cycle delta is measured
+# from the frame before the first hit to the frame after the completing hit.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite524.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+208 poke v_lite524 message_field 8
+210 event a_sink17 ControlCollision
+220 event a_sink15 ControlCollision
+230 event a_sink14 ControlCollision
+231 expect v_lite524.message_field == 0
+231 expect n_score == 170000 delta 209
+248 poke v_lite524 message_field 8
+250 event a_sink17 ControlCollision
+260 event a_sink15 ControlCollision
+270 event a_sink14 ControlCollision
+271 expect v_lite524.message_field == 0
+271 expect n_score == 220000 delta 249
+288 poke v_lite524 message_field 8
+290 event a_sink17 ControlCollision
+300 event a_sink15 ControlCollision
+310 event a_sink14 ControlCollision
+311 expect v_lite524.message_field == 0
+311 expect n_score == 320000 delta 289
+328 poke v_lite524 message_field 8
+330 event a_sink17 ControlCollision
+340 event a_sink15 ControlCollision
+350 event a_sink14 ControlCollision
+351 expect v_lite524.message_field == 0
+351 expect n_score == 520000 delta 329
+368 poke v_lite524 message_field 8
+370 event a_sink17 ControlCollision
+380 event a_sink15 ControlCollision
+390 event a_sink14 ControlCollision
+391 expect v_lite524.message_field == 0
+391 expect n_score == 920000 delta 369
+408 poke v_lite524 message_field 8
+410 event a_sink17 ControlCollision
+420 event a_sink15 ControlCollision
+430 event a_sink14 ControlCollision
+431 expect v_lite524.message_field == 0
+431 expect n_score == 1720000 delta 409
+448 poke v_lite524 message_field 8
+450 event a_sink17 ControlCollision
+460 event a_sink15 ControlCollision
+470 event a_sink14 ControlCollision
+471 expect v_lite524.message_field == 0
+471 expect n_score == 1720000 delta 449
+481 quit

@@ -4,6 +4,7 @@
 #include "options.h"
 #include "pb.h"
 #include "score.h"
+#include "tables.h"
 #include "translations.h"
 
 bool high_score::dlg_enter_name;
@@ -14,7 +15,8 @@ high_score_struct high_score::highscore_table[5];
 
 int high_score::read()
 {
-	char Buffer[20];
+	std::string Buffer;
+	const std::string prefix = tables::Current().ScoreKeyPrefix;
 
 	int checkSum = 0;
 	clear_table();
@@ -22,14 +24,12 @@ int high_score::read()
 	{
 		auto& tablePtr = highscore_table[position];
 
-		snprintf(Buffer, sizeof Buffer, "%d", position);
-		strcat(Buffer, ".Name");
+		Buffer = prefix + std::to_string(position) + ".Name";
 		auto name = options::GetSetting(Buffer, "");
 		strncpy(tablePtr.Name, name.c_str(), sizeof tablePtr.Name);
 
-		snprintf(Buffer, sizeof Buffer, "%d", position);
-		strcat(Buffer, ".Score");
-		tablePtr.Score = options::get_int(Buffer, tablePtr.Score);
+		Buffer = prefix + std::to_string(position) + ".Score";
+		tablePtr.Score = options::get_int(Buffer.c_str(), tablePtr.Score);
 
 		for (int i = static_cast<int>(strlen(tablePtr.Name)); --i >= 0; checkSum += tablePtr.Name[i])
 		{
@@ -37,7 +37,7 @@ int high_score::read()
 		checkSum += tablePtr.Score;
 	}
 
-	auto verification = options::get_int("Verification", 7);
+	auto verification = options::get_int((prefix + "Verification").c_str(), 7);
 	if (checkSum != verification)
 		clear_table();
 	return 0;
@@ -45,20 +45,19 @@ int high_score::read()
 
 int high_score::write()
 {
-	char Buffer[20];
+	std::string Buffer;
+	const std::string prefix = tables::Current().ScoreKeyPrefix;
 
 	int checkSum = 0;
 	for (auto position = 0; position < 5; ++position)
 	{
 		auto& tablePtr = highscore_table[position];
 
-		snprintf(Buffer, sizeof Buffer, "%d", position);
-		strcat(Buffer, ".Name");
+		Buffer = prefix + std::to_string(position) + ".Name";
 		options::SetSetting(Buffer, tablePtr.Name);
 
-		snprintf(Buffer, sizeof Buffer, "%d", position);
-		strcat(Buffer, ".Score");
-		options::set_int(Buffer, tablePtr.Score);
+		Buffer = prefix + std::to_string(position) + ".Score";
+		options::set_int(Buffer.c_str(), tablePtr.Score);
 
 		for (int i = static_cast<int>(strlen(tablePtr.Name)); --i >= 0; checkSum += tablePtr.Name[i])
 		{
@@ -66,7 +65,7 @@ int high_score::write()
 		checkSum += tablePtr.Score;
 	}
 
-	options::set_int("Verification", checkSum);
+	options::set_int((prefix + "Verification").c_str(), checkSum);
 	return 0;
 }
 

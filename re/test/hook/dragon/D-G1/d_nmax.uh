@@ -1,0 +1,19 @@
+# NMAX starts the selected quest. The NMAX typed at 420 starts mode 5 at frame 423; Mode5Controller
+# (dragon_quest_modes.cpp:336) shows the entry text 3031 in that frame (time -1) and the countdown text 3030 when the
+# intro light sweep ends, at 743 (:352-355), repeated at 793. mode == 5 and ball_held == 1 are checked at 470.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 event a_spot4 ControlCollision
+410 poke a_kout2 message_field 5
+420 type NMAX
+470 expect mode == 5
+470 expect ball_held == 1
+423-423 expect text info_text_box display id 3031
+743-743 expect text info_text_box display id 3030
+793-793 expect text info_text_box display id 3030
+810 quit

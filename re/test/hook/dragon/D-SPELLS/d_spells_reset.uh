@@ -1,0 +1,28 @@
+# ResetSpells (called by the table control handler on SetTiltLock) turns the spell lights off:
+# award spells, then event table SetTiltLock; v_lite28 / 29 / 30 / 31 light_on 0 afterwards. (Spells counter stays: ResetSpells
+# does not clear 0x434d24.) The BlockerFControl enable at its end is not checked here.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite28.light_on v_lite29.light_on v_lite30.light_on v_lite31.light_on a_kout3.active
+10 key down new_game
+11 key up new_game
+# The game starts in mode 10 (PlungerControl, dragon_ball.cpp:136), where the first a_spot4 collision goes to
+# Mode10LaunchBallController and awards a spell (+120,000, spells 0 -> 1, sound AwardSpell, mode 10 -> 2) before
+# SpellTargetControl1 scores 2,500. The script pokes info_text_box message_field 2 (mode 2) at 190 so the
+# spell-target bank itself is tested.
+190 poke info_text_box message_field 2
+200 event a_spot4 ControlCollision
+210 event a_spot5 ControlCollision
+220 event a_spot6 ControlCollision
+230 event a_spot7 ControlCollision
+240 event a_spot22 ControlCollision
+240 expect spells == 1 delta 239
+400 event table SetTiltLock
+401 expect v_lite28.light_on == 0
+401 expect v_lite29.light_on == 0
+401 expect v_lite30.light_on == 0
+401 expect v_lite31.light_on == 0
+401 expect a_kout3.active == 0
+401 expect spells == 1
+450 quit

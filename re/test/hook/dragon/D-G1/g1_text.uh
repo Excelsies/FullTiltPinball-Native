@@ -1,0 +1,11 @@
+# TextEvent smoke: three FT codes reach the info box (display ids are compared by hand from text.jsonl).
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+40 text 0x5d
+50 text 0x5b
+60 text 0x57
+70 text 0x5f
+80 quit

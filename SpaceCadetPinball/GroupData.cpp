@@ -89,21 +89,30 @@ void GroupData::FinalizeGroup()
 	}
 }
 
-gdrv_bitmap8* GroupData::GetBitmap(int resolution) const
+gdrv_bitmap8* GroupData::GetBitmap(int resolution, int index) const
 {
-	return Bitmaps[resolution];
+	assertm(resolution >= 0 && resolution < 3, "GroupData: resolution out of bounds");
+	if (index < 0 || index >= MaxBitmapsPerResolution)
+		return nullptr;
+	return Bitmaps[resolution][index];
 }
 
-zmap_header_type* GroupData::GetZMap(int resolution) const
+zmap_header_type* GroupData::GetZMap(int resolution, int index) const
 {
-	return ZMaps[resolution];
+	assertm(resolution >= 0 && resolution < 3, "GroupData: resolution out of bounds");
+	if (index < 0 || index >= MaxBitmapsPerResolution)
+		return nullptr;
+	return ZMaps[resolution][index];
 }
 
 void GroupData::SplitSplicedBitmap(const gdrv_bitmap8& srcBmp, gdrv_bitmap8& bmp, zmap_header_type& zMap)
 {
 	assertm(srcBmp.BitmapType == BitmapTypes::Spliced, "GroupData: wrong bitmap type");
 
-	std::memset(bmp.IndexedBmpPtr, 0xff, bmp.Stride * bmp.Height);
+	// Pixels the stream does not cover. Space Cadet: index 255 (white, as upstream). Full Tilt paints only the stream's
+	// runs (FUN_0041e2c0), so an uncovered pixel must leave the screen as it was: index 0 is the background clear
+	// colour, which is what shows where no table bitmap is under the sprite (z 0xFFFF passes the z test there).
+	std::memset(bmp.IndexedBmpPtr, pb::IsFullTiltTable() ? 0x00 : 0xff, bmp.Stride * bmp.Height);
 	bmp.XPosition = srcBmp.XPosition;
 	bmp.YPosition = srcBmp.YPosition;
 	bmp.Resolution = srcBmp.Resolution;
@@ -114,6 +123,39 @@ void GroupData::SplitSplicedBitmap(const gdrv_bitmap8& srcBmp, gdrv_bitmap8& bmp
 	auto tableWidth = fullscrn::resolution_array[srcBmp.Resolution].TableWidth;
 	auto src = reinterpret_cast<uint16_t*>(srcBmp.IndexedBmpPtr);
 	auto srcChar = reinterpret_cast<char**>(&src);
+
+	if (pb::IsFullTiltTable())
+	{
+		// Full Tilt (FUN_0041e2c0 in DRAGON.EXE / PIRATES.EXE) never splits: it writes the spliced stream linearly into
+		// a buffer whose row pitch is the one the DAT was authored for (tableWidth, the same 600/752/960 as Space Cadet:
+		// DRAGON.DAT and PIRATES.DAT strides all fit it), so a stride may skip several rows (DRAGON v_lite119 skips four).
+		// Reproduce that: keep the position in the authored buffer and map it to (row, column) of this bitmap.
+		for (int pos = 0;;)
+		{
+			auto stride = static_cast<int16_t>(*src++);
+			if (stride < 0)
+				break;
+
+			pos += stride;
+			for (auto count = *src++; count; count--)
+			{
+				auto depth = *src++;
+				auto row = pos / tableWidth, col = pos % tableWidth;
+				assertm(col < bmp.Width && row < bmp.Height, "Spliced bitmap: pixel outside the bitmap");
+				if (col < bmp.Width && row < bmp.Height)
+				{
+					auto dstInd = row * bmp.Width + col;
+					bmp.IndexedBmpPtr[dstInd] = **srcChar;
+					zMap.ZPtr1[dstInd] = depth;
+				}
+
+				(*srcChar)++;
+				pos++;
+			}
+		}
+		return;
+	}
+
 	for (int dstInd = 0;;)
 	{
 		auto stride = static_cast<int16_t>(*src++);
@@ -142,10 +184,17 @@ void GroupData::SplitSplicedBitmap(const gdrv_bitmap8& srcBmp, gdrv_bitmap8& bmp
 
 void GroupData::SetBitmap(gdrv_bitmap8* bmp)
 {
-	assertm(Bitmaps[bmp->Resolution] == nullptr, "GroupData: bitmap override");
-	Bitmaps[bmp->Resolution] = bmp;
+	// Up to two bitmaps per resolution (Full Tilt ball groups), kept in DAT order.
+	auto slots = Bitmaps[bmp->Resolution];
+	int index = 0;
+	while (index < MaxBitmapsPerResolution && slots[index])
+		++index;
+	assertm(index < MaxBitmapsPerResolution, "GroupData: more than two bitmaps for one resolution");
+	if (index == MaxBitmapsPerResolution)
+		return;
+	slots[index] = bmp;
 
-	auto zMap = ZMaps[bmp->Resolution];
+	auto zMap = ZMaps[bmp->Resolution][index];
 	if (zMap)
 	{
 		assertm(bmp->Width == zMap->Width && bmp->Height == zMap->Height,
@@ -158,10 +207,16 @@ void GroupData::SetZMap(zmap_header_type* zMap)
 	// Flip zMap to match with flipped non-indexed bitmaps
 	zdrv::FlipZMapHorizontally(*zMap);
 
-	assertm(ZMaps[zMap->Resolution] == nullptr, "GroupData: zMap override");
-	ZMaps[zMap->Resolution] = zMap;
+	auto slots = ZMaps[zMap->Resolution];
+	int index = 0;
+	while (index < MaxBitmapsPerResolution && slots[index])
+		++index;
+	assertm(index < MaxBitmapsPerResolution, "GroupData: more than two zMaps for one resolution");
+	if (index == MaxBitmapsPerResolution)
+		return;
+	slots[index] = zMap;
 
-	auto bmp = Bitmaps[zMap->Resolution];
+	auto bmp = Bitmaps[zMap->Resolution][index];
 	if (bmp)
 	{
 		assertm(bmp->Width == zMap->Width && bmp->Height == zMap->Height,
@@ -268,16 +323,16 @@ char* DatFile::field_labeled(LPCSTR lpString, FieldTypes fieldType)
 	return groupIndex < 0 ? nullptr : field(groupIndex, fieldType);
 }
 
-gdrv_bitmap8* DatFile::GetBitmap(int groupIndex)
+gdrv_bitmap8* DatFile::GetBitmap(int groupIndex, int index)
 {
 	auto group = Groups[groupIndex];
-	return group->GetBitmap(fullscrn::GetResolution());
+	return group->GetBitmap(fullscrn::GetResolution(), index);
 }
 
-zmap_header_type* DatFile::GetZMap(int groupIndex)
+zmap_header_type* DatFile::GetZMap(int groupIndex, int index)
 {
 	auto group = Groups[groupIndex];
-	return group->GetZMap(fullscrn::GetResolution());
+	return group->GetZMap(fullscrn::GetResolution(), index);
 }
 
 void DatFile::Finalize()

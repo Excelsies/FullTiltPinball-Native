@@ -1,0 +1,6 @@
+# Hook check: place with 6 arguments must exit 3.
+init window 960 666
+init fixed_dt 16.667
+init expect_exit 3
+20 place 0 100 100 5 0 1
+40 quit

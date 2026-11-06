@@ -1,0 +1,36 @@
+# MissionControl's pre-hook raises the jackpot by 50000 per a_spot4 collision and by 75000 per a_sink1 collision
+# (values read from the original, 0x42c020).
+# (No dump line: hookrun.State overlays every dump over later timeline records of the same key, which would hide the change.)
+# The first a_sink1 after an a_spot4 scores 125,000 (and targets_hit +1), not 75,000: LizardSinkControl1
+# (dragon_quests.cpp:183) calls ScorePart, NoteScorer (ft_common.cpp) replaces the last scorer a_spot4 and sends it
+# ControlScorerReplaced through Handler, which runs the code-agnostic MissionControl pre-hook again (a_spot4: +50,000,
+# TargetsHit++), as the original's 0x4230f0 -> 0x423060 -> 0x42c020 does.
+# The second a_sink1 hit (250) is in mode 2, where LizardSinkControl1 starts mode 7: Mode7Controller
+# (dragon_playfield.cpp:323; start sound id 44 at 250) awards ScoreValue(nullptr, 100000) at its start
+# (dragon_playfield.cpp:128). ScoreValue(nullptr) replaces the last scorer a_sink1 (ft_common.cpp NoteScorer: 'A null
+# comp is valid, only the last scorer is replaced'), so ControlScorerReplaced reaches a_sink1 and the code-agnostic
+# MissionControl pre-hook (+75,000) runs a second time: jackpot +150,000 (75,000 for the collision, 75,000 for the
+# replacement), n_score +105,000 (the sink's own 5,000 plus the 100,000 mode start award; the jackpot itself is not
+# part of the score). Same double-count mechanism as the first hit's 125,000; it is the original's behaviour per both
+# decompiles, not measured on Wine here.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+210 event a_spot4 ControlCollision
+211 expect jackpot == 50000 delta 209
+220 event a_spot4 ControlCollision
+221 expect jackpot == 50000 delta 219
+230 event a_spot4 ControlCollision
+231 expect jackpot == 50000 delta 229
+240 event a_sink1 ControlCollision
+241 expect jackpot == 125000 delta 239
+241 expect targets_hit == 1 delta 239
+250 event a_sink1 ControlCollision
+250-250 expect sound 44
+251 expect jackpot == 150000 delta 249
+251 expect n_score == 105000 delta 249
+251 expect mode == 7
+251 expect targets_hit == 0 delta 249
+260 quit

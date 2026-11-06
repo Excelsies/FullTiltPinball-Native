@@ -1,0 +1,30 @@
+# Hook smoke check, Space Cadet: new game, launch, flips, typed cheat, event, poke, dump, shots.
+init window 960 666
+init fixed_dt 16.667
+init seed 7
+init dump_period 50
+5 shot before
+10 key down new_game
+11 key up new_game
+10 expect track 1
+12 expect none track 1
+60 key down plunger
+120 key up plunger
+200 key down left_flipper
+210 key up left_flipper
+220 key down right_flipper
+230 key up right_flipper
+300 type hidden\stest
+400 expect n_cheat == 1
+410 dump before_event
+420 event a_bump1 ControlCollision
+421 dump after_event
+421 expect n_score == 500 delta 419
+430 poke lite1 light_on 1
+430 dump poked lite1.light_on
+431 expect lite1.light_on == 1
+440 shot mid
+450 shot late
+460 dump end
+470 quit
+10 expect text info_text_box display

@@ -55,6 +55,17 @@ struct gdrv_bitmap8
 	void ScaleIndexed(float scaleX, float scaleY);
 	void CreateTexture(const char* scaleHint, int access);
 	void BlitToTexture();
+	// Streaming texture upload tracking. Every write into BmpBufPtr1 of a bitmap that has a texture must be
+	// declared here (the gdrv:: writers do it); BlitToTexture then uploads only these areas. Bitmaps without a
+	// texture ignore the calls (CreateTexture marks everything dirty).
+	void MarkDirty(int x, int y, int width, int height);
+	void MarkAllDirty();
+	static const size_t MaxDirtyRects = 16;
+	std::vector<SDL_Rect> DirtyRects;
+	bool AllDirty = false;
+	unsigned SeenRenderResets = 0;
+	// Bytes handed to SDL by BlitToTexture during the last call (0 when nothing changed).
+	size_t LastUploadBytes = 0;
 	ColorRgba* BmpBufPtr1;
 	char* IndexedBmpPtr;
 	int Width;

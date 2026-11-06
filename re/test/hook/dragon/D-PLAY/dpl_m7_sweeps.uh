@@ -1,0 +1,19 @@
+# Mode7Controller, ControlTimerExpired from the TLightSweeps part (listing 4908-4916; FT 0x429bbb): the intro sweep ended:
+# ModeStartLights, v_lite14 on, the captured ball is released from a_sink18, mode timer 30.65 s, then MissionControl(ControlMissionStarted)
+# shows the countdown text 3035.
+init fixed_dt 10
+init seed 1
+init watch v_lite14.light_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 7
+99 expect v_lite14.light_on == 0
+100 event light_sweeps ControlTimerExpired
+100 expect v_lite14.light_on == 1
+100 expect text info_text_box display id 3035
+100 expect mode == 7
+# the 30.65 s mode timer (about 3065 frames at dt 10 ms; the expiry lands on frame 3164, measured, one frame early by tick order): still mode 7 at 3163,
+# mode 3 at 3166 (a 30.0 s timer would already have ended near frame 3100)
+3163 expect mode == 7
+3166 expect mode == 3
+3200 quit

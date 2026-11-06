@@ -1,0 +1,22 @@
+# a_ramp5 in mode 2: wind steps v_lite611 / v_lite612 on, v_lite603 stays off; ladder 25k, 200k, 525k, 1,000,000, 1,475,000.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite611.light_on v_lite612.light_on v_lite603.light_on
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 2
+200 event a_ramp5 ControlBallToLayer2
+201 expect n_score == 25000
+500 event a_ramp5 ControlBallToLayer2
+501 expect n_score == 200000
+503 expect v_lite611.light_on == 1
+503 expect v_lite603.light_on == 0
+800 event a_ramp5 ControlBallToLayer2
+801 expect n_score == 525000
+803 expect v_lite612.light_on == 1
+1100 event a_ramp5 ControlBallToLayer2
+1101 expect n_score == 1000000
+1400 event a_ramp5 ControlBallToLayer2
+1401 expect n_score == 1475000
+1450 quit

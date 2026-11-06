@@ -1,0 +1,21 @@
+# Mode6Controller ControlMissionStarted when no level text was ever chosen (FT 0x42c430 case 0x50; the level
+# text buffer 0x435d50 is .bss, zero-filled, so the format is the empty string). The original does not abort: it formats the empty
+# string and shows it for 0.5 s on the info box. Here mode 6 is entered by poke (no MissionComplete), then the sweep end runs.
+# After a MissionComplete (level 0 -> string 3046) the same sweep-end message shows that level text again with the seconds left.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms v_lite606.message_field
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 6
+300 event light_sweeps ControlTimerExpired
+300 expect text info_text_box display
+301 expect mode == 6
+301 expect mode_timer.time_left_ms in 24100 24140
+# the level text is chosen by MissionComplete; a following MissionStarted shows it
+400 event info_text_box ControlMissionComplete
+400 expect text info_text_box display id 3067
+402 event info_text_box ControlMissionStarted
+402 expect text info_text_box display id 3046
+450 quit

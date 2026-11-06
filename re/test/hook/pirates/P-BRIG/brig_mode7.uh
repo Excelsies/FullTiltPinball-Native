@@ -1,0 +1,20 @@
+# B2: the multiball-replaces-mode case. The same three captures while
+# mode 7 runs: mode 13 with no 0x52 sent to the running mode, so the jackpot and modes_played are unchanged.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 7
+200 expect mode == 7
+210 event s_hole19 ControlBallCaptured
+230 event s_hole19 ControlBallCaptured
+240 expect locked == 2
+240 expect mode == 7
+250 event s_hole19 ControlBallCaptured
+250 expect mode == 13
+250 expect locked == 0
+250 expect multiball == 3
+250 expect modes_played == 0 delta 249
+250 expect jackpot == 0 delta 249
+250 expect n_score == 100000
+260 quit

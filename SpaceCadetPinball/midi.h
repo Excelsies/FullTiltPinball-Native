@@ -99,18 +99,32 @@ public:
 	static void music_play();
 	static void music_stop();
 	static void SetVolume(int volume);
+	/// Space Cadet's fixed three-track API (control.cpp). Unchanged behaviour.
 	static bool play_track(MidiTracks track, bool replay);
 	static MidiTracks get_active_track();
+
+	/// Named tracks (Full Tilt tables: the rules load their own list). load_track returns a handle
+	/// >= 1, or 0 when audio is closed or neither <name>.MDS nor <name>.MID exists; the caller decides
+	/// what a missing track means (FT rules fall back to their default track).
+	static int load_track(const std::string& name);
+	/// Plays a handle from load_track. Handle 0 (never loaded) stops the playing music (as the original) and returns false.
+	static bool play_track(int handle, bool replay);
+	/// Handle of the playing named track (the one that will play when music resumes if music is
+	/// stopped), 0 if none or if a Space Cadet track is playing.
+	static int active_track();
 private:
 	static std::vector<Mix_Music*> LoadedTracks;
+	static std::vector<Mix_Music*> NamedTracks; // handle h is NamedTracks[h - 1]
 	static Mix_Music* track1, * track2, * track3;
-	static MidiTracks active_track, NextTrack;
+	// Playback key: 0 none, 1..3 Space Cadet MidiTracks, -h named handle h (kept apart from 1..3)
+	static int ActiveKey, NextKey;
 	static int Volume;
 	static bool IsPlaying, MixOpen;
 
 	static void StopPlayback();
-	static Mix_Music* load_track(std::string fileName);
+	static Mix_Music* load_music(std::string fileName);
 	static Mix_Music* load_track_sub(std::string fileName, bool isMidi);
-	static Mix_Music* TrackToMidi(MidiTracks track);
+	static Mix_Music* KeyToMusic(int key);
+	static bool play_key(int key, bool replay);
 	static std::vector<uint8_t>* MdsToMidi(std::string file);
 };

@@ -1,0 +1,71 @@
+# Mode6Controller (FT 0x42c430; listing 6598-6795; machine code read there). ControlMissionComplete: score
+# 300,000, sweeps 9.0, ResetSkuTargets / ResetLduggTargets / ResetEryTargets, level by the lit count of the eight wind / orbit /
+# island light groups (here 0 lit -> 8 targets, 10,000 each, string 3046), string 3067. Sweep end: timer 24.14 s + the level
+# text with the seconds left. TPopupTarget hits (a_drop5): the counter 0x435cf8 counts; hit n < 8 scores 10,000; the 8th is
+# AwardJackpot and resets the counter. a_roll6: ball save := 2 and v_lite569 timed on. Sinks a_sink17 / 15 / 14: string 3050,
+# then the drain path (mode ends). Expected values: machine code, not a run.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms v_lite606.message_field v_lite504.light_on v_lite505.light_on v_lite778.flasher_on v_lite1.flasher_on v_lite11.flasher_on v_lite569.light_on v_lite569.bitmap v_lite778.light_on a_kout2.active
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+195 expect no_hold_start == 0
+200 poke info_text_box message_field 6
+201 event info_text_box ControlMissionComplete
+201 expect mode == 6
+201 expect n_score == 300000
+201 expect text info_text_box display id 3067
+201 expect sound 49
+201 expect track 0
+201 expect v_lite778.flasher_on == 1
+201 expect v_lite1.flasher_on == 1
+201 expect v_lite11.flasher_on == 1
+201 expect a_kout2.active == 1
+# a non-timer, non-sweeps caller does nothing
+250 event v_lite4 ControlTimerExpired
+251 expect mode_timer.time_left_ms == 0
+300 event light_sweeps ControlTimerExpired
+300 expect text info_text_box display id 3046
+301 expect mode_timer.time_left_ms in 24100 24140
+# popup target hits: 1..7 score 10,000, the 8th is the jackpot
+310 event a_drop5 ControlCollision
+310 expect n_score == 10000 delta 309
+310 expect sound 50
+311 event a_drop5 ControlCollision
+311 expect n_score == 10000 delta 310
+312 event a_drop5 ControlCollision
+313 event a_drop5 ControlCollision
+314 event a_drop5 ControlCollision
+315 event a_drop5 ControlCollision
+316 event a_drop5 ControlCollision
+316 expect n_score == 10000 delta 315
+317 event a_drop5 ControlCollision
+317 expect n_score != 10000 delta 316
+# a_roll6: ball save 2 and the ball-save light timed on
+330 poke v_lite569 light_on 0
+331 event a_roll6 ControlCollision
+331 expect ball_save == 2
+# TLightTurnOnTimed sets ToggledOnFlag, not LightOnFlag: the sprite changes
+331 expect v_lite569.bitmap != 0 delta 330
+# an unrelated rollover changes nothing
+340 poke v_lite569 light_on 0
+341 event a_roll5 ControlCollision
+341 expect v_lite569.bitmap == 0 delta 340
+400 poke v_lite606 message_field 2
+401 event mode_timer ControlTimerExpired
+402 expect v_lite606.message_field == 3
+402 expect v_lite778.light_on == 0
+402 expect a_kout2.active == 0
+402 expect v_lite504.light_on == 0
+402 expect v_lite505.light_on == 1
+402 expect mode == 2
+# sink path: string 3050 then the drain path
+500 poke info_text_box message_field 6
+501 event a_sink17 ControlCollision
+501 expect text info_text_box display id 3050
+502 expect mode_timer.time_left_ms == 0
+502 expect mode == 2
+550 quit

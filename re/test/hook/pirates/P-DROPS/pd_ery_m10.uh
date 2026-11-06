@@ -1,0 +1,24 @@
+# EryTargetBank mode 10: 30,000 per hit; on completion the mode 10 bits 0x70 of the shared mode counter are set, the three
+# ERY lights come on, the bank resets and CheckMode10Banks runs.
+# CheckMode10Banks (pirates_modes_b.cpp:190-204), with 0x70 set, clears them and calls Mode10Award (:154-167),
+# whose award follows TreasureXIndex (0 on a new game) = AwardNextSpecialTreasure (pirates_awards.cpp:180):
+# ScoreValue 100000 with the first special-treasure light (n_score +100000 at 320). The lights stay on (checked below).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop10.message_field v_lite1.message_field v_lite9.light_on v_lite10.light_on v_lite11.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 10
+300 event a_drop10 ControlCollision
+310 event a_drop11 ControlCollision
+320 event a_drop12 ControlCollision
+300 expect n_score == 30000 delta 299
+310 expect n_score == 30000 delta 309
+320 expect n_score == 100000 delta 319
+320 expect a_drop10.message_field == 0
+320 expect v_lite9.light_on == 1
+320 expect v_lite10.light_on == 1
+320 expect v_lite11.light_on == 1
+320 expect sound 63
+380 quit

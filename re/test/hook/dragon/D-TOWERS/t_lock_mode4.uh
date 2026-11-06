@@ -1,0 +1,17 @@
+# TowerLockTargetBank, mode 4: an incomplete bank scores nothing and plays no sound of its own (0x4250f7..0x42512e je 0x42521d).
+# Mode 4 is Mode4Controller (dragon_quest_modes.cpp:128-129): a_spot3 is a gem target worth 60,000 with its own
+# text and the gem sound (id 40). The check is 'the hit scores exactly the gem, nothing from the bank itself, and none of
+# the bank's sounds'.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 4
+110 event a_spot3 ControlCollision
+110 expect n_score == 60000 delta 109
+110 expect text info_text_box display id 3023
+110 expect sound 40
+110 expect none sound 5
+110 expect none sound 24
+110 expect none sound 43
+130 quit

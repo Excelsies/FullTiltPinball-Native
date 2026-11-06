@@ -8,6 +8,8 @@
 #include "timer.h"
 #include "TPinballTable.h"
 #include "TBall.h"
+#include "nudge.h"
+#include "TPlunger.h"
 
 TDemo::TDemo(TPinballTable* table, int groupIndex)
 	: TCollisionComponent(table, groupIndex, false)
@@ -19,6 +21,7 @@ TDemo::TDemo(TPinballTable* table, int groupIndex)
 	FlipLeftTimer = 0;
 	FlipRightTimer = 0;
 	MessageField = 0;
+	SavedBallPosition = {0.0f, 0.0f};
 	UnusedBaseFlag = 0;
 	ActiveFlag = 0;
 	FlipRightFlag = 0;
@@ -54,6 +57,15 @@ TDemo::TDemo(TPinballTable* table, int groupIndex)
 
 	auto v9 = loader::query_float_attribute(groupIndex, 0, 1404);
 	Edge3 = TEdgeSegment::install_wall(v9, this, &ActiveFlag, visual.CollisionGroup, table->CollisionCompOffset, 1404);
+
+	// FT 0x417a50: optional extra trigger walls 1405 / 1406 act as the 1401 / 1403 walls on
+	// another collision layer: first float = layer n (mask 1 << n), the wall follows. Absent in CADET.DAT.
+	auto v10 = loader::query_float_attribute_opt(groupIndex, 0, 1405);
+	if (v10)
+		TEdgeSegment::install_wall(v10 + 1, this, &ActiveFlag, 1u << static_cast<int>(v10[0]), 0.0, 1401);
+	auto v11 = loader::query_float_attribute_opt(groupIndex, 0, 1406);
+	if (v11)
+		TEdgeSegment::install_wall(v11 + 1, this, &ActiveFlag, 1u << static_cast<int>(v11[0]), 0.0, 1403);
 }
 
 int TDemo::Message(MessageCode code, float value)
@@ -64,6 +76,14 @@ int TDemo::Message(MessageCode code, float value)
 		if (RestartGameTimer)
 			timer::kill(RestartGameTimer);
 		RestartGameTimer = 0;
+		if (pb::IsFullTiltTable())
+		{
+			// FT 0x418290 case 0x3f6: the watchdog starts with the ball position (-100, -100)
+			SavedBallPosition = {-100.0f, -100.0f};
+			timer::kill(Watchdog);
+			if (ActiveFlag)
+				timer::set(WatchdogPeriod, this, Watchdog);
+		}
 		break;
 	case MessageCode::GameOver:
 		if (RestartGameTimer)
@@ -71,6 +91,8 @@ int TDemo::Message(MessageCode code, float value)
 		RestartGameTimer = 0;
 		if (ActiveFlag != 0)
 			RestartGameTimer = timer::set(5.0, this, NewGameRestartTimer);
+		if (pb::IsFullTiltTable())
+			timer::kill(Watchdog); // FT 0x418290 case 0x400
 		break;
 	case MessageCode::Reset:
 		if (FlipLeftTimer)
@@ -200,4 +222,59 @@ void TDemo::NewGameRestartTimer(int timerId, void* caller)
 	pb::replay_level(true);
 	demo->PinballTable->Message(MessageCode::NewGame, static_cast<float>(demo->PinballTable->PlayerCount));
 	demo->RestartGameTimer = 0;
+}
+
+// FT 0x417c40 (DRAGON export): every 5 s while the demo is active. Looks for the first ball
+// staying (+-3 x CollisionCompOffset) around where it was last tick: inside the plunger's box it
+// presses the plunger and arms the release timer, elsewhere it flips both flippers and nudges.
+void TDemo::Watchdog(int timerId, void* caller)
+{
+	auto demo = static_cast<TDemo*>(caller);
+	auto table = demo->PinballTable;
+	if (!demo->ActiveFlag)
+		return;
+
+	if (!table->BallList.empty())
+	{
+		auto ball = table->BallList[0];
+		auto offset = table->CollisionCompOffset;
+		RectF watchBox{};
+		watchBox.XMax = offset * 3.0f + demo->SavedBallPosition.X;
+		watchBox.YMax = offset * 3.0f + demo->SavedBallPosition.Y;
+		watchBox.XMin = offset * -3.0f + demo->SavedBallPosition.X;
+		watchBox.YMin = offset * -3.0f + demo->SavedBallPosition.Y;
+		if (table->BallCountInRect(watchBox) != 0)
+		{
+			if (BallInsidePlunger(ball, table->Plunger))
+			{
+				if (!demo->PlungerFlag)
+				{
+					table->Message(MessageCode::PlungerInputPressed, 0);
+					float time = RandFloat() + 2.0f;
+					demo->PlungerFlag = timer::set(time, demo, PlungerRelease);
+				}
+			}
+			else
+			{
+				FlipRight(0, demo);
+				FlipLeft(0, demo);
+				ft_rand::Int(); // FT 0x42c4cb: a draw whose value is discarded
+				nudge::nudge_right(); // FT 0x411eb0
+			}
+		}
+		demo->SavedBallPosition = ball->Position;
+	}
+	if (demo->ActiveFlag)
+		timer::set(WatchdogPeriod, demo, Watchdog);
+}
+
+// FT 0x412ae0: active ball inside the component's bounding box grown by CollisionCompOffset / 2.
+bool TDemo::BallInsidePlunger(TBall* ball, TCollisionComponent* plunger)
+{
+	auto margin = plunger->PinballTable->CollisionCompOffset / 2.0f;
+	return ball->ActiveFlag &&
+		plunger->AABB.XMin - margin <= ball->Position.X &&
+		plunger->AABB.YMin - margin <= ball->Position.Y &&
+		ball->Position.X <= plunger->AABB.XMax + margin &&
+		ball->Position.Y <= plunger->AABB.YMax + margin;
 }

@@ -1,0 +1,59 @@
+# TTimer on DRAGON mode_timer (part_ttimer_ttextbox T1, T2, T3, T4). Expected values come from the
+# spec rows: 0x45 with a value >= 0 starts the timer, 0x45 with a value < 0 stops it with no expiry (T1), 0x48
+# returns the time left in ms (T2), PlayerChanged swaps MessageField per player and kills the timer (T3), Reset
+# zeroes MessageField (T4). Watch keys: time_left_ms = what 0x48 returns, timer = a timer is armed,
+# expired = number of timer expiries (ControlTimerExpired sent), message_field.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init option Players 2
+init watch mode_timer.time_left_ms mode_timer.timer mode_timer.expired mode_timer.message_field mode_timer.last_get_ms
+# Two-player game so the table's own player switch drives PlayerChanged.
+2 key down new_game
+3 key up new_game
+# T2: 5.0 s started at frame 10, read back at frame 110 (1.00 s later): 4000 ms +-10.
+10 msg mode_timer ft:0x45@TTimer 5.0
+10 expect mode_timer.timer == 1
+110 msg mode_timer ft:0x48@TTimer 0
+110 expect mode_timer.time_left_ms in 3990 4010
+111 expect mode_timer.last_get_ms in 3990 4010
+# T1: a negative value stops the timer, no expiry; the timer would have run out at frame ~510.
+120 msg mode_timer ft:0x45@TTimer -1.0
+121 expect mode_timer.timer == 0
+121 expect mode_timer.expired == 0
+121 expect mode_timer.time_left_ms == 0
+# 0x48 with no timer returns 0 through the message path.
+122 msg mode_timer ft:0x48@TTimer 0
+123 expect mode_timer.last_get_ms == 0
+520 expect mode_timer.expired == 0
+# A normal timer does expire once (0x46 sent to control): 1.0 s from frame 530.
+530 msg mode_timer ft:0x45@TTimer 1.0
+540 expect mode_timer.expired == 0
+631 expect mode_timer.expired == 1
+631 expect mode_timer.timer == 0
+# T4: Reset zeroes MessageField.
+640 poke mode_timer message_field 7
+641 expect mode_timer.message_field == 7
+650 msg mode_timer Reset 0
+651 expect mode_timer.message_field == 0
+# T3: the table's player switch (PlayerChanged to every part) saves the current player's MessageField, loads
+# the next player's and kills the timer (the remaining time is not saved).
+660 poke mode_timer message_field 5
+670 msg mode_timer ft:0x45@TTimer 30.0
+671 expect mode_timer.timer == 1
+680 msg table SwitchToNextPlayer 0
+681 expect mode_timer.timer == 0
+681 expect mode_timer.message_field == 0
+681 expect mode_timer.expired == 1
+681 expect mode_timer.time_left_ms == 0
+# Player 1 gets 9; switching back to player 0 restores 5.
+690 poke mode_timer message_field 9
+700 msg table SwitchToNextPlayer 0
+701 expect mode_timer.message_field == 5
+# SetTiltLock kills a running timer, no expiry.
+710 msg mode_timer ft:0x45@TTimer 2.0
+720 msg mode_timer SetTiltLock 0
+721 expect mode_timer.timer == 0
+900 expect mode_timer.expired == 1
+910 quit

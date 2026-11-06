@@ -1,0 +1,38 @@
+# L1 (listing 3175-3328, 618-630, 7102-7150): the lava bank in mode 2. Targets a_spot11,
+# a_spot8, a_spot9, a_spot10 (controls 1-4) set bits 1,2,4,8 of a_spot11->MessageField and score ScorePart index 0 = 1,000;
+# the fourth completes the bank: ScorePart index 1 = 15,000, bank state cleared, StartMode12 -> mode 12 (MissionControl 0x4f)
+# -> Mode12 entry adds two balls (multiball +2) and clears locked; text 3055 shown. Each target also adds 20,000 to the jackpot
+# (MissionControl pre-hook for a TSoloTarget, 0x42d850). P1; mode forced to 2 with poke (Mode2Idle is not under test).
+# Sounds: DAT sound index 16 = tabb23wave (idle-mode lava hit), 22 = tabb32wave (Mode12 entry), read from sounds.jsonl of the run.
+# Expected values come from the listing, not from a run.
+init fixed_dt 10
+init seed 1
+init watch a_spot11.message_field a_spot8.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+200 expect mode == 2
+210 event a_spot11 ControlCollision
+210 expect a_spot11.message_field == 1
+210 expect n_score == 1000 delta 209
+210 expect jackpot == 20000 delta 209
+210 expect sound 16
+220 event a_spot8 ControlCollision
+220 expect a_spot11.message_field == 3
+220 expect n_score == 1000 delta 219
+230 event a_spot9 ControlCollision
+230 expect a_spot11.message_field == 7
+230 expect n_score == 1000 delta 229
+240 event a_spot10 ControlCollision
+240 expect mode == 12
+240 expect a_spot11.message_field == 0
+240 expect n_score == 15000 delta 239
+240 expect multiball == 2 delta 239
+240 expect locked == 0
+240 expect text info_text_box display id 3055
+240 expect sound 22
+# mode 12 with MultiballCount 3: a drain event does nothing (the controller returns unless MultiballCount == 1)
+260 event drain ControlBallDrained
+260 expect mode == 12
+260 expect multiball == 2 delta 239
+300 quit

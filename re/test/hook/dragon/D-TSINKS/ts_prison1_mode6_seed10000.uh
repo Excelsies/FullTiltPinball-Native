@@ -1,0 +1,20 @@
+# D-TSINKS PrisonSinkControl1 branch C (listing 3078-3121, code 0x427075-0x4270ef), mode 6: tabc51wave (sound 43) and ONE draw
+# RandIndex(2) = (r * 2) >> 15 (0x427087). `seed 10000` runs in the frame of the event before it, so the sink's draw is the first: MSVC rand() after
+# srand(10000) is 32694 (independent calculation: h = h * 214013 + 2531011, r = (h >> 16) & 0x7fff) -> index 1 -> v_lite66 flashes (code 7, 1.0 s)
+# and v_lite65 is not touched by this call.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 6
+199 dump before v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+200 seed 10000
+200 event a_sink15 ControlCollision
+210 dump after v_lite48.light_on v_lite48.message_field v_lite49.light_on v_lite49.message_field v_lite50.message_field a_sink18.active a_sink17.active s_plunger1.pullback_started v_lite65.flasher_on v_lite66.flasher_on v_lite49.flasher_on
+200 expect sound 43
+200 expect n_score == 0 delta 199
+210 expect v_lite66.flasher_on == 1
+210 expect v_lite65.flasher_on == 0
+210 expect multiball == 0 delta 199
+210 expect n_rand_draws == 15 delta 199
+250 quit

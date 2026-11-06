@@ -1,0 +1,36 @@
+# O-7 (listing 4584-4730): RightOrbitTripwireControl in mode 2. Before the ladder: v_lite527 flashes (1.0), bit 8 is set in
+# v_lite524->MessageField and CheckHideawayComplete(0) runs (all four bits -> SetHideawayLights(1) + AwardCoins ladder step 1 =
+# 50,000, string 3003, tabb84 id 56). Orbit light group adds +0/+1/+2 (v_lite608 / v_lite609 / group).
+# Hit 1 (bits 0 -> 8, no completion): 25,000. Then bits are poked to 7: hit 2 completes the set. AwardCoins scores through
+# ScoreValue(0, 50000) (coin ladder step 1), and a ScoreValue with a null component replaces the last scorer (FT 0x4230f0 as
+# listing ScoreValue: NoteScorer), i.e. sends 0x4d to s_trip8, whose combo group is reset BEFORE the ladder reads it (CheckHideawayComplete
+# runs first, 0x4294a2). So the ladder index of hit 2 is combo 0 + orbit count 1 (v_lite608 lit by hit 1) = 1 = 50,000: 50,000 + 50,000 = 100,000,
+# message_field cleared to 0. Hit 3: combo count 1 (A flashed at hit 2) = 3, orbit count 2 (A, B) = +2 -> idx 5 = 200,000.
+# Hit 4: combo count 2 = 6, orbit group full = +2 -> idx 8 = 325,000.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite527.flasher_on v_lite524.message_field v_lite608.flasher_on v_lite609.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 poke v_lite524 message_field 0
+220 event s_trip8 ControlCollision
+221 expect n_score == 25000 delta 219
+221 expect v_lite527.flasher_on == 1
+221 expect v_lite524.message_field == 8
+221 expect v_lite608.flasher_on == 1
+221 expect v_lite609.flasher_on == 0
+220 expect none sound 56
+235 poke v_lite524 message_field 7
+240 event s_trip8 ControlCollision
+241 expect n_score == 100000 delta 239
+241 expect v_lite524.message_field == 0
+241 expect v_lite609.flasher_on == 1
+240 expect sound 56
+240 expect sound 11
+260 event s_trip8 ControlCollision
+261 expect n_score == 200000 delta 259
+280 event s_trip8 ControlCollision
+281 expect n_score == 325000 delta 279
+350 quit

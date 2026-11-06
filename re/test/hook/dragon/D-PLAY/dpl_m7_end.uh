@@ -1,0 +1,17 @@
+# Mode7Controller, ControlModeEnd and ControlBallDrained (listing 4985-4997; FT 0x429e0e / 0x429df0): QuestEndCleanup, the
+# mode lamps off, rocks re-enabled, CompleteQuest. BallDrained first sets the mode to 2 and stops the mode timer (-1.0).
+init fixed_dt 10
+init seed 1
+init watch v_lite45.light_on v_lite46.light_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 7
+60 msg v_lite45 TLightTurnOn 0
+60 msg v_lite46 TLightTurnOn 0
+61 expect v_lite45.light_on == 1
+100 event info_text_box ControlModeEnd
+100 expect v_lite45.light_on == 0
+100 expect v_lite46.light_on == 0
+# CompleteQuest (listing 4994) does not change the mode itself
+100 expect mode == 7
+200 quit

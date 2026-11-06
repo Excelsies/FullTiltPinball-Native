@@ -1,0 +1,16 @@
+# LightTargetControl1 / 2 (listing 1984-2019): a_spot30 flashes v_lite20 and a_spot31 flashes v_lite19 (code 7, 2.0 s) and each scores
+# the table value (2,500).
+init fixed_dt 10
+init seed 1
+init watch v_lite20.flasher_on v_lite19.flasher_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+99 expect v_lite20.flasher_on == 0
+100 event a_spot30 ControlCollision
+100 expect n_score == 2500 delta 99
+100 expect v_lite20.flasher_on == 1
+110 event a_spot31 ControlCollision
+110 expect n_score == 2500 delta 109
+110 expect v_lite19.flasher_on == 1
+200 quit

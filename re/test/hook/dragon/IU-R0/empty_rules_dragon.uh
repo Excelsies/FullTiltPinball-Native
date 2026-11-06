@@ -1,0 +1,13 @@
+# Rules smoke run: P1, launch, 600 frames, a hook `text 0x5d` at frame 700 (accepted because Rules is set; with
+# null Rules the hook exits 3), `quit`. No game text; no expected strings.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+610 dump before_text
+700 text 0x5d
+710 dump after_text
+750 quit

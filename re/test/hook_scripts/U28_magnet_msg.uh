@@ -1,0 +1,40 @@
+# TMagnet, PIRATES s_magnet1..6 (part_1042 4.2 Message, 3.2 ctor). Expected values from the spec rows.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch s_magnet1.active s_magnet1.hold_off s_magnet1.field_mult s_magnet1.hold_off_time s_magnet2.active s_magnet3.active s_magnet4.active s_magnet5.active s_magnet6.active s_magnet6.field_mult s_magnet6.hold_off_time
+# ctor (3.2): FieldMult = attr 305 = 150, hold-off time = 1.0 f.
+0 expect s_magnet1.field_mult ~= 150 1e-6
+0 expect s_magnet1.hold_off_time ~= 1.0 1e-6
+0 expect s_magnet6.field_mult ~= 150 1e-6
+0 expect s_magnet6.hold_off_time ~= 1.0 1e-6
+# Reset broadcast before frame 5 disables all six (4.2, case 0x402).
+5 expect s_magnet1.active == 0
+5 expect s_magnet2.active == 0
+5 expect s_magnet3.active == 0
+5 expect s_magnet4.active == 0
+5 expect s_magnet5.active == 0
+5 expect s_magnet6.active == 0
+10 msg s_magnet1 ft:0x4b@TMagnet 0
+11 expect s_magnet1.active == 1
+11 expect s_magnet1.hold_off == 0
+11 expect s_magnet2.active == 0
+20 msg s_magnet1 ft:0x4c@TMagnet 0
+21 expect s_magnet1.active == 0
+21 expect s_magnet1.hold_off == 0
+30 msg s_magnet1 ft:0x4b@TMagnet 0
+31 expect s_magnet1.active == 1
+40 msg s_magnet1 SetTiltLock 0
+41 expect s_magnet1.active == 0
+# the message is per part: enable magnet 6 only, magnet 1 stays off
+50 msg s_magnet6 ft:0x4b@TMagnet 0
+51 expect s_magnet6.active == 1
+51 expect s_magnet1.active == 0
+# Reset disables again
+60 msg s_magnet6 Reset 0
+61 expect s_magnet6.active == 0
+# any other code is ignored (TKickout::Message is not called): TKickoutDestroyBall (FT 0x4e, unmapped for TMagnet) leave the part alone
+70 msg s_magnet1 ft:0x4b@TMagnet 0
+72 msg s_magnet1 TKickoutDestroyBall 0
+73 expect s_magnet1.active == 1
+80 quit

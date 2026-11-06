@@ -1,0 +1,28 @@
+# Quest selection cleared by the bonus on a plain drain (twin of the tail of D-QMODES/dq_complete.uh): no quest is started, so the
+# selection made at the new ball is still set when the ball drains and the bonus count runs. The bonus's step 1 (CancelQuestSelection,
+# dragon_bonus.cpp:161, FT 0x423e50) clears it (and resets the quest lights v_lite72..75, flasher_on 1 on v_lite74 -> 0 on all four)
+# 2.0 s after mode 11 begins (Wine reference: selected_quest -> 0 at +2.0 s).
+# With quests_done 0 the step shows no bonus line for quests (text 3013), which is also asserted.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch selected_quest quests_done bonus_step v_lite72.flasher_on v_lite73.flasher_on v_lite74.flasher_on v_lite75.flasher_on
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 event a_spot4 ControlCollision
+400 expect mode == 2
+2100 expect mode == 11
+2100 expect selected_quest != 0
+2100 expect quests_done == 0
+2200 expect selected_quest != 0
+2230 expect selected_quest == 0
+2200 expect v_lite74.flasher_on == 1
+2230 expect bonus_step == 4
+2230 expect v_lite72.flasher_on == 0
+2230 expect v_lite73.flasher_on == 0
+2230 expect v_lite74.flasher_on == 0
+2230 expect v_lite75.flasher_on == 0
+2000-2500 expect none text info_text_box display id 3013
+2800 quit

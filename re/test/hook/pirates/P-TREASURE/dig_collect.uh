@@ -1,0 +1,65 @@
+# DigTreasure 0x424b00 + CollectBuriedTreasure 0x425ab0 (listing 1451-1507, 2147-2204).
+# Driven through the real callers:
+# - EastWindRolloverControl1 (pirates_winds.cpp:317-335) digs only in mode 8 -> mode poked to 8 before the digs;
+# - a_roll8 digs in mode 8 too (EastWindRolloverControl2), so the multiplier comes from the real AdvanceFathom caller
+#   s_rexit8 ControlBallToLayer2 in mode 4 (pirates_awards.cpp:225-238): fathom group on-count 6 -> multiplier 7;
+# - HoldSinkControl a_sink8 (pirates_brig.cpp:173-185) only restarts the sink timer, so the buried treasure is collected through its
+#   real caller: a lit mystery award light v_lite529 (a_sink17 in mode 5, HideawaySinkControl1 case 5) collected by a_roll3 (WindsRolloverControl1) draws
+#   RandomMysteryAward (pirates_awards.cpp:199-208), index = (n_rand_last * 6) >> 15 (ft::RandIndex); index 5 is CollectBuriedTreasure.
+#   The index a given frame draws is measured (seed 1): collect at frame 309 draws index 5 (310/312/315/316 draw other awards, 300 / 305 too).
+# Text ids are the table_text ids of the listing: coins 3040, treasure 3034 (no treasure lit), bonus 3041, jackpot 3042, extra ball 3043.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_lite529.light_on
+10 key down new_game
+11 key up new_game
+140 poke info_text_box message_field 4
+150 event s_rexit8 ControlBallToLayer2
+151 dump fathom
+151 expect multiplier == 7
+155 poke info_text_box message_field 8
+160 event a_roll9 ControlCollision
+160-161 expect text info_text_box display id 3040
+170 event a_roll9 ControlCollision
+170-171 expect text info_text_box display id 3040
+180 event a_roll9 ControlCollision
+180-181 expect text info_text_box display id 3040
+190 event a_roll9 ControlCollision
+190-191 expect text info_text_box display id 3034
+200 event a_roll9 ControlCollision
+200-201 expect text info_text_box display id 3034
+205 poke v_lite607 message_field 2
+206 poke v_lite606 message_field 1
+210 event a_roll9 ControlCollision
+210-211 expect text info_text_box display id 3041
+220 event a_roll9 ControlCollision
+220-221 expect text info_text_box display id 3042
+221 expect n_score == 0
+230 event a_roll9 ControlCollision
+230-231 expect text info_text_box display id 3043
+240 event a_roll9 ControlCollision
+240-241 expect text info_text_box display id 3040
+241 expect n_score == 0
+250 poke info_text_box message_field 5
+255 event a_sink17 ControlCollision
+256 expect v_lite529.light_on == 1
+256 expect n_score == 280000
+309 event a_roll3 ControlCollision
+310 dump collected
+# Texts of the batch (ids): coins 3003 x5; treasure 1 = 3019, treasure 2 = 3024 (the 1,500,000 treasure: the buried-treasure bug, the second
+# award takes the already reset index -1; without the bug it would be 3019 again), bonus 3057, jackpot 3058, extra ball 3014.
+309-310 expect text info_text_box display id 3019
+309-310 expect text info_text_box display id 3024
+309-310 expect text info_text_box display id 3057
+309-310 expect text info_text_box display id 3058
+309-310 expect text info_text_box display id 3014
+309-310 expect sound 56   # tabb84wave (DAT sound index 60 - 4): AwardCoins
+309-310 expect sound 57   # tabb85wave: the sound of text 3042
+# Score, worked by hand (multiplier 7): the a_sink17 mode 5 sink score 40,000 x 7 = 280,000 (checked at 256); collect: coins (50k+100k+200k+400k+800k) x 7
+# = 10,850,000; first treasure 100,000 x 7 = 700,000; second treasure (index -1) 1,500,000 x 7 = 10,500,000; bonus ((0*2 + 2 map pieces)*25 +
+# 1 mode*20 + 0 targets = 70) x 10,000 x 6 fathom lights = 4,200,000 (SpecialAddScore, multiplier forced to 1); jackpot 1,000,000 (SpecialAddScore).
+# Total 280,000 + 27,250,000.
+310 expect n_score == 27530000
+310 expect extra_balls == 1
+350 quit

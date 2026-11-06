@@ -1,0 +1,6 @@
+# DumpState keys (no new game). The Dragon rule keys of re/test/scripts/watch_dragon.json appear in dumps.jsonl.
+init window 960 666
+init fixed_dt 10
+init seed 1
+30 dump keys
+40 quit

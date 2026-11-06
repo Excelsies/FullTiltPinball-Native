@@ -1,0 +1,25 @@
+# AwardNextSpecialTreasure through its real caller HideawaySinkControl1 (pirates_hideaway.cpp HideawaySinkBody), which
+# reacts to ControlCollision only and reaches AwardNextSpecialTreasure(0.0f) in mode 0xb (case 0xb, :111-116) or on a
+# lit treasure light in mode 8. This script pokes mode 11 and drives the real control.
+# AwardSpecialTreasure 0x424780 (pirates_awards.cpp:156-178): index = special_treasure_light_group.message_field, then ++; text
+# 3019..3024 shown at time + 2.0 (batch flag 0), score 100k, 250k, ..., sound tabb84 (id 56). Each real caller passes time 0.0f, so
+# a chained "t = Award(0); Award(t)" (3019 at 2.0, 3020 at 4.0) is not reachable through HideawaySinkControl1; the chained
+# batch (0.25 s steps) is read in dig_collect (CollectBuriedTreasure). Here: two collisions, 3019 then 3020, each shown 2.0 s.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch special_treasure_light_group.message_field
+10 key down new_game
+11 key up new_game
+140 poke info_text_box message_field 11
+150 event a_sink17 ControlCollision
+150-151 expect text info_text_box display id 3019
+150-151 expect sound 56
+151 expect special_treasure_light_group.message_field == 1
+151 expect n_score == 100000
+170 event a_sink17 ControlCollision
+170-171 expect text info_text_box display id 3020
+170-171 expect sound 56
+171 expect special_treasure_light_group.message_field == 2
+171 expect n_score == 350000
+200 quit

@@ -1,0 +1,23 @@
+# R-seed script, Space Cadet: new game (master-group light show), game-over and light-show
+# animations on a lane group, captures during each show. Baseline and candidate must be byte-identical.
+init window 960 666
+init fixed_dt 10
+init seed 5
+init dump_period 50
+init watch *.bitmap
+10 key down new_game
+11 key up new_game
+12 shot show_start
+40 shot show_mid
+80 shot show_late
+200 seed 11
+200 msg bmpr_inc_lights TLightGroupGameOverAnimation 1.4
+201 dump gameover
+210 shot gameover_a
+260 shot gameover_b
+400 seed 12
+400 msg ramp_bmpr_inc_lights TLightGroupLightShowAnimation 0.2
+401 dump lightshow
+410 shot lightshow_a
+450 shot lightshow_b
+600 quit

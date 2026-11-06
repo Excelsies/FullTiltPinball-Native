@@ -1,0 +1,28 @@
+# LduggTargetControl1-5 in mode 12: each handler also sets its letter bit in v_lite1's MessageField (0x08..0x80) and flashes the
+# letter light (listing 2654-2748). Score as the default body (CheckSkulduggery* returns 0: not all 11 letters lit): 3,000 x4 then 25,000.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop5.message_field v_lite1.message_field v_lite4.flasher_on v_lite5.flasher_on v_lite6.flasher_on v_lite7.flasher_on v_lite8.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 12
+300 event a_drop5 ControlCollision
+310 event a_drop6 ControlCollision
+320 event a_drop7 ControlCollision
+330 event a_drop8 ControlCollision
+340 event a_drop9 ControlCollision
+300 expect v_lite1.message_field == 8
+300 expect n_score == 3000 delta 299
+310 expect v_lite1.message_field == 24
+320 expect v_lite1.message_field == 56
+330 expect v_lite1.message_field == 120
+340 expect v_lite1.message_field == 248
+340 expect n_score == 25000 delta 339
+340 expect a_drop5.message_field == 0
+300 expect v_lite4.flasher_on == 1
+310 expect v_lite5.flasher_on == 1
+320 expect v_lite6.flasher_on == 1
+330 expect v_lite7.flasher_on == 1
+340 expect v_lite8.flasher_on == 1
+360 quit

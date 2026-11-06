@@ -1,0 +1,30 @@
+# B4 (listing 5293-5319): s_oneway7 frees one locked ball per ControlCollision in the modes that use the brig: locked-- and
+# MultiballCount++; the release that leaves locked 0 sends FtPartDisable (0x4c) to a_kick1 (kicker re-enabled by hand at 285). In mode 12 (and 13, 17) it does nothing. With no ball locked it changes nothing.
+init fixed_dt 10
+init seed 1
+init watch a_kick1.disabled
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event s_hole19 ControlBallCaptured
+230 event s_hole19 ControlBallCaptured
+240 expect locked == 2
+240 expect multiball == 0
+250 poke info_text_box message_field 12
+260 event s_oneway7 ControlCollision
+260 expect locked == 2
+260 expect multiball == 0
+270 poke info_text_box message_field 2
+280 event s_oneway7 ControlCollision
+280 expect locked == 1
+280 expect multiball == 1
+285 msg a_kick1 FtPartEnable 0
+288 expect a_kick1.disabled == 0
+290 event s_oneway7 ControlCollision
+290 expect a_kick1.disabled == 1
+290 expect locked == 0
+290 expect multiball == 2
+300 event s_oneway7 ControlCollision
+300 expect locked == 0
+300 expect multiball == 2
+320 quit

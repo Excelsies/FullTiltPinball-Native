@@ -1,0 +1,28 @@
+# BlockerFControl (0x425b10) on a_blocf: Disable -> field 1 and v_lite32 turned on timed (accelerator pays 500,000 as proof);
+# timer expiry -> field 2 and v_lite32 flashing (timed); second expiry -> field 0 (Enable); Enable -> field 0, v_lite32 off (75,000).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_blocf.message_field v_lite32.flasher_on v_lite32.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 event a_blocf TBlockerDisable
+206 expect a_blocf.message_field == 1
+210 event a_accl1 ControlCollision
+211 expect n_score == 500000 delta 209
+220 event a_blocf ControlTimerExpired
+221 expect a_blocf.message_field == 2
+221 expect v_lite32.flasher_on == 1
+225 event a_accl1 ControlCollision
+226 expect n_score == 500000 delta 224
+240 event a_blocf ControlTimerExpired
+241 expect a_blocf.message_field == 0
+245 event a_blocf TBlockerDisable
+246 expect a_blocf.message_field == 1
+250 event a_blocf TBlockerEnable
+251 expect a_blocf.message_field == 0
+251 expect v_lite32.flasher_on == 0
+255 event a_accl1 ControlCollision
+256 expect n_score == 75000 delta 254
+300 quit

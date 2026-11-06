@@ -1,0 +1,16 @@
+# TMagnet field pull (part_1042 4.4): FieldEffect v += (FieldMult x n - v) x dt, inherited from TKickout.
+# s_magnet1 centre (6.5663,-3.426), R = 0.6701; the ball starts 0.5 inside R (7.0663,-3.426), at rest.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch s_magnet1.active
+# magnet disabled (the start-up Reset): one gravity-only frame
+10 place 0 7.0663 -3.426 0.37 1 0 0
+11 expect s_magnet1.active == 0
+12 msg s_magnet1 ft:0x4b@TMagnet 0
+13 place 0 7.0663 -3.426 0.37 1 0 0
+# end of frame 13 against end of frame 10: both one frame after a place from rest; the only difference
+# is the magnet: (150 x (-1,0) - 0) x 0.01 = -1.5 in x, 0 in y
+13 expect n_ball0_vx ~= -1.5 1e-3 delta 10
+13 expect n_ball0_vy ~= 0 1e-3 delta 10
+20 quit

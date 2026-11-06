@@ -1,0 +1,33 @@
+# Full count: all five amount steps and the held-bonus light. One popup target (10,000), modes_played 1 (200,000), map_pieces 2 (250,000 each = 500,000), special treasure light 1 (100,000), drain.message_field 5000 (held bonus), v_lite570 lit. Texts 3028..3033 are 199/200 frames apart (+-1), bonus_step 1..6 then 7 at the next ball, total 815000 (count_check.py).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 poke v_lite606 message_field 1
+200 poke v_lite607 message_field 2
+200 poke special_treasure_light_group message_field 1
+200 poke drain message_field 5000
+200 poke v_lite570 light_on 1
+205 event a_drop5 ControlCollision
+207 event s_oneway3 ControlCollision
+1720 expect ball_save == 0
+1730 place 0 0 15.6 0.37 0 1 5 0x1
+1731-1760 expect text info_text_box display id 3028
+1760 expect mode == 16
+1760 expect bonus_step == 1
+1934-1936 expect text info_text_box display id 3029
+1940 expect bonus_step == 2
+2134-2136 expect text info_text_box display id 3030
+2140 expect bonus_step == 3
+2334-2336 expect text info_text_box display id 3031
+2340 expect bonus_step == 4
+2534-2536 expect text info_text_box display id 3032
+2540 expect bonus_step == 5
+2734-2736 expect text info_text_box display id 3033
+2740 expect bonus_step == 6
+3034 expect mode == 16
+3036 expect mode == 3
+3040 expect bonus_step == 7
+3400 quit

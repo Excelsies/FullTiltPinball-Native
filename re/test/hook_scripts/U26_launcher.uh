@@ -1,0 +1,57 @@
+# PIRATES: the 1034 launcher. A key press = LaunchBall (Boost = MaxPullback = attr 402 = 100) with
+# no pull-back, and the 0.2 s ReleasedTimer clears Boost again. Expected values from part_1034 3.1/3.2/5,
+# not recomputed from the code.
+#
+# Frames of the new game: the hook build runs -noaudio, so a Full Tilt sound whose wave did not load has Duration 0
+# (loader.cpp). Its effects:
+#  - the F2 at frame 10 is followed by the 0.96 s feed timer: ball fed at frame 106 = F2 + 96 ticks (Wine: F2 to
+#    multiball 0 -> 1 = 0.956 s in the recorded ftpeek timelines, 4.166 s vs native 4.200 s with F2 at 3.2 s in the
+#    100 ms-sampled harness run).
+#  - NewGame draws 188 ft_rand values in frame 10 (the 0 s start light show), so n_rand_draws is
+#    only meaningful as a delta from a frame after that burst, never as an absolute count.
+#  - the launcher wall contact is feed + 64 ticks = frame 170; the kick (speed 74) shows in the dump of frame 171.
+# Everything after the feed is counted from the feed frame F = 106 and the contact frame C = 170; a change of the feed
+# time shows first at the explicit F expects, not as a downstream speed or draw mismatch. The first press is at 160
+# (window 160-180 holds C); the spec's frame 200 is after the ball came to rest on the wall and would miss the window.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch s_launcher1.boost s_launcher1.pullback_started s_launcher1.max_pullback
+0 expect s_launcher1.max_pullback == 100
+10 key down new_game
+11 key up new_game
+# before the feed: only the placed captive ball (U29_captive.uh) is active (n_placed_balls 1, active from frame 0)
+105 expect n_active_balls == 1
+# the feed frame F = 106: the fed ball makes 2
+106 expect n_active_balls == 2
+106 expect n_placed_balls == 1
+159 expect s_launcher1.boost == 0
+160 key down plunger
+161 expect s_launcher1.boost == 100
+168 expect s_launcher1.boost == 100
+# ReleasedTimer 0.2 s after the press: Boost back to 0 at 160 + 20 +-1
+# (observed: the dump of tick 160 already shows 100, the drop is in tick 179 = press + 19, as for U14's plunger)
+# the ball is in free flight before the contact (no kick yet), the contact C = 170 kicks it: speed 74 in the dump of 171
+# (100..110 clamped to 0.37 x 200), one rand draw for it.
+# Every active ball draws one gravity-jitter value per tick (TTableLayer, 2 active balls): 2 per tick over the
+# 63 ticks F..C-1 = 126, then 2 + the kick's 1 = 3 in the contact tick
+169 expect n_ball0_speed in 5 40
+169 expect n_rand_draws ~= 126 0 delta 106
+170 expect n_rand_draws ~= 3 0 delta 169
+171 expect n_ball0_speed in 73.9 74.1
+178 expect s_launcher1.boost == 100
+180 expect s_launcher1.boost == 0
+260 key up plunger
+# second press with no ball contact in the window: Boost 100 for 0.2 s, never in between
+400 key down plunger
+401 expect s_launcher1.boost == 100
+410 expect s_launcher1.boost == 100
+418 expect s_launcher1.boost == 100
+# no contact, so no kick: only the 2 gravity draws per tick over the 19 ticks since the press (a kick would add 1). The
+# ball speed is not checked here: it is a free-flight value of one rand stream (seeds 2..5 give 3.8..13), not a launcher property
+419 expect n_rand_draws ~= 38 0 delta 400
+420 expect s_launcher1.boost == 0
+450 expect s_launcher1.boost == 0
+500 key up plunger
+520 quit

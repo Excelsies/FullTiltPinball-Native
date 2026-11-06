@@ -1,0 +1,45 @@
+# Drain with the ball save off -> mode 16 in the same frame, then the count. targets_hit 6 (10,000 each),
+# modes_played 3 (200,000 each).
+# (1) targets_hit: LduggTargetControl1-3 (pirates_drop_targets.cpp:118-138) score through ScorePart; NoteScorer
+# (ft_common.cpp) sends ControlScorerReplaced to the previous scorer, and MissionControl (pirates_rules.cpp:187-191,
+# original 0x42d850 called first by the handler 0x423080) counts every message whose caller is a TPopupTarget, without
+# testing the code. So hit 1 counts 1 (no previous scorer), hit 2 counts 1 + the replaced a_drop5 = 3, hit 3 counts 2
+# more = 5, and the s_oneway3 replacement of a_drop7 one more = 6 (timeline frames 205/206/207: 1, 3, 6). That the
+# original double counts is the decompile reading; it is not measured on Wine here. (2) modes_played: s_oneway3 at 207
+# starts mode 4 through Mode4Controller (pirates_modes_a.cpp:184); the drain's ModeEndTail (:70-75) adds the
+# played mode, so 3. Steps with an amount last 2.0 s each, the total 3.0 s: with two non-zero
+# amount steps (texts 3028 and 3029) plus the total the next ball starts 7.0 s after the drain (5.0 s is
+# the one-amount-step case). The first text interval measures 199 frames (text-box timer), the second 200: ranges allow +-1.
+# Amounts (60000, 600000, 660000 = targets x 10,000, modes_played x 200,000, their sum) are checked by count_check.py.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 poke v_lite606 message_field 2
+205 event a_drop5 ControlCollision
+206 event a_drop6 ControlCollision
+207 event a_drop7 ControlCollision
+220 expect targets_hit == 6
+# ball save runs out 15 s after the one-way (BallSaveLightControl: 10 s lit, 5 s flashing)
+207 event s_oneway3 ControlCollision
+1720 expect ball_save == 0
+# a real drain: a ball placed in the drain wall (hook_scripts/U26_relaunch.uh), so the engine decrements multiball before the rules run
+1730 place 0 0 15.6 0.37 0 1 5 0x1
+1760 expect mode == 16
+1760 expect bonus_step == 1
+1731-1760 expect text info_text_box display id 3028
+1934-1936 expect text info_text_box display id 3029
+1940 expect bonus_step == 2
+2134-2136 expect text info_text_box display id 3033
+2140 expect bonus_step == 6
+2434 expect mode == 16
+2436 expect mode == 3
+2440 expect bonus_step == 7
+2440 expect ball_count == 2
+2440 expect ball_save == 3
+2440 expect no_hold_start == 1
+2440 expect targets_hit == 0
+2440 expect modes_played == 3
+3400 quit

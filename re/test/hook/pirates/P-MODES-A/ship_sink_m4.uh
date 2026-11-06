@@ -1,0 +1,18 @@
+# ShipSinkControl case 4 (FT 0x4285cb): in mode 4 a hit on the ship (a_sink4) is DropLduggTargets, mode counter + 1,
+# AwardJackpot(0.0) whose result is the value of fathom_light_group's restart-notify message (0x2f), then ReleaseHoldSink(-1.0).
+# MissionControl's TSink pre-hook adds 40,000 to the jackpot first (0x42d850). AwardJackpot scores the jackpot value
+# (SpecialAddScore). Separate script: ReleaseHoldSink schedules a sink release whose later TSink event adds another 40,000.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+195 expect no_hold_start == 0
+200 poke info_text_box message_field 4
+201 event a_sink4 ControlCollision
+201 expect jackpot == 40000 delta 200
+201 expect n_score == 1040000 delta 200
+201 expect text info_text_box display
+250 quit

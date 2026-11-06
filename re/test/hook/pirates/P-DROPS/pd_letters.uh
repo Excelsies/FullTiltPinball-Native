@@ -1,0 +1,31 @@
+# Letters set by the real drop-target handlers in mode 2 (pirates_drop_targets.cpp over the pirates_drop_banks.cpp banks). The ERY bank's Y
+# target (a_drop12, EryTargetControl3, bit 0x400) then its E target (a_drop10, EryTargetControl1, bit 0x100) raise the key
+# `letters` (v_lite1's MessageField) 0 -> 1024 -> 1280; then an L of LDUGG (a_drop5, bit 0x08) and the
+# S of SKU (a_drop13, bit 0x01): 1288, 1289. LetterTargetHit (pirates_drop_targets.cpp:48-56) only sets the bit in modes 2 and 12;
+# in mode 3 a hit on an unset letter leaves `letters` unchanged (a_drop6 at 310, mode 3) and in mode 12 it is set again (a_drop6, 0x10).
+# The ERY bank's hit bits (a_drop10.message_field 4, then 5) are the ones the same handler wrote and are checked as well.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch letters a_drop10.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 expect letters == 0
+210 event a_drop12 ControlCollision
+210 expect letters == 1024
+210 expect a_drop10.message_field == 4
+220 event a_drop10 ControlCollision
+220 expect letters == 1280
+220 expect a_drop10.message_field == 5
+230 event a_drop5 ControlCollision
+230 expect letters == 1288
+240 event a_drop13 ControlCollision
+240 expect letters == 1289
+300 poke info_text_box message_field 3
+310 event a_drop6 ControlCollision
+320 expect letters == 1289
+330 poke info_text_box message_field 12
+340 event a_drop6 ControlCollision
+350 expect letters == 1305
+400 quit

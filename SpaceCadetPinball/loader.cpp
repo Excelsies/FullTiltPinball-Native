@@ -3,8 +3,10 @@
 #include "GroupData.h"
 #include "TPinballComponent.h"
 #include "pb.h"
+#include "maths.h"
 #include "Sound.h"
 #include "zdrv.h"
+#include "ft_test_hook.h"
 
 
 errorMsg loader::loader_errors[] =
@@ -43,7 +45,7 @@ int loader::sound_count = 1;
 int loader::loader_sound_count;
 DatFile* loader::loader_table;
 DatFile* loader::sound_record_table;
-soundListStruct loader::sound_list[65];
+soundListStruct loader::sound_list[70];
 
 int loader::error(int errorCode, int captionCode)
 {
@@ -90,7 +92,7 @@ void loader::loadfrom(DatFile* datFile)
 		auto value = reinterpret_cast<int16_t*>(datFile->field(groupIndex, FieldTypes::ShortValue));
 		if (value && *value == 202)
 		{
-			if (sound_count < 65)
+			if (sound_count < 70)
 			{
 				sound_list[sound_count] = {nullptr, groupIndex, 0, 0};
 				sound_count++;
@@ -174,6 +176,9 @@ int loader::get_sound_id(int groupIndex)
 
 				sound_list[soundIndex].Duration = duration;
 				sound_list[soundIndex].WavePtr = Sound::LoadWaveFile(filePath);
+				// Full Tilt stores a sound's duration only for a wave that loaded.
+				if (pb::IsFullTiltTable() && !sound_list[soundIndex].WavePtr)
+					sound_list[soundIndex].Duration = 0.0f;
 			}
 		}
 	}
@@ -298,6 +303,32 @@ float loader::query_float_attribute(int groupIndex, int groupIndexOffset, int fi
 	return NAN;
 }
 
+float* loader::query_float_attribute_opt(int groupIndex, int groupIndexOffset, int firstValue)
+{
+	if (groupIndex < 0)
+	{
+		error(0, 22);
+		return nullptr;
+	}
+
+	int stateId = state_id(groupIndex, groupIndexOffset);
+	if (stateId < 0)
+	{
+		error(16, 22);
+		return nullptr;
+	}
+
+	for (auto skipIndex = 0;; ++skipIndex)
+	{
+		auto floatArr = reinterpret_cast<float*>(loader_table->field_nth(stateId, FieldTypes::FloatArray,
+		                                                                 skipIndex));
+		if (!floatArr)
+			return nullptr;
+		if (static_cast<int16_t>(floor(*floatArr)) == firstValue)
+			return floatArr + 1;
+	}
+}
+
 int loader::material(int groupIndex, visualStruct* visual)
 {
 	if (groupIndex < 0)
@@ -334,9 +365,17 @@ int loader::material(int groupIndex, visualStruct* visual)
 
 float loader::play_sound(int soundIndex, TPinballComponent *soundSource, const char *info)
 {
+	ft_test_hook::SoundEvent(soundIndex, soundSource, info);
 	if (soundIndex <= 0)
 		return 0.0;
 	Sound::PlaySound(sound_list[soundIndex].WavePtr, pb::time_ticks, soundSource, info);
+	return sound_list[soundIndex].Duration;
+}
+
+float loader::sound_duration(int soundIndex)
+{
+	if (soundIndex <= 0)
+		return 0.0;
 	return sound_list[soundIndex].Duration;
 }
 
@@ -398,6 +437,18 @@ int loader::kicker(int groupIndex, visualKickerStruct* kicker)
 			kicker->ThrowBallDirection = *reinterpret_cast<vector3*>(floatArr);
 			floatArr += 3;
 			index += 4;
+			// Full Tilt (0x40d471) normalises X/Y; upstream's Space Cadet does not.
+			if (pb::IsFullTiltTable())
+				maths::normalize_2d(kicker->ThrowBallDirection);
+			break;
+		case 410:
+			// Two points (x, y, z, w each): direction = p2 - p1, X/Y normalised, Z raw (FT 0x40d290).
+			kicker->ThrowBallDirection.X = floatArr[4] - floatArr[0];
+			kicker->ThrowBallDirection.Y = floatArr[5] - floatArr[1];
+			kicker->ThrowBallDirection.Z = floatArr[6] - floatArr[2];
+			maths::normalize_2d(kicker->ThrowBallDirection);
+			floatArr += 8;
+			index += 9;
 			break;
 		case 405:
 			kicker->ThrowBallAngleMult = *floatArr;
@@ -408,7 +459,7 @@ int loader::kicker(int groupIndex, visualKickerStruct* kicker)
 		default:
 			return error(10, 20);
 		}
-		if (floorVal != 404)
+		if (floorVal != 404 && floorVal != 410)
 		{
 			floatArr++;
 			index += 2;
@@ -418,7 +469,7 @@ int loader::kicker(int groupIndex, visualKickerStruct* kicker)
 }
 
 
-int loader::query_visual(int groupIndex, int groupIndexOffset, visualStruct* visual)
+int loader::query_visual(int groupIndex, int groupIndexOffset, visualStruct* visual, int bitmapIndex)
 {
 	default_vsi(visual);
 	if (groupIndex < 0)
@@ -427,8 +478,8 @@ int loader::query_visual(int groupIndex, int groupIndexOffset, visualStruct* vis
 	if (stateId < 0)
 		return error(16, 18);
 
-	auto bmp = loader_table->GetBitmap(stateId);
-	auto zMap = loader_table->GetZMap(stateId);
+	auto bmp = loader_table->GetBitmap(stateId, bitmapIndex);
+	auto zMap = loader_table->GetZMap(stateId, bitmapIndex);
 	visual->Bitmap = { bmp, zMap };
 
 	auto shortArr = reinterpret_cast<int16_t*>(loader_table->field(stateId, FieldTypes::ShortArray));

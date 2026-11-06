@@ -4,7 +4,12 @@ project(SpaceCadetPinball)
 set(CMAKE_CXX_STANDARD 11)
 
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
+# Output directory of the binary; a second build flavour (e.g. build-hook) passes its own so the two never overwrite each other.
+set(FT_OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/bin CACHE PATH "Directory the SpaceCadetPinball binary is written to")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FT_OUTPUT_DIR})
+
+# Native test hook (Full Tilt port test harness); off in release builds.
+option(FT_TEST_HOOK "Build the native test hook" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeModules")
 
@@ -186,6 +191,65 @@ set(SOURCE_FILES
         SpaceCadetPinball/imstb_truetype.h
         SpaceCadetPinball/DebugOverlay.cpp
         SpaceCadetPinball/DebugOverlay.h
+        # Full Tilt port: engine part types and helpers, table rules interface, table catalogue and text reader, shared random stream, test hook
+        SpaceCadetPinball/DelayedMessage.cpp
+        SpaceCadetPinball/DelayedMessage.h
+        SpaceCadetPinball/TAccelerator.cpp
+        SpaceCadetPinball/TAccelerator.h
+        SpaceCadetPinball/TDiverter.cpp
+        SpaceCadetPinball/TDiverter.h
+        SpaceCadetPinball/TLightSweeps.cpp
+        SpaceCadetPinball/TLightSweeps.h
+        SpaceCadetPinball/TMagnet.cpp
+        SpaceCadetPinball/TMagnet.h
+        SpaceCadetPinball/TRampExit.cpp
+        SpaceCadetPinball/TRampExit.h
+        SpaceCadetPinball/ft_rand.cpp
+        SpaceCadetPinball/ft_rand.h
+        SpaceCadetPinball/ft_test_hook.cpp
+        SpaceCadetPinball/ft_test_hook.h
+        SpaceCadetPinball/table_rules.h
+        SpaceCadetPinball/table_text.cpp
+        SpaceCadetPinball/table_text.h
+        SpaceCadetPinball/tables.cpp
+        SpaceCadetPinball/tables.h
+        SpaceCadetPinball/rules/dragon_armor.cpp
+        SpaceCadetPinball/rules/dragon_ball.cpp
+        SpaceCadetPinball/rules/dragon_bonus.cpp
+        SpaceCadetPinball/rules/dragon_core.cpp
+        SpaceCadetPinball/rules/dragon_gate_sinks.cpp
+        SpaceCadetPinball/rules/dragon_playfield.cpp
+        SpaceCadetPinball/rules/dragon_quest_modes.cpp
+        SpaceCadetPinball/rules/dragon_quests.cpp
+        SpaceCadetPinball/rules/dragon_rules.cpp
+        SpaceCadetPinball/rules/dragon_rules.h
+        SpaceCadetPinball/rules/dragon_shop.cpp
+        SpaceCadetPinball/rules/dragon_slay.cpp
+        SpaceCadetPinball/rules/dragon_spells.cpp
+        SpaceCadetPinball/rules/dragon_tables.cpp
+        SpaceCadetPinball/rules/dragon_tower_sinks.cpp
+        SpaceCadetPinball/rules/dragon_towers.cpp
+        SpaceCadetPinball/rules/ft_common.cpp
+        SpaceCadetPinball/rules/ft_common.h
+        SpaceCadetPinball/rules/pirates_awards.cpp
+        SpaceCadetPinball/rules/pirates_ball.cpp
+        SpaceCadetPinball/rules/pirates_brig.cpp
+        SpaceCadetPinball/rules/pirates_core.cpp
+        SpaceCadetPinball/rules/pirates_drop_banks.cpp
+        SpaceCadetPinball/rules/pirates_drop_targets.cpp
+        SpaceCadetPinball/rules/pirates_hideaway.cpp
+        SpaceCadetPinball/rules/pirates_lava.cpp
+        SpaceCadetPinball/rules/pirates_lower.cpp
+        SpaceCadetPinball/rules/pirates_mode_select.cpp
+        SpaceCadetPinball/rules/pirates_modes_a.cpp
+        SpaceCadetPinball/rules/pirates_modes_b.cpp
+        SpaceCadetPinball/rules/pirates_orbits.cpp
+        SpaceCadetPinball/rules/pirates_ramps.cpp
+        SpaceCadetPinball/rules/pirates_rules.cpp
+        SpaceCadetPinball/rules/pirates_rules.h
+        SpaceCadetPinball/rules/pirates_tables.cpp
+        SpaceCadetPinball/rules/pirates_treasure.cpp
+        SpaceCadetPinball/rules/pirates_winds.cpp
         )
 
 # On Windows, include resource file with the icon
@@ -195,6 +259,13 @@ if(WIN32)
 endif(WIN32)
 
 add_executable(SpaceCadetPinball ${SOURCE_FILES})
+
+# Sources under SpaceCadetPinball/rules include their headers as "rules/<name>.h".
+target_include_directories(SpaceCadetPinball PRIVATE ${CMAKE_CURRENT_LIST_DIR}/SpaceCadetPinball)
+
+if(FT_TEST_HOOK)
+    target_compile_definitions(SpaceCadetPinball PRIVATE FT_TEST_HOOK=1)
+endif()
 
 # Skip pch on foreign code
 set_source_files_properties(

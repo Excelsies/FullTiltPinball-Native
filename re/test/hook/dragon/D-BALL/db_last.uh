@@ -1,0 +1,43 @@
+# Last ball: P1, three unsaved drains, ball save off (s_oneway2 ControlCollision 1500+ frames before each drain). At the
+# third drain last_ball == 1, tilt_lock == 1 and mode == 11 in one frame (BallDrainControl, listing 1282-1363); then
+# Mode11BonusController -> game over: mode 0, ball_count 0, last_ball 0, text 3065 (Mode0GameOverController).
+# Timing precondition: the third plunge is released at 5290 and s_oneway2 fires at 5350; the ball still drains naturally
+# at 6782 with the ball-save window open (multiball 1 -> 0, ball_save 1 until 6820, TPlunger2_1 relaunch at 6782,
+# relaunch feed done at 6877), and that relaunch finishes 23 frames BEFORE the forced unsaved drain at 6900 (ball_save 0
+# from 6820). The 6890 expects pin that precondition: with the relaunch feed still pending, its 0.96 s timer would clear
+# the tilt lock and send MissionStarted into Mode11BonusController. Result: text 3012 at 6905, 3017 200 frames later
+# (7104, as drains 1 and 2: 2.0 s steps, as Wine 116.14 / 118.15 / 120.17 / 122.18), game over (2002 + 3065) at 7304.
+# The duration mode 11 -> 0 is not compared with Wine (Wine earned more bonus steps).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+360 event s_oneway2 ControlCollision
+1900 place 0 0 15.6 0.37 0 1 5 0x1
+1910 expect mode == 11
+2700 key down plunger
+2800 key up plunger
+2860 event s_oneway2 ControlCollision
+4400 place 0 0 15.6 0.37 0 1 5 0x1
+4410 expect mode == 11
+5200 key down plunger
+5290 key up plunger
+5350 event s_oneway2 ControlCollision
+6890 expect ball_save == 0
+6890 expect multiball == 1
+6900 place 0 0 15.6 0.37 0 1 5 0x1
+6910 expect last_ball == 1
+6910 expect tilt_lock == 1
+6910 expect mode == 11
+6900-6910 expect text info_text_box display id 3012
+7104-7106 expect text info_text_box display id 3017
+7700 expect mode == 0
+7700 expect ball_count == 0
+7700 expect last_ball == 0
+7300-7310 expect text info_text_box display id 2002
+7300-7310 expect text info_text_box display id 3065
+7800 quit

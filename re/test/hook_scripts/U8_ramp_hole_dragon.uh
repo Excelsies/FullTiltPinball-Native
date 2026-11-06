@@ -1,0 +1,68 @@
+# THole, DRAGON s_hole118 (part_thole sections 1, 3, 4, 5, 6; attrs from DRAGON.DAT:
+# hole centre 408[0..1] = 5.18845, -5.23773; 407 = -1 (no hold timer), 1304 = 2 (exit mask 1 << 2 = 4),
+# 1306 = 1 (rise speed), 408[3] = 2.50614, ball radius 0.37 => exit Z = 0.37 + 2.50614 = 2.87614).
+# The script tests the THole engine part; the real dragon::HoleControl answers its ControlBallCaptured message.
+# NewGame leaves a selected quest (a_kout2 field, here 6, drawn at frame 10); the first capture in mode 10 would run
+# Mode10LaunchBallController -> StartSelectedQuest (dragon_ball.cpp:243-245, dragon_quests.cpp:303-310: mode 6), and
+# HoleControl in any other mode ejects after 1.0 s (dragon_shop.cpp:192-219; FT 0x426ee0, port_listing_dragon.c
+# 2963-2998). The precondition here is a state in which the rules HOLD the ball: mode 10 with NO selected quest, where
+# StartSelectedQuest returns 0 and HoleControl takes its mode 10 branch (hole MessageField 2, no eject; checked below and by
+# D-SHOP/shop_hole_kout3). `poke a_kout2 message_field 0` gives that state, so every THole check that follows
+# (constants, capture, message 0x43 timer, rise to exit Z, exit-occupied wait, retry) is driven by the part,
+# not by the rules. The rules' own eject of a real ball (mode 6, 1.0 s, no poke) is pinned by U8_hole_rules_eject_dragon.uh,
+# not by D-SHOP/shop_hole_kout3.uh (mode 7, no ball, message field and sound only) nor by shop_hole_release.uh (a sound only).
+init window 960 666
+init fixed_dt 10
+init seed 7
+init dump_period 10
+init watch s_hole118.message_field s_hole118.captured s_hole118.second_stage s_hole118.hold_timer s_hole118.exit_z s_hole118.exit_mask s_hole118.rise_speed s_hole118.hold_time
+10 key down new_game
+11 key up new_game
+# constants read by the constructor (part_thole section 1)
+20 expect s_hole118.rise_speed == 1
+20 expect s_hole118.exit_mask == 4
+20 expect s_hole118.exit_z ~= 2.87614 0.0001
+20 expect s_hole118.hold_time == -1
+# precondition: no selected quest, so the capture stays in mode 10 and HoleControl holds (see the header)
+21 poke a_kout2 message_field 0
+25 expect selected_quest == 0
+# capture: ball placed beside the hole is pulled in and held with NO timer (407 < 0, section 3)
+100 place 0 5.40 -5.2377 0.37 -1 0 2 1
+100 dump placed
+200 expect mode == 10
+200 expect s_hole118.message_field == 2
+200 expect s_hole118.captured == 1
+200 expect s_hole118.hold_timer == 0
+200 expect s_hole118.second_stage == 0
+200 expect n_ball0_x ~= 5.18845 0.001
+200 expect n_ball0_z ~= 0.37 0.001
+# rules message 0x43 with 1.0 s (section 5): hold timer armed, ball still held at 250
+210 msg s_hole118 ft:0x43@THole 1.0
+220 expect s_hole118.hold_timer == 1
+300 expect s_hole118.second_stage == 0
+300 expect s_hole118.captured == 1
+# after 1.0 s the second stage starts and the ball RISES 1.0 per frame to exit Z (section 4)
+330 dump rise
+330 expect s_hole118.captured == 0
+330 expect n_ball0_z ~= 2.87614 0.0001
+330 expect n_ball0_mask == 4
+# exit-occupied wait (H3, section 4): ball 1 is held by the hole, ball 2 (exit mask 4) sits on the exit
+# rectangle (within 2 ball radii of the held ball, kept there by `hold`), so the release is deferred.
+# The blocker is placed at speed 0.8, not 0: the engine stuck check (pb::timed_frame) only runs for balls
+# below speed 0.8, and with DragonRules::UnstuckBall live a ball held still on the exit for over 500 ms is
+# thrown every frame and, after 21 checks, disabled and sent to the plunger, which frees the exit early.
+# `hold` re-applies the placed speed every frame, so 0.8 keeps the blocker out of that path.
+400 place 1 5.40 -5.2377 0.37 -1 0 2 1
+400 place 2 5.30 -5.2377 0.37 0 1 0.8 4
+400 hold 2 on
+500 expect s_hole118.captured == 1
+505 msg s_hole118 ft:0x43@THole 0
+600 expect s_hole118.captured == 1
+600 expect s_hole118.second_stage == 1
+# remove the blocker: the 0.5 s retry releases ball 1 on the exit mask
+610 hold 2 off
+610 place 2 0 0 0.37 0 0 0 4
+700 expect s_hole118.captured == 0
+700 expect n_ball1_mask == 4
+710 dump end
+720 quit

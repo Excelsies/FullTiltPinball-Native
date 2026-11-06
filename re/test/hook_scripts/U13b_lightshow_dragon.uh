@@ -1,0 +1,29 @@
+# DRAGON: LightShowAnimation (ft:0x20) on outlane_kicker_light_group (4 TLight members,
+# DRAGON.DAT attr 1027). part_tlight_tlightgroup G3 (0x40b3d1): the loop runs over count-1 lights,
+# one rand() per light plus a second one when rand() % 100 > 70; the last member is never animated.
+# Expected value: independent simulation of the MSVC LCG (state = state * 214013 + 2531011,
+# value = bits 16..30) from state 3: the values % 100 are 48, 96, 94, 91, 31, 77, ...
+# FT (3 lights tested): 48 no; 96 yes (+ the draw 94); 91 yes (+ the draw 31) -> 5 draws, the last
+# draw (n_rand_last) is the 5th value, 7031. An ungated loop over all 4 lights would test 77 as well
+# (yes, + 1 draw) and draw 7.
+# Members in DRAGON.DAT attribute 1027 order: v_lite44, v_lite43, v_lite42, v_lite41. The last member
+# (v_lite41) must stay untouched: it is turned off at frame 43, and the ungated loop would turn it on
+# (bitmap 0) for the timed show at frame 45; FT leaves it at -1.
+# Frame 45 is quiet: the same run without the message shows no other draw between frames 40 and 58
+# (other groups' random light animations draw in bursts around frames 19, 39, 59, ...; they are
+# counted because TLightGroup draws through ft_rand::Int()).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite44.bitmap v_lite43.bitmap v_lite42.bitmap v_lite41.bitmap
+43 msg v_lite41 TLightTurnOff 0
+44 dump pre_msg
+45 seed 3
+45 msg outlane_kicker_light_group ft:0x20@TLightGroup 0.2
+45 dump at_msg
+46 dump after
+45 expect n_rand_draws == 5 delta 44
+46 expect n_rand_draws == 5 delta 44
+46 expect n_rand_last == 7031
+46 expect v_lite41.bitmap == -1
+70 quit

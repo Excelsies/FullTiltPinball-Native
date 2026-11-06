@@ -1,0 +1,11 @@
+# Space Cadet demo mode R-seed script (baseline vs candidate must be byte-identical).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 key down demo
+11 key up demo
+300 shot demo_300
+700 shot demo_700
+1100 shot demo_1100
+1600 quit

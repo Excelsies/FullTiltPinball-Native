@@ -1,0 +1,57 @@
+# Mode 4 (listing 4446-4620). NMAX starts the selected quest (poke a_kout2 message_field 4): entry text 3020, sound tabc46 (id 39),
+# light sweep 0; the sweep ends at frame 820 (measured: engine sweep length): ball released, countdown text 3019, timer 27.73 s -> expiry at 820 + 2773
+# = 3593 (mode 3). Both balls are held after the release so the ball cannot drain. Gems (ControlCollision / ControlBallToLayer2) light their gem light and show their text.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite88.flasher_on v_lite89.flasher_on v_lite90.flasher_on v_lite91.flasher_on v_lite92.flasher_on v_lite93.flasher_on v_lite94.flasher_on v_lite95.flasher_on v_lite117.flasher_on
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 event a_spot4 ControlCollision
+410 poke a_kout2 message_field 4
+420 type NMAX
+470 expect mode == 4
+470 expect ball_held == 1
+423 expect text info_text_box display id 3020
+423 expect sound 39
+# Track slot identity (0x439ae4/ae8/aec/af4) is pinned by the disassembly, not by this run: the run only shows that a track event is logged at the entry frame (slot 0).
+423 expect track 0
+# Entry ScoreValue(0,100000) (port_listing_dragon.c); gem amounts are not asserted (a gem event's n_score also holds the sink and part scores of the same frame).
+423 expect n_score == 100000 delta 422
+820 expect text info_text_box display id 3019
+819 expect ball_held == 1
+840 place 0 3.0 8.0 0.37 0 1 5 0x1
+840 place 1 -3.0 8.0 0.37 0 1 5 0x1
+841 hold 0 on
+841 hold 1 on
+900 event a_spot4 ControlCollision
+900-901 expect text info_text_box display id 3022
+901 expect v_lite89.flasher_on == 1
+910 event a_spot3 ControlCollision
+910-911 expect text info_text_box display id 3023
+911 expect v_lite90.flasher_on == 1
+920 event a_spot10 ControlCollision
+920-921 expect text info_text_box display id 3026
+921 expect v_lite93.flasher_on == 1
+930 event a_sink1 ControlCollision
+930-931 expect text info_text_box display id 3024
+931 expect v_lite91.flasher_on == 1
+940 event s_oneway5 ControlCollision
+941 expect v_lite95.flasher_on == 1
+950 event a_accl1 ControlCollision
+950-951 expect text info_text_box display id 3028
+951 expect v_lite117.flasher_on == 1
+960 event a_ramp103 ControlBallToLayer2
+960-961 expect text info_text_box display id 3027
+961 expect v_lite94.flasher_on == 1
+970 event a_ramp6 ControlBallToLayer2
+970-971 expect text info_text_box display id 3025
+971 expect v_lite92.flasher_on == 1
+980 event a_bump1 ControlCollision
+980-981 expect text info_text_box display id 3021
+981 expect v_lite88.flasher_on == 1
+3592 expect mode == 4
+3594 expect mode == 3
+3700 quit

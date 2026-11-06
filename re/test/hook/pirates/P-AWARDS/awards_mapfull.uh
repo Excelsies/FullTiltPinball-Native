@@ -1,0 +1,87 @@
+# AwardMapPiece 0x423aa0 map-complete branch, driven through a_roll3 (WindsRolloverControl1) with all five WINDS lights
+# poked on: with info_text_box.message_field = 2 (mode 2), eleven pieces fill the map group; the eleventh reaches
+# SelectNextMode (the mode change itself is not checked here).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 2
+160 poke v_lite533 light_on 1
+160 poke v_lite534 light_on 1
+160 poke v_lite535 light_on 1
+160 poke v_lite536 light_on 1
+160 poke v_lite537 light_on 1
+170 event a_roll3 ControlCollision
+171 expect map_pieces == 1
+185 poke v_lite533 light_on 1
+185 poke v_lite534 light_on 1
+185 poke v_lite535 light_on 1
+185 poke v_lite536 light_on 1
+185 poke v_lite537 light_on 1
+195 event a_roll3 ControlCollision
+196 expect map_pieces == 2
+205 poke v_lite533 light_on 1
+205 poke v_lite534 light_on 1
+205 poke v_lite535 light_on 1
+205 poke v_lite536 light_on 1
+205 poke v_lite537 light_on 1
+215 event a_roll3 ControlCollision
+216 expect map_pieces == 3
+225 poke v_lite533 light_on 1
+225 poke v_lite534 light_on 1
+225 poke v_lite535 light_on 1
+225 poke v_lite536 light_on 1
+225 poke v_lite537 light_on 1
+235 event a_roll3 ControlCollision
+236 expect map_pieces == 4
+245 poke v_lite533 light_on 1
+245 poke v_lite534 light_on 1
+245 poke v_lite535 light_on 1
+245 poke v_lite536 light_on 1
+245 poke v_lite537 light_on 1
+255 event a_roll3 ControlCollision
+256 expect map_pieces == 5
+265 poke v_lite533 light_on 1
+265 poke v_lite534 light_on 1
+265 poke v_lite535 light_on 1
+265 poke v_lite536 light_on 1
+265 poke v_lite537 light_on 1
+275 event a_roll3 ControlCollision
+276 expect map_pieces == 6
+285 poke v_lite533 light_on 1
+285 poke v_lite534 light_on 1
+285 poke v_lite535 light_on 1
+285 poke v_lite536 light_on 1
+285 poke v_lite537 light_on 1
+295 event a_roll3 ControlCollision
+296 expect map_pieces == 7
+305 poke v_lite533 light_on 1
+305 poke v_lite534 light_on 1
+305 poke v_lite535 light_on 1
+305 poke v_lite536 light_on 1
+305 poke v_lite537 light_on 1
+315 event a_roll3 ControlCollision
+316 expect map_pieces == 8
+325 poke v_lite533 light_on 1
+325 poke v_lite534 light_on 1
+325 poke v_lite535 light_on 1
+325 poke v_lite536 light_on 1
+325 poke v_lite537 light_on 1
+335 event a_roll3 ControlCollision
+336 expect map_pieces == 9
+345 poke v_lite533 light_on 1
+345 poke v_lite534 light_on 1
+345 poke v_lite535 light_on 1
+345 poke v_lite536 light_on 1
+345 poke v_lite537 light_on 1
+355 event a_roll3 ControlCollision
+356 expect map_pieces == 10
+365 poke v_lite533 light_on 1
+365 poke v_lite534 light_on 1
+365 poke v_lite535 light_on 1
+365 poke v_lite536 light_on 1
+365 poke v_lite537 light_on 1
+375 event a_roll3 ControlCollision
+376 expect map_pieces == 11
+450 quit

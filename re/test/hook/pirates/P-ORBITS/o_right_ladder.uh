@@ -1,0 +1,34 @@
+# O-6 (listing 4584-4730, disassembly 0x429400): RightOrbitTripwireControl s_trip8 outside modes 2 and 5. Mirror of
+# O-3 with right_orbit_combo_light_group (v_lite634 / v_lite635 combo flashes) and tabb12 (id 11): 25,000 / 150,000 / 275,000 /
+# 425,000 / 425,000; 0x4d resets; a hit of the other scorer (s_trip3) resets it too.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite634.flasher_on v_lite635.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 4
+220 event s_trip8 ControlCollision
+221 expect n_score == 25000 delta 219
+220 expect sound 11
+220 expect text info_text_box display id 3008
+221 expect v_lite634.flasher_on == 1
+221 expect v_lite635.flasher_on == 0
+240 event s_trip8 ControlCollision
+241 expect n_score == 150000 delta 239
+241 expect v_lite635.flasher_on == 1
+260 event s_trip8 ControlCollision
+261 expect n_score == 275000 delta 259
+280 event s_trip8 ControlCollision
+281 expect n_score == 425000 delta 279
+300 event s_trip8 ControlCollision
+301 expect n_score == 425000 delta 299
+320 event s_trip8 ControlScorerReplaced
+340 event s_trip8 ControlCollision
+341 expect n_score == 25000 delta 339
+360 event s_trip8 ControlCollision
+361 expect n_score == 150000 delta 359
+380 event s_trip3 ControlCollision
+400 event s_trip8 ControlCollision
+401 expect n_score == 25000 delta 399
+450 quit

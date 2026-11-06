@@ -1,0 +1,52 @@
+# LightNextTreasureX (FT 0x424580; listing 1243-1284), driven through the real callers (pirates_orbits.cpp
+# OrbitSinkBody, pirates_hideaway.cpp HideawaySinkBody case 8): they first run TLightResetAndTurnOn on their own
+# treasure light (it stops flashing and stays on), only if it is flashing, and then call LightNextTreasureX; so the
+# flashing moves on. One sink per Treasure X: a_sink9 v_mlite110, a_sink15 v_mlite107, a_sink12 v_mlite104, a_sink14 v_mlite106, a_sink17
+# v_mlite44 (the last one awards the jackpot, a Jackpot sink). Index order 0..3 then the default branch (index reset to 0), so the
+# sixth call (a_sink17 collision) wraps to v_mlite110. Mode entry (Mode8Controller, real ControlMissionComplete in mode 8) flashes the first.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_mlite110.flasher_on v_mlite107.flasher_on v_mlite104.flasher_on v_mlite106.flasher_on v_mlite44.flasher_on a_sink9.active
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+200 poke info_text_box message_field 8
+201 event info_text_box ControlMissionComplete
+202 expect v_mlite110.flasher_on == 1
+202 expect v_mlite107.flasher_on == 0
+202 expect v_mlite104.flasher_on == 0
+202 expect v_mlite106.flasher_on == 0
+202 expect v_mlite44.flasher_on == 0
+220 event a_sink9 ControlCollision
+221 expect v_mlite110.flasher_on == 0
+221 expect v_mlite107.flasher_on == 1
+221 expect v_mlite104.flasher_on == 0
+221 expect v_mlite106.flasher_on == 0
+221 expect v_mlite44.flasher_on == 0
+230 event a_sink15 ControlCollision
+231 expect v_mlite110.flasher_on == 0
+231 expect v_mlite107.flasher_on == 0
+231 expect v_mlite104.flasher_on == 1
+231 expect v_mlite106.flasher_on == 0
+231 expect v_mlite44.flasher_on == 0
+240 event a_sink12 ControlCollision
+241 expect v_mlite110.flasher_on == 0
+241 expect v_mlite107.flasher_on == 0
+241 expect v_mlite104.flasher_on == 0
+241 expect v_mlite106.flasher_on == 1
+241 expect v_mlite44.flasher_on == 0
+250 event a_sink14 ControlCollision
+251 expect v_mlite110.flasher_on == 0
+251 expect v_mlite107.flasher_on == 0
+251 expect v_mlite104.flasher_on == 0
+251 expect v_mlite106.flasher_on == 0
+251 expect v_mlite44.flasher_on == 1
+260 event a_sink17 ControlCollision
+261 expect v_mlite110.flasher_on == 1
+261 expect v_mlite107.flasher_on == 0
+261 expect v_mlite104.flasher_on == 0
+261 expect v_mlite106.flasher_on == 0
+261 expect v_mlite44.flasher_on == 0
+400 quit

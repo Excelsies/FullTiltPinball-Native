@@ -1,0 +1,25 @@
+# Two-player check (any table): bumper level survives a player switch while the fire timer runs.
+# Used for the Space Cadet R-seed (baseline vs candidate must be byte-identical) and as a no-crash run on DRAGON.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init watch current_player player_count
+10 key down new_game
+11 key up new_game
+40 expect player_count == 2
+40 expect current_player == 0
+60 msg a_bump1 TBumperSetBmpIndex 1
+62 shot p0_fire
+62 msg table SwitchToNextPlayer 0
+63 shot p1_after_switch
+64 expect current_player == 1
+100 msg a_bump1 TBumperSetBmpIndex 1
+105 msg table SwitchToNextPlayer 0
+106 shot p0_after_switch
+107 expect current_player == 0
+130 msg a_bump1 TBumperIncBmpIndex 0
+135 msg table SwitchToNextPlayer 0
+140 msg a_bump1 Reset 0
+150 shot after_reset
+160 quit

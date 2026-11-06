@@ -1,0 +1,22 @@
+# Dragon fire direction 0x439b0c (DragonState Mode9Fire, listing: OpenDragonJaw writes 1; the fire light chain steps write 1 / -1;
+# read by the dragon_fire_light_group notify-timer step: state < 1 steps v_lite113's counter (message_field) down, otherwise up). Not reset
+# per ball or per player. Player 1: the intro sweep ends (frame 505, measured with a watch on v_lite113.message_field) -> OpenDragonJaw -> state 1; ControlModeEnd at 620 closes the jaw and stops
+# the fire timer chain while the state is still 1 (the up-sweep reaches step 8 and flips it to -1 at frame 680). Switch to player 2 and step the fire group
+# once with the counter at 3: the carried state 1 counts up (4); a reset state 0 would count down (2). Negative control, same steps with
+# player 1 never opening the jaw (fresh state 0, expects 2): dm_leak_D-SLAY_fire_ctl.uh.
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+620 event info_text_box ControlModeEnd
+1000 msg table SwitchToNextPlayer 0
+1010 poke info_text_box message_field 9
+1011 poke v_lite113 message_field 3
+1020 event dragon_fire_light_group ControlNotifyTimerExpired
+1021 dump after v_lite113.message_field
+1022 expect v_lite113.message_field == 4
+1100 quit

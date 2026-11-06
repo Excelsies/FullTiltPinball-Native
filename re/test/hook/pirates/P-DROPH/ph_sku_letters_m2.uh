@@ -1,0 +1,23 @@
+# SkuTargetControl1-3 (a_drop13-15) in mode 2: bits 1,2,4 in a_drop13 and v_lite1 (letters S K U), 4,000 x2 then 30,000 (listing 2846-2902).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop13.message_field v_lite1.message_field v_lite1.flasher_on v_lite2.flasher_on v_lite3.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+300 event a_drop13 ControlCollision
+310 event a_drop14 ControlCollision
+320 event a_drop15 ControlCollision
+300 expect v_lite1.message_field == 1
+300 expect n_score == 4000 delta 299
+310 expect v_lite1.message_field == 3
+310 expect a_drop13.message_field == 3
+310 expect n_score == 4000 delta 309
+320 expect v_lite1.message_field == 7
+320 expect a_drop13.message_field == 0
+320 expect n_score == 30000 delta 319
+300 expect v_lite1.flasher_on == 1
+310 expect v_lite2.flasher_on == 1
+320 expect v_lite3.flasher_on == 1
+360 quit

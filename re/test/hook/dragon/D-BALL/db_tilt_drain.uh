@@ -1,0 +1,36 @@
+# Tilted drain: P1, launch, nudges until tilt (as d_nudge.uh: tilt at frame 481), then a drain.
+# BallDrainControl with the tilt lock set: no bonus text, next ball: mode == 10 (tilt_lock == 0) at 731.
+# bonus_step is 9, not 0, after a tilted drain: with the lock set Mode11BonusController starts at step 8
+# (dragon_bonus.cpp:129-130) and the step loop makes it 9; Wine shows the same value (dragon_tilt_pause timeline
+# bonus_step 0 -> 9 at t=19.762, mode 10, tilt_lock 0). Because 9 is also what an untilted drain with nothing earned
+# ends at, a bonus is earned first (a_spot4 at 150 is the skill shot: mode 2, one spell, targets_hit 1 at 487), so the
+# tilt skip is what keeps bonus text ids 3012 (targets) and 3015 (spells) off the display from the drain on.
+# The 2.5 s tilt_lock interval of Wine is not checked natively here (tilt_lock is already 0 at 505: the drain is forced at 500).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 event a_spot4 ControlCollision
+151 expect mode == 2
+200 key down plunger
+300 key up plunger
+400 key down bump_left
+410 key up bump_left
+425 key down bump_right
+435 key up bump_right
+450 key down bump_left
+460 key up bump_left
+475 key down bump_right
+485 key up bump_right
+486 expect tilt_lock == 1
+487 expect targets_hit == 1
+500 place 0 0 15.6 0.37 0 1 5 0x1
+510 expect bonus_step == 9
+730 expect bonus_step == 9
+731 expect mode == 10
+505-730 expect none text info_text_box display id 3012
+505-730 expect none text info_text_box display id 3015
+731 expect tilt_lock == 0
+900 quit

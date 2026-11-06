@@ -1,0 +1,25 @@
+# R-seed script (Space Cadet): raise the drain post v_bloc1 and send a placed ball at it.
+# Candidate and baseline must produce byte-identical outputs.
+# The post is one circle wall (DAT attr 600 of v_bloc1); the ball is aimed at its centre. The expect
+# lines are sanity checks of the scenario: the raised post turns the ball back, the lowered one does not.
+init window 960 666
+init fixed_dt 16.667
+init seed 7
+init watch v_bloc1.active n_ball0_x n_ball0_y n_ball0_dx n_ball0_dy n_ball0_speed
+5 shot before
+10 msg v_bloc1 TBlockerEnable 55
+11 dump raised
+11 expect v_bloc1.active == 1
+12 place 0 0.0 12.2 0.5 0 1 2.5
+60 dump after_hit
+60 expect n_ball0_dy != 1
+60 expect n_ball0_y in 12.2 12.9
+121 shot after_hit
+200 msg v_bloc1 TBlockerDisable 0
+201 dump disabled
+201 expect v_bloc1.active == 0
+202 place 0 0.0 12.2 0.5 0 1 2.5
+320 dump after_pass
+320 expect n_ball0_y in 13.4 30
+330 shot end
+340 quit

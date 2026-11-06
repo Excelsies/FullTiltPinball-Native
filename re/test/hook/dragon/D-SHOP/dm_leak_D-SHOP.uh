@@ -1,0 +1,31 @@
+# The egg-shop offer level 0x434d1c (DragonState EggOffer) is written by Mode12EggShopController's ControlMissionComplete (from the lit-egg
+# count) and, on a buy, decremented; a decline leaves it. It is read again by ControlMissionStarted WITHOUT recomputing (listing Mode12EggShopController),
+# and nothing resets it per ball or per player. Player 1: eight eggs lit (four s_rexit19 ramp exits), capture in s_hole118 in mode 2 -> mode 12 with offer 8
+# (text 3052), decline with the right flipper (offer level stays 8). Switch to player 2 (zero eggs of its own: the egg lights are per-player), poke mode 12 and send
+# ControlMissionStarted: the shop shows P1's offer text 3052 although P2 owns no egg. A per-player or per-ball reset would show the empty-shop text 3068.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init dump_period 100
+init watch v_lite80.light_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event s_rexit19 ControlBallToLayer1
+213 event s_rexit19 ControlBallToLayer1
+216 event s_rexit19 ControlBallToLayer1
+219 event s_rexit19 ControlBallToLayer1
+240 event s_hole118 ControlBallCaptured
+241 expect mode == 12
+240 expect text info_text_box display id 3052
+260 key down right_flipper
+260 key up right_flipper
+265 expect mode == 2
+300 msg table SwitchToNextPlayer 0
+350 expect v_lite80.light_on == 0
+360 poke info_text_box message_field 12
+370 event info_text_box ControlMissionStarted
+370 expect text info_text_box display id 3052
+370 expect none text info_text_box display id 3068
+400 quit

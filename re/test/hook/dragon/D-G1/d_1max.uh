@@ -1,0 +1,12 @@
+# 1MAX: one extra ball and the 3011 text (AddExtraBall, dragon_core.cpp).
+# The 3011 text is shown for 2 s from the frame the 4th character is typed (frame 33, text.jsonl):
+# the expect is exactly frame 33 (deterministic under fixed_dt); the extra_balls expect is at 70.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+30 type 1MAX
+70 expect extra_balls == 1
+33 expect text info_text_box display id 3011
+80 quit

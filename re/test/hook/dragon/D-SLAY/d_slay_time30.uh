@@ -1,0 +1,18 @@
+# Mode timer, no item lit (listing 5097-5160, 5300-5330): the s_oneway2 hit (ControlCollision, type 1016, intro
+# over is NOT required: Mode9Intro cleared by the sweep end at 5 s) starts mode_timer at Mode9Time = 30 s and shows text 3047.
+# Hit at frame 700, no ramp-plane event: the timer expires 30 s later (frame 3700) and the mode leaves 9
+# (ControlTimerExpired, Mode9Ramp == 0 -> CloseDragonJaw(0), info_text_box.message_field = 3, ControlMissionComplete).
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+700 event s_oneway2 ControlCollision
+# listing: ControlMissionStarted text, string 3047
+700 expect text info_text_box display id 3047
+3691 expect mode == 9
+# listing: expiry at 30 s with Mode9Ramp == 0 leaves mode 9
+3721 expect mode != 9
+3900 quit

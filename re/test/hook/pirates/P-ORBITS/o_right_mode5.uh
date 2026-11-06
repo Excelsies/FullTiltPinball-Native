@@ -1,0 +1,20 @@
+# O-8 (listing 4584-4730, disassembly 0x4294ab / 0x4294c2): RightOrbitTripwireControl in mode 5, v_lite608 not flashing:
+# SpecialAddScore(50000) and tabb12 (id 11), no text. v_lite608 flashing -> Mode5WindHit (pirates_winds.cpp): only
+# "no 50,000 award" is checked there.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite634.flasher_on v_lite608.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 5
+220 event s_trip8 ControlCollision
+221 expect n_score == 50000 delta 219
+220 expect sound 11
+220 expect none text info_text_box display
+221 expect v_lite634.flasher_on == 0
+230 msg v_lite608 TLightFlasherStartTimedThenStayOn 20
+231 expect v_lite608.flasher_on == 1
+240 event s_trip8 ControlCollision
+241 expect none sound 11
+260 quit

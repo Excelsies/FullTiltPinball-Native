@@ -1,0 +1,51 @@
+# The Full Tilt TDemo watchdog, stuck-ball branch. Run: --table dragon.
+# Ball 0 is held at the middle of a_flip3's bounding box (-5.6, -2.3; the box is X -7.06..-4.12,
+# Y -3.76..-0.86), nowhere near the plunger. Demo mode starts at frame 10 and arms the 5.0 s watchdog.
+# The first tick (expected near frame 510; silent, nothing here observes it) stores the ball position;
+# the second tick (frame 1010) finds the ball inside the watch box but outside the plunger box: both
+# flipper presses (right, then left), one discarded rand() and the nudge helper (0x411eb0 =
+# nudge::nudge_right: ball velocity += (1.0, 0.5), export FUN_00411c80(2, 1)).
+# Why the ball sits in a flipper box: with the Dragon rules live, the engine's per-frame stuck check
+# (FT 0x411200, pb::timed_frame) calls DragonRules::UnstuckBall (FT 0x42c320) once a ball has been slower
+# than 0.8 for more than 500 ms; that function returns without acting when the ball is inside a_flip1,
+# a_flip3, a_flip2 or s_plunger1 (+ half the collision offset). A ball held outside those boxes would be
+# thrown every frame and the draw counts would follow that cycle. Inside a flipper box only the watchdog
+# (which excludes only the plunger box) acts on it. Measured: the run is byte-identical (timeline) with
+# the UnstuckBall call switched off, and the 30 frames 61..90 add 29 draws (1 per frame).
+# Precondition: the hook build runs -noaudio, so no wave is loaded and every sound has Duration 0 (loader.cpp:
+# FT 0x40cc60 clears the +0xc duration to 0 and sets it only when the wave loaded); that puts the watchdog press at
+# frame 1010 and the demo ball feed at frame 106.
+# Demo ball 1 hits the table in frames 1005-1009 (sound id 0, source none, TCollisionComponent2 - a ball collision,
+# not a flipper press); its path follows the rand stream, which the rules' NewGame draws from at frame 0
+# (SelectRandomQuest, mode 10, selected_quest 6). So the window before the watchdog tick asserts only what it is
+# for - no flipper press - with `none sound 19` / `none sound 20` (19 is the press id of both flippers, a_flip1 and
+# a_flip2; 20 is the release id; they are not left/right; id 0, used by a_flip3 and by ball collisions, is
+# deliberately not excluded); the press at 1010 is pinned by the positive expects below. The 505-515 window (first
+# tick) is `none sound` for any id.
+# Values: sounds a_flip3 id 0, a_flip2 id 19, a_flip1 id 19 at 1010; 5 draws at 1010 (2 per-frame
+# + 2 flip timers + the discarded draw), 2 at 1011; ball velocity (1.0, 0.69) at 1010 (the nudge on top
+# of the held ball's own (0, 0.19) from gravity).
+# Draw counts are deltas (`expect n_rand_draws == N delta F`) so the script does not move with the 101
+# draws TLightGroup makes at table load or any other earlier change in draws. What the deltas
+# depend on: 1 draw per frame in frames 61..90 (no throw) and the frames 1009..1011 around the watchdog.
+# No absolute total at frame 1008 is pinned: it moves with where ball 0 is held, through demo ball 1's
+# later path.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down demo
+11 key up demo
+12 place 0 -5.6 -2.3 0.37 1 0 0
+12 hold 0 on
+90 expect n_rand_draws == 29 delta 61
+505-515 expect none sound
+1005-1009 expect none sound 19
+1005-1009 expect none sound 20
+1010 expect sound 19
+1010 expect sound 0
+1010 expect n_rand_draws == 5 delta 1009
+1010 expect n_ball0_vx ~= 1.0 0.01
+1010 expect n_ball0_vy ~= 0.69 0.02
+1011 expect n_rand_draws == 2 delta 1010
+1011-1014 expect none sound
+1600 quit

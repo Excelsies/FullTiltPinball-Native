@@ -1,0 +1,25 @@
+# Mode 14.
+# P1, plunger launch, then `event a_spot22 ControlCollision` in mode 10: Mode10LaunchBallController (dragon_ball.cpp:239, a_spot22
+# branch) sets mode 14 without the skill-shot award; Mode14 (dragon_towers.cpp) adds +100,000 and multiball becomes 2; the part scores 2,500
+# (n_score 102,500 at frame 360, measured natively).
+# Ball-save drain at frame 727 relaunches the ball (multiball back to 2 at 822); once the ball save expired (frame 1831) the natural
+# drain at 1871 ends the mode: mode 2, multiball 1.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+360 event a_spot22 ControlCollision
+361 expect mode == 14
+361 expect multiball == 2
+361 expect n_score == 102500 delta 359
+730 expect mode == 14
+730 expect multiball == 1
+830 expect multiball == 2
+1800 expect mode == 14
+1880 expect mode == 2
+1880 expect multiball == 1
+2100 quit

@@ -1,0 +1,68 @@
+# ShipSinkControl (FT 0x4283f0; listing 3673-3836; the lost-argument sends read from the machine code at
+# 0x42841d-0x4286c6): a_sink4 ControlCollision, case = info_text_box->MessageField. Jump table 0x4286d8 read: field 2 ->
+# 0x4284d6, 4 -> 0x4285cb, 9 -> 0x428606, 11 -> 0x428649, everything else (3, 5-8, 10, >11) -> default 0x42841d.
+# The score is pirates_scores_10[0] = 100,000 (ScorePart index 0); MissionControl's TSink pre-hook adds 40,000 to the jackpot
+# first (0x42d850). Expected values: machine code and the table, not a run.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_lite567.flasher_on v_lite567.light_on v_lite568.light_on v_lite570.light_on v_mlite51.light_on v_lite4.light_on v_lite8.light_on a_blocc.blocker_state a_blocf.blocker_state a_blocg.blocker_state
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+195 expect no_hold_start == 0
+# mode 2, v_lite568 off: score 100,000 with string 3003; blockers to -1; v_lite567 flashes on
+200 msg a_blocg TBlockerSetFrame 1.0
+210 poke info_text_box message_field 2
+211 event a_sink4 ControlCollision
+211 expect n_score == 100000 delta 210
+211 expect jackpot == 40000 delta 210
+211 expect text info_text_box display id 3003
+# tabb27wave = engine sound 19
+211 expect sound 19
+211 expect v_lite567.flasher_on == 1
+260 expect a_blocc.blocker_state == -1
+260 expect a_blocg.blocker_state == -1
+# mode 2, v_lite568 lit: extra ball, light off, no score
+300 poke v_lite568 light_on 1
+301 event a_sink4 ControlCollision
+301 expect v_lite568.light_on == 0
+301 expect extra_balls == 1
+301 expect sound 2
+301 expect sound 19
+301 expect n_score == 0 delta 300
+# mode 5 (default case): same as the idle score without the extra ball
+400 poke info_text_box message_field 5
+400 poke v_lite568 light_on 1
+401 event a_sink4 ControlCollision
+401 expect n_score == 100000 delta 400
+401 expect v_lite568.light_on == 1
+401 expect text info_text_box display id 3003
+401 expect sound 19
+# mode 9: v_lite570 on, v_lite567 flashing; no score
+500 poke info_text_box message_field 9
+500 poke v_lite570 light_on 0
+501 event a_sink4 ControlCollision
+501 expect v_lite570.light_on == 1
+501 expect v_lite567.flasher_on == 1
+501 expect sound 19
+501 expect n_score == 0 delta 500
+# mode 11: lights v_mlite51 on, v_lite4-8 / 567 / 568 off
+600 poke info_text_box message_field 11
+600 poke v_lite4 light_on 1
+600 poke v_lite8 light_on 1
+600 poke v_lite567 light_on 1
+600 poke v_lite568 light_on 1
+601 event a_sink4 ControlCollision
+601 expect v_mlite51.light_on == 1
+601 expect v_lite4.light_on == 0
+601 expect v_lite8.light_on == 0
+601 expect v_lite567.light_on == 0
+601 expect v_lite568.light_on == 0
+601 expect none sound 19
+# a code other than ControlCollision does nothing
+800 poke info_text_box message_field 2
+801 event a_sink4 ControlBallCaptured
+801 expect n_score == 0 delta 800
+850 quit

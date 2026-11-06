@@ -1,0 +1,11 @@
+# The original's 2000 ms start-up wait in script time (init startup_wait 1), jackpot dumped every
+# 50 ms from frame 0 (before NewGame: 20000; NewGame at tick 200), F2 after the start-up show, then a second game.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 50
+init startup_wait 1
+init watch jackpot player_count
+360 key down new_game
+368 key up new_game
+460 quit

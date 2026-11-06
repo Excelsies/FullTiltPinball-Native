@@ -1,0 +1,12 @@
+# Rebounder a_rebo1 scores 1000 (RebounderControl1 -> Rebound, ft_common.cpp 189).
+# The poke puts the game in mode 2: NewGame starts in mode 10, and the first scoring event in mode 10 is the skill shot
+# (Mode10LaunchBallController: mode 10 -> 2, +15,000 in the event frame), which would make n_score 16,000.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+200 event a_rebo1 ControlCollision
+200 expect n_score == 1000 delta 199
+210 expect n_score == 1000 delta 199
+250 quit

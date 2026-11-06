@@ -1,0 +1,16 @@
+# Drain in mode 6: the unheld ball drains, ControlBallDrained ends the quest: mode -> 11 directly, quests_done +1, jackpot +500,000.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 event a_spot4 ControlCollision
+410 poke a_kout2 message_field 6
+420 type NMAX
+470 expect mode == 6
+2100 expect mode == 11
+2100 expect quests_done == 1
+2100 expect jackpot == 500000 delta 2018
+2500 quit

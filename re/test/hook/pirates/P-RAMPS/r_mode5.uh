@@ -1,0 +1,36 @@
+# R-5: mode 5: v_lite603 not flashing -> SpecialAddScore(50,000) (no multiplier, no text 3004); flashing -> Mode5WindHit
+# (pirates_winds.cpp:213-228), which scores SpecialAddScore(Mode5WindScore[ModeCounter]) = 125,000 for the first
+# hit and 250,000 for the second (table :53 {125000, 250000, 500000, 1000000}), shows string 3003 with the value, plays tabb12
+# (sound 11) and counts ModeCounter up. So: flashing hit 1 (310): 50,000 + 125,000 = 175,000 with sound 11 and text 3003; the
+# a_ramp5 unlit half scores 50,000 (225,000); the flashing right-wind hit (340) is hit 2: 225,000 + 250,000 = 475,000, sound 11.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite603.flasher_on v_lite611.flasher_on
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 5
+199 expect v_lite603.flasher_on == 0
+200 event a_ramp8 ControlBallToLayer2
+200 expect sound 11
+201 expect n_score == 50000
+200 expect none text info_text_box display id 3004
+300 msg v_lite603 TLightFlasherStartTimedThenStayOn 5.0
+302 expect v_lite603.flasher_on == 1
+310 event a_ramp8 ControlBallToLayer2
+310 expect sound 11
+310 expect text info_text_box display id 3003
+311 expect n_score == 175000
+310 expect none text info_text_box display id 3004
+320 event a_ramp5 ControlBallToLayer2
+320 expect sound 11
+321 expect n_score == 225000
+# The second wind light of the shared helper (right wind group light 611): not flashing -> 50,000 (scored above); flashing -> Mode5WindHit (second hit, 250,000)
+325 expect v_lite611.flasher_on == 0
+330 msg v_lite611 TLightFlasherStartTimedThenStayOn 5.0
+332 expect v_lite611.flasher_on == 1
+340 event a_ramp5 ControlBallToLayer2
+340 expect sound 11
+340 expect text info_text_box display id 3003
+341 expect n_score == 475000
+360 quit

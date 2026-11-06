@@ -1,0 +1,58 @@
+# H-3: the other sink-1 cases (listing 3444-3518). Mode 5 (case 5): ScorePart 40,000, no string 3002, one draw.
+# Mode 6: Mode6Controller runs first on the sink hit (pirates_modes_a.cpp:366-372):
+# text 3050, the drain path ControlBallDrained -> ControlModeEnd (SetModeLight(6,0), SelectNextMode: 1 draw; AddJackpot 750000), then
+# MissionControl (pirates_rules.cpp:204-208) sets mode 2 and sends ControlMissionComplete (SetModeLight(2,1), SelectNextMode: 1 draw), and
+# the hideaway control then reads mode 2: case 2 (pirates_hideaway.cpp:84) shows 3002 and scores ScorePart 40,000; its HideawayExit takes no
+# draw in mode 2. So 2 engine draws + 2 selection draws = 4, 40,000 scored, mode 2 after the hit.
+# Mode 8 with v_mlite44 not flashing: like the default (40,000, one draw); mode 8 with v_mlite44
+# flashing: no score, no draw (ReleaseHoldSink instead), lights v_lite524/v_lite519 off then v_lite519 flashes 2.0 s.
+# Mode 11 (0xb): one draw; the score of AwardNextSpecialTreasure (pirates_awards.cpp) is not asserted here.
+# Sounds: tabb11 (id 10) on mode 6 and on the dark mode 8 hit; tabb70 (id 51) in mode 5; none (ids 10, 51) for the lit mode 8 hit and mode 11.
+# Ids read from sounds.jsonl (info field) after the disassembly global-to-tag mapping; not resolved independently from the DAT.
+# Lit mode 8 also sends v_mlite44 <- 0x13 (an argument the listing lost): the treasure light ends not flashing, still lit.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_mlite44.flasher_on v_mlite44.light_on v_lite519.flasher_on v_lite524.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 5
+210 event a_sink17 ControlCollision
+211 expect n_score == 40000 delta 209
+210 expect n_rand_draws == 3 delta 209
+210 expect sound 51
+210 expect none sound 10
+210 expect none text info_text_box display id 3002
+224 poke info_text_box message_field 6
+232 event a_sink17 ControlCollision
+232 expect n_rand_draws == 4 delta 231
+233 expect n_score == 40000 delta 231
+233 expect mode == 2
+232 expect text info_text_box display id 3050
+232 expect text info_text_box display id 3002
+232 expect sound 10
+240 poke info_text_box message_field 8
+250 event a_sink17 ControlCollision
+251 expect n_score == 40000 delta 249
+250 expect n_rand_draws == 3 delta 249
+250 expect text info_text_box display id 3002
+250 expect sound 10
+260 msg v_mlite44 TLightFlasherStartTimed 1
+261 expect v_mlite44.flasher_on == 1
+270 event a_sink17 ControlCollision
+# n_score after the lit mode 8 hit is deliberately not asserted: it includes the AwardJackpot table jackpot score.
+270 expect n_rand_draws == 2 delta 269
+271 expect v_lite519.flasher_on == 1
+271 expect v_lite524.flasher_on == 0
+271 expect v_mlite44.flasher_on == 0
+271 expect v_mlite44.light_on == 1
+270 expect none sound 10
+270 expect none sound 51
+270 expect none text info_text_box display id 3002
+280 poke info_text_box message_field 11
+290 event a_sink17 ControlCollision
+# n_score after the mode 11 hit is deliberately not asserted: AwardNextSpecialTreasure ends in ScoreValue.
+290 expect none sound 10
+290 expect none sound 51
+290 expect n_rand_draws == 3 delta 289
+300 quit

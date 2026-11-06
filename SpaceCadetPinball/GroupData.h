@@ -89,13 +89,16 @@ public:
 	const EntryData* GetEntry(size_t index) const { return Entries[index]; }
 	size_t EntryCount() const { return Entries.size(); }
 	void ReserveEntries(size_t count) { Entries.reserve(count); }
-	gdrv_bitmap8* GetBitmap(int resolution) const;
-	zmap_header_type* GetZMap(int resolution) const;
+	// index selects the n-th bitmap (zMap) of that resolution in DAT order; nullptr when absent.
+	// Full Tilt ball groups carry two bitmaps per resolution (alternate ball); index 0 is the default.
+	gdrv_bitmap8* GetBitmap(int resolution, int index = 0) const;
+	zmap_header_type* GetZMap(int resolution, int index = 0) const;
+	static const int MaxBitmapsPerResolution = 2;
 
 private:
 	std::vector<EntryData*> Entries;
-	gdrv_bitmap8* Bitmaps[3]{};
-	zmap_header_type* ZMaps[3]{};
+	gdrv_bitmap8* Bitmaps[3][MaxBitmapsPerResolution]{};
+	zmap_header_type* ZMaps[3][MaxBitmapsPerResolution]{};
 	bool NeedsSort = false;
 
 	static void SplitSplicedBitmap(const gdrv_bitmap8& srcBmp, gdrv_bitmap8& bmp, zmap_header_type& zMap);
@@ -119,8 +122,8 @@ public:
 	int field_size(int groupIndex, FieldTypes targetEntryType);
 	int record_labeled(LPCSTR targetGroupName);
 	char* field_labeled(LPCSTR lpString, FieldTypes fieldType);
-	gdrv_bitmap8* GetBitmap(int groupIndex);
-	zmap_header_type* GetZMap(int groupIndex);
+	gdrv_bitmap8* GetBitmap(int groupIndex, int index = 0);
+	zmap_header_type* GetZMap(int groupIndex, int index = 0);
 	void Finalize();
 
 private:

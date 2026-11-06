@@ -1,0 +1,22 @@
+# Check winds_lane; sound ids = DAT sound order offset 4 (tabb12=11, tabb43=29, tabb44=30); scores from acceptance_pirates.md rows WINDS / island lanes
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+init watch v_lite533.flasher_on
+140 poke info_text_box message_field 2
+160 event s_trip11 ControlCollision
+161 expect n_score == 25000
+160-161 expect sound 29
+161 expect v_lite533.flasher_on == 1
+170 poke v_lite533 light_on 1
+170 poke v_lite534 light_on 1
+170 poke v_lite535 light_on 1
+170 poke v_lite536 light_on 1
+170 poke v_lite537 light_on 1
+180 event s_trip11 ControlCollision
+181 expect map_pieces == 1
+181 expect n_score == 1025000
+180-181 expect none sound 29
+220 quit

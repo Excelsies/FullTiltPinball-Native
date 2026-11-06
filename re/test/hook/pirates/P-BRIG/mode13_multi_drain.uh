@@ -1,0 +1,17 @@
+# B10 (listing 7151-7207): Mode13 on ControlBallDrained with MultiballCount != 1 does nothing: mode 13 stays on
+# and its text is not cleared. Three captures in mode 2 start mode 13 with 3 balls in play (B1); one drain leaves 3 != 1.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event s_hole19 ControlBallCaptured
+230 event s_hole19 ControlBallCaptured
+250 event s_hole19 ControlBallCaptured
+250 expect mode == 13
+250 expect multiball == 3
+260 event drain ControlBallDrained
+270 expect mode == 13
+270 expect multiball == 3
+270 expect none text info_text_box clear
+300 quit

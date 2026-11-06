@@ -1,0 +1,29 @@
+# TFlipperExtend during the count sets the skip flag (0x434d0c) and clears the text: every later step still adds
+# its value but shows no text; the total (68,000) is added at once. No text display after the flipper press.
+# The game starts in mode 10, where the first a_spot4 contact would be Mode10LaunchBallController's skill shot
+# (AwardSpell, +120,000, mode 2). The subject here is the skip flag, so `50 poke info_text_box message_field 2` sets
+# mode 2 before the contacts; the nine contacts are SpellTargetControl1 hits.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+200 poke v_lite37 light_on 1
+210 event a_spot4 ControlCollision
+211 event a_spot4 ControlCollision
+212 event a_spot4 ControlCollision
+213 event a_spot4 ControlCollision
+214 event a_spot4 ControlCollision
+215 event a_spot4 ControlCollision
+216 event a_spot4 ControlCollision
+217 event a_spot4 ControlCollision
+218 event a_spot4 ControlCollision
+220 poke info_text_box message_field 11
+300 event info_text_box ControlMissionComplete
+300 expect text info_text_box display id 3012
+350 event info_text_box TFlipperExtend
+351-1000 expect none text info_text_box display id 3014
+351-1000 expect none text info_text_box display id 3017
+351 expect n_score == 68000 delta 299
+1000 quit

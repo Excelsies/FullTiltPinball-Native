@@ -1,0 +1,19 @@
+# Mode9Controller ControlCollision (listing 5260-5300): AddSuperJackpot(n) for the bumper (50000), kickout
+# a_kout1 (750000), sinks a_sink1 / a_sink2 (500000) and a solo target (100000). Expected: super_jackpot rises by n per
+# hit (AddSuperJackpot, dragon_core.cpp, at the point where its cap does not bind).
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+710 event a_bump1 ControlCollision
+711 expect super_jackpot ~= 50000 0 delta 709
+720 event a_kout1 ControlCollision
+721 expect super_jackpot ~= 750000 0 delta 719
+730 event a_sink1 ControlCollision
+731 expect super_jackpot ~= 500000 0 delta 729
+740 event a_spot4 ControlCollision
+741 expect super_jackpot ~= 100000 0 delta 739
+800 quit

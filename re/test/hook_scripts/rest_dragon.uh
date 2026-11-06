@@ -1,0 +1,6 @@
+init window 960 666
+init fixed_dt 10
+300 dump rest_1 @re/test/scripts/rest_dragon.json
+350 dump rest_2 @re/test/scripts/rest_dragon.json
+400 dump rest_3 @re/test/scripts/rest_dragon.json
+410 quit

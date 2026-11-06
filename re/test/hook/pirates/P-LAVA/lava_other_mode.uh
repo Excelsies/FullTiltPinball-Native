@@ -1,0 +1,17 @@
+# L3 (listing 3192-3225, the `!= 10` branch): outside modes 2 and 10 a lava hit only plays the sound and scores
+# ScorePart index 0 = 1,000 (+20,000 jackpot from the MissionControl pre-hook); the bank state is untouched. Mode 4 forced by poke.
+init fixed_dt 10
+init seed 1
+init watch a_spot11.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 4
+210 event a_spot11 ControlCollision
+210 expect mode == 4
+210 expect a_spot11.message_field == 0
+210 expect n_score == 1000 delta 209
+210 expect jackpot == 20000 delta 209
+220 event a_spot9 ControlCollision
+220 expect a_spot11.message_field == 0
+220 expect n_score == 1000 delta 219
+260 quit

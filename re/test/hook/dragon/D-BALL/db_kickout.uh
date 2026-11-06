@@ -1,0 +1,56 @@
+# Kickouts (listing 2904-2962). a_kout1 in mode 2: lights v_lite14..11 flash then stay off, v_lite45 off; it calls AwardRandomArmor.
+# a_kout2 in mode 2 starts mode 14 (dragon_towers.cpp). a_kout2 in mode 10 scores and counts up.
+# The contacts score 115,000 because the controllers run behind the skill shot: at 210 the Mode14Controller
+# start adds ScoreValue 100,000 (dragon_towers.cpp:426) to the 15,000 skill shot (Mode10LaunchBallController); at 280
+# Kickout1Control (dragon_ball.cpp:196-; the script pokes message_field 10 at 270, so Mode10LaunchBall's 15,000 is scored
+# again) calls AwardRandomArmor (sound 37). That pick is a seeded random draw (ft::RandIndex) of 25,000 / 50,000 /
+# 100,000 depending on which armor is unlit; v_lite37 and v_lite38 are poked on at 265 so only the armor post is left and
+# the award is 100,000. No Wine value exists for these scores: not compared with Wine.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_lite45.light_on a_kout2.message_field
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 2
+151 poke v_lite45 light_on 1
+153 expect v_lite45.light_on == 1
+160 event a_kout1 ControlCollision
+162 expect v_lite45.light_on == 0
+170 event a_kout2 ControlCollision
+171 expect mode == 14
+# mode 10: Mode10LaunchBallController sees the kickout's first contact (15,000, mode 2) and then Kickout2Control finds mode 2 and
+# starts mode 14 (the skill-shot multiball); in mode 14 each contact counts the kickout up to 3 and scores it.
+200 poke info_text_box message_field 10
+201 poke a_kout2 message_field 0
+210 event a_kout2 ControlCollision
+210-212 expect text info_text_box display id 3001
+212 expect mode == 14
+212 expect n_score == 115000 delta 209
+212 expect a_kout2.message_field == 0
+220 event a_kout2 ControlCollision
+222 expect a_kout2.message_field == 1
+230 event a_kout2 ControlCollision
+232 expect a_kout2.message_field == 2
+240 event a_kout2 ControlCollision
+242 expect a_kout2.message_field == 3
+245 event a_kout2 ControlCollision
+247 expect a_kout2.message_field == 3
+250 poke info_text_box message_field 7
+260 event a_kout1 ControlCollision
+261 expect mode == 7
+# a_kout1 in mode 10: first contact ends mode 10 (+15,000), Mode2WaitQuestController shows id 3001 (listing 4248-4377, 5965-5995)
+265 poke v_lite37 light_on 1
+265 poke v_lite38 light_on 1
+270 poke info_text_box message_field 10
+280 event a_kout1 ControlCollision
+# the mode is set to 2 before MissionControl(Complete), so Mode2WaitQuestController sees Complete with BallHeld == 0: Clear branch, then Started shows 3001
+280 expect text info_text_box clear
+280-282 expect text info_text_box display id 3001
+282 expect mode == 2
+282 expect n_score == 115000 delta 279
+# a_kout2 in mode 2 leaves mode 2 for 14 (mode 14's own controller is in dragon_towers.cpp)
+290 event a_kout2 ControlCollision
+292 expect mode == 14
+350 quit

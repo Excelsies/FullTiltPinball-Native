@@ -1,0 +1,43 @@
+# Real-rules eject (DRAGON s_hole118). Companion of U8_ramp_hole_dragon.uh, which
+# pokes a_kout2 to keep the rules from ejecting. This script is that script's front half WITHOUT the poke: NewGame leaves
+# a selected quest (selected_quest 6, drawn at frame 10), the first capture in mode 10 runs Mode10LaunchBallController ->
+# StartSelectedQuest (dragon_ball.cpp:243-245, dragon_quests.cpp:303-310) and the mode becomes 6; the real
+# dragon::HoleControl (dragon_shop.cpp:192-219; FT 0x426ee0, port_listing_dragon.c 2963-2998) then takes its other-mode
+# branch: hole MessageField 1 and a THoleEjectBall 1.0 s timer. The ball is captured at frame 102 (hold_timer 1), the
+# second stage starts at 201 and the ball is above the exit (Z 2.87614, mask 4) at 204. No other script pins this
+# eject of a real ball (shop_hole_kout3 fires the message in mode 7 with no ball; shop_hole_release asserts a sound only).
+init window 960 666
+init fixed_dt 10
+init seed 7
+init dump_period 10
+init watch s_hole118.message_field s_hole118.captured s_hole118.second_stage s_hole118.hold_timer s_hole118.exit_z s_hole118.exit_mask s_hole118.rise_speed s_hole118.hold_time
+10 key down new_game
+11 key up new_game
+# constants read by the constructor (part_thole section 1)
+20 expect s_hole118.rise_speed == 1
+20 expect s_hole118.exit_mask == 4
+20 expect s_hole118.exit_z ~= 2.87614 0.0001
+20 expect s_hole118.hold_time == -1
+# ball placed beside the hole is pulled in at frame 102 (part_thole section 3) and the rules answer in mode 6
+99 expect mode == 10
+99 expect selected_quest == 6
+99 expect s_hole118.captured == 0
+100 place 0 5.40 -5.2377 0.37 -1 0 2 1
+100 dump placed
+110 expect mode == 6
+110 expect s_hole118.message_field == 1
+110 expect s_hole118.captured == 1
+110 expect s_hole118.hold_timer == 1
+110 expect s_hole118.second_stage == 0
+110 expect n_ball0_x ~= 5.18845 0.001
+110 expect n_ball0_z ~= 0.37 0.001
+# still held at 190 (the 1.0 s timer runs from frame 102), then the second stage starts at 201 and the ball rises
+190 expect s_hole118.captured == 1
+190 expect s_hole118.second_stage == 0
+190 expect n_ball0_z ~= 0.37 0.001
+205 dump eject
+205 expect s_hole118.captured == 0
+205 expect n_ball0_z ~= 2.87614 0.0001
+205 expect n_ball0_mask == 4
+210 dump end
+220 quit

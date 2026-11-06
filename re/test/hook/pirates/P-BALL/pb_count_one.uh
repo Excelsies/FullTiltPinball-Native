@@ -1,0 +1,35 @@
+# The one-amount-step case. Three popup-target hits (targets_hit 6, see below) and no mode played give a single amount
+# step (targets, text 3028, 60000), then the total.
+# targets_hit is 6, not 3: LduggTargetControl1-3 (pirates_drop_targets.cpp) score through ScorePart, and the
+# MissionControl pre-hook on ControlScorerReplaced counts a replaced TPopupTarget scorer again (original 0x42d850 run
+# before the control function by 0x423080; timeline 205/206/207: 1, 3, 6). The skill-shot wheel (s_launcher1.message_field)
+# is set to outcome 2 = AwardCoins + idle mode (pb_skill_gate_o2.uh), a precondition choosing which skill-shot outcome
+# the one-way at 207 takes: any mode-starting outcome would make the drain count a played mode (a second amount step).
+# So no mode is played and modes_played stays 0. Mode 3 follows at d+500 +-1, d = the first frame of text 3028
+# (1736 here); mode 16 is still active at 2234 and mode 3 is active at 2236 (= d + 500). The two-amount-step case is pb_count.uh (d+705).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+205 event a_drop5 ControlCollision
+206 event a_drop6 ControlCollision
+207 event a_drop7 ControlCollision
+207 poke s_launcher1 message_field 2
+207 event s_oneway3 ControlCollision
+220 expect targets_hit == 6
+1720 expect ball_save == 0
+1730 place 0 0 15.6 0.37 0 1 5 0x1
+1760 expect mode == 16
+1736 expect text info_text_box display id 3028
+2240 expect modes_played == 0
+1730 dump drain_frame
+2234 expect mode == 16
+2236 expect mode == 3
+2240 expect bonus_step == 7
+2240 expect ball_count == 2
+2240 expect ball_save == 3
+2240 expect no_hold_start == 1
+2240 expect targets_hit == 0
+3000 quit

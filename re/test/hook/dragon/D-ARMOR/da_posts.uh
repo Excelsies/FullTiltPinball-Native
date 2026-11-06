@@ -1,0 +1,47 @@
+init window 960 666
+init fixed_dt 10
+init seed 1
+# CenterPostControl / ArmorPostControl (FT 0x425910 / 0x425a10, lines 2020-2097): Enable (field 1, v_lite38/39
+# flash), timer 1 (field 2), timer 2 (field 0 + blocker disable), Disable (field 0, light off).
+init dump_period 10
+init watch a_center_post.message_field a_center_post.blocker_state v_lite38.light_on a_bloce.message_field a_bloce.blocker_state v_lite39.light_on v_lite38.flasher_on v_lite39.flasher_on
+10 key down new_game
+11 key up new_game
+200 event a_center_post TBlockerEnable
+201 expect a_center_post.message_field == 1
+201 expect a_bloce.message_field == 0
+201 expect v_lite38.flasher_on == 1
+201 expect v_lite39.flasher_on == 0
+300 event a_center_post ControlTimerExpired
+301 expect a_center_post.message_field == 2
+301 expect v_lite38.flasher_on == 1
+301 expect v_lite39.flasher_on == 0
+400 event a_center_post ControlTimerExpired
+401 expect a_center_post.message_field == 0
+221 expect a_center_post.blocker_state == 0
+421 expect a_center_post.blocker_state == -1
+500 event a_bloce TBlockerEnable
+501 expect a_bloce.message_field == 1
+501 expect a_center_post.message_field == 0
+501 expect v_lite39.flasher_on == 1
+600 event a_bloce ControlTimerExpired
+601 expect a_bloce.message_field == 2
+601 expect v_lite39.flasher_on == 1
+700 event a_bloce ControlTimerExpired
+701 expect a_bloce.message_field == 0
+521 expect a_bloce.blocker_state == 0
+721 expect a_bloce.blocker_state == -1
+800 event a_center_post TBlockerEnable
+900 event a_center_post TBlockerDisable
+901 expect a_center_post.message_field == 0
+921 expect a_center_post.blocker_state == -1
+901 expect v_lite38.light_on == 0
+901 expect v_lite38.flasher_on == 0
+1000 event a_bloce TBlockerEnable
+1100 event a_bloce TBlockerDisable
+1101 expect a_bloce.message_field == 0
+1121 expect a_bloce.blocker_state == -1
+1101 expect v_lite39.light_on == 0
+1101 expect v_lite39.flasher_on == 0
+1101 expect v_lite38.flasher_on == 0
+1200 quit

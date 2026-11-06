@@ -1,0 +1,18 @@
+# SkuTargetBank default body (listing 2749-2845): 4,000 per hit, 30,000 on completion; bank resets.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop13.message_field v_lite1.message_field
+10 key down new_game
+11 key up new_game
+300 event a_drop13 ControlCollision
+310 event a_drop14 ControlCollision
+320 event a_drop15 ControlCollision
+300 expect n_score == 4000 delta 299
+310 expect n_score == 4000 delta 309
+320 expect n_score == 30000 delta 319
+310 expect a_drop13.message_field == 3
+320 expect a_drop13.message_field == 0
+300 expect sound 4
+320 expect sound 21
+380 quit

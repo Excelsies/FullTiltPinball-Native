@@ -1,0 +1,25 @@
+# R-4: a different scorer replaces the last one (ControlScorerReplaced, 0x4d) and resets that ramp's combo. Mode 3.
+# a_ramp8 x2 (25k, 150k), a_ramp13 layer 1 (50,000 + text 3006), a_ramp8 again: idx 0 = 25k (not 275k), then a_ramp5 (own combo, 25k),
+# then a_ramp8 again: idx 0 again because a_ramp5 replaced it. Cumulative 25k, 175k, 225k, 250k, 275k, 300k.
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 3
+200 event a_ramp8 ControlBallToLayer2
+201 expect n_score == 25000
+500 event a_ramp8 ControlBallToLayer2
+501 expect n_score == 175000
+800 event a_ramp13 ControlBallToLayer1
+800 expect sound 27
+801 expect n_score == 225000
+800 expect text info_text_box display id 3006
+1100 event a_ramp8 ControlBallToLayer2
+1100 expect sound 11
+1101 expect n_score == 250000
+1400 event a_ramp5 ControlBallToLayer2
+1401 expect n_score == 275000
+1700 event a_ramp8 ControlBallToLayer2
+1701 expect n_score == 300000
+1750 quit

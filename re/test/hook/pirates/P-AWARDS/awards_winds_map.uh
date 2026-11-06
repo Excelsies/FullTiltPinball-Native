@@ -1,0 +1,26 @@
+# CheckWindsComplete 0x424290 + AwardMapPiece 0x423aa0 (pirates_awards.cpp:104-130) through WindsRolloverControl1
+# (pirates_winds.cpp:253-270), which calls CheckWindsComplete only in mode 2 (after flashing v_lite537 itself) and
+# otherwise scores the part (+25,000, text glyph, tabb43 sound): four of five lights lit, mode 3 -> the rollover
+# only scores (map_pieces 0); mode poked to 2 with all five lit -> map piece (v_lite607 count 1), string 3015, score +1,000,000
+# and no rollover score (the map piece took the display), sound tabb83 = id 55.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke v_lite533 light_on 1
+150 poke v_lite534 light_on 1
+150 poke v_lite535 light_on 1
+150 poke v_lite536 light_on 1
+160 event a_roll3 ControlCollision
+161 expect map_pieces == 0
+161 expect n_score == 25000
+170 poke v_lite537 light_on 1
+170 poke info_text_box message_field 2
+180 dump pre
+190 event a_roll3 ControlCollision
+190-191 expect text info_text_box display id 3015
+191 expect map_pieces == 1
+190-191 expect sound 55  # tabb83
+191 expect n_score == 1025000
+220 quit

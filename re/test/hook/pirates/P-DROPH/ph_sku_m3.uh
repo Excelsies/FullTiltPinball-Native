@@ -1,0 +1,21 @@
+# SkuTargetControl1-3 in mode 3 (no letters): v_lite1 stays 0.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_drop13.message_field v_lite1.message_field v_lite1.flasher_on v_lite2.flasher_on v_lite3.flasher_on
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 3
+300 event a_drop13 ControlCollision
+310 event a_drop14 ControlCollision
+320 event a_drop15 ControlCollision
+300 expect v_lite1.message_field == 0
+300 expect a_drop13.message_field == 1
+300 expect n_score == 4000 delta 299
+320 expect a_drop13.message_field == 0
+320 expect n_score == 30000 delta 319
+320 expect v_lite1.message_field == 0
+300 expect v_lite1.flasher_on == 0
+310 expect v_lite2.flasher_on == 0
+320 expect v_lite3.flasher_on == 0
+360 quit

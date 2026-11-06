@@ -1,0 +1,12 @@
+# Mode7Controller, ControlTimerExpired from mode_timer (listing 4915-4925; FT 0x429b52): v_lite46 / v_lite45 off, the mode
+# timer keeps the old mode in its MessageField (7), the mode becomes 3 and MissionControl(ControlMissionComplete) runs (Mode3, dragon_core.cpp).
+init fixed_dt 10
+init seed 1
+init watch mode_timer.message_field
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 7
+100 event mode_timer ControlTimerExpired
+100 expect mode == 3
+100 expect mode_timer.message_field == 7
+200 quit

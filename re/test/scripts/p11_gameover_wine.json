@@ -1,0 +1,5977 @@
+{
+ "name": "p11_gameover_wine",
+ "description": "3 balls, alternating flipper taps 0.5 s, plunger every ~7 s, NMAX cheat on ball 1",
+ "steps": [
+  {
+   "wait": 3.0
+  },
+  {
+   "windows": "play_00_loaded"
+  },
+  {
+   "shot": "00_loaded",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "loaded"
+  },
+  {
+   "wait": 0.3
+  },
+  {
+   "windows": "play_t0004"
+  },
+  {
+   "tap": "new_game"
+  },
+  {
+   "wait": 2.0
+  },
+  {
+   "windows": "play_01_new_game"
+  },
+  {
+   "shot": "01_new_game",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "new_game"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "wait": 15.0
+  },
+  {
+   "tap": "n",
+   "hold": 0.08
+  },
+  {
+   "tap": "m",
+   "hold": 0.08
+  },
+  {
+   "tap": "a",
+   "hold": 0.08
+  },
+  {
+   "tap": "x",
+   "hold": 0.08
+  },
+  {
+   "peek": "cheat"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0020"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0036"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0052"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0068"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0083"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b0_00"
+  },
+  {
+   "shot": "b0_00",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0100"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0116"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "windows": "play_t0131"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0147"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0163"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b0_01"
+  },
+  {
+   "shot": "b0_01",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "windows": "play_t0180"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0195"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0211"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0227"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0243"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0258"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b0_02"
+  },
+  {
+   "shot": "b0_02",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0275"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0291"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0306"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0322"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0338"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b0_03"
+  },
+  {
+   "shot": "b0_03",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0355"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0370"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0386"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0402"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0418"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b0_04"
+  },
+  {
+   "shot": "b0_04",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0434"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0450"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0466"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0481"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0497"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b0_05"
+  },
+  {
+   "shot": "b0_05",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "end_b0"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0515"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0531"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0547"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0563"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0578"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b1_00"
+  },
+  {
+   "shot": "b1_00",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "windows": "play_t0595"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0611"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0627"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0642"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0658"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0674"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b1_01"
+  },
+  {
+   "shot": "b1_01",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0690"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0706"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0722"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0738"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0753"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b1_02"
+  },
+  {
+   "shot": "b1_02",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0770"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0786"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "windows": "play_t0801"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0817"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0833"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b1_03"
+  },
+  {
+   "shot": "b1_03",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0850"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0865"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0881"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0897"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0913"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b1_04"
+  },
+  {
+   "shot": "b1_04",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0929"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0945"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0961"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0976"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t0992"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b1_05"
+  },
+  {
+   "shot": "b1_05",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "end_b1"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "wait": 0.5
+  },
+  {
+   "windows": "play_t1010"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1026"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1042"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1058"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1073"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1089"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b2_00"
+  },
+  {
+   "shot": "b2_00",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1106"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1122"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1137"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1153"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1169"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b2_01"
+  },
+  {
+   "shot": "b2_01",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1185"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1201"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1217"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1233"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1248"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b2_02"
+  },
+  {
+   "shot": "b2_02",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1265"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1281"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1297"
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1312"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1328"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b2_03"
+  },
+  {
+   "shot": "b2_03",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1345"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1360"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1376"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1392"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1408"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b2_04"
+  },
+  {
+   "shot": "b2_04",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1424"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1440"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1456"
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "plunger",
+   "hold": 1.0
+  },
+  {
+   "windows": "play_t1471"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_t1487"
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "left_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "tap": "right_flipper",
+   "hold": 0.15
+  },
+  {
+   "wait": 0.1
+  },
+  {
+   "windows": "play_b2_05"
+  },
+  {
+   "shot": "b2_05",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "peek": "end_b2"
+  },
+  {
+   "windows": "play_zz_end"
+  },
+  {
+   "shot": "zz_end",
+   "crops": [
+    "panel"
+   ]
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_01"
+  },
+  {
+   "peek": "over_01"
+  },
+  {
+   "rootshot": "over_01"
+  },
+  {
+   "restpeek": "over_01",
+   "watch": "watch_pirates_p11.json"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_02"
+  },
+  {
+   "peek": "over_02"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_03"
+  },
+  {
+   "peek": "over_03"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_04"
+  },
+  {
+   "peek": "over_04"
+  },
+  {
+   "rootshot": "over_04"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_05"
+  },
+  {
+   "peek": "over_05"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_06"
+  },
+  {
+   "peek": "over_06"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_07"
+  },
+  {
+   "peek": "over_07"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_08"
+  },
+  {
+   "peek": "over_08"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_09"
+  },
+  {
+   "peek": "over_09"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_10"
+  },
+  {
+   "peek": "over_10"
+  },
+  {
+   "rootshot": "over_10"
+  },
+  {
+   "restpeek": "over_10",
+   "watch": "watch_pirates_p11.json"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_11"
+  },
+  {
+   "peek": "over_11"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_12"
+  },
+  {
+   "peek": "over_12"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_13"
+  },
+  {
+   "peek": "over_13"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_14"
+  },
+  {
+   "peek": "over_14"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_15"
+  },
+  {
+   "peek": "over_15"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_16"
+  },
+  {
+   "peek": "over_16"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_17"
+  },
+  {
+   "peek": "over_17"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_18"
+  },
+  {
+   "peek": "over_18"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_19"
+  },
+  {
+   "peek": "over_19"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_20"
+  },
+  {
+   "peek": "over_20"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_21"
+  },
+  {
+   "peek": "over_21"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_22"
+  },
+  {
+   "peek": "over_22"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_23"
+  },
+  {
+   "peek": "over_23"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_24"
+  },
+  {
+   "peek": "over_24"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_25"
+  },
+  {
+   "peek": "over_25"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_26"
+  },
+  {
+   "peek": "over_26"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_27"
+  },
+  {
+   "peek": "over_27"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_28"
+  },
+  {
+   "peek": "over_28"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_29"
+  },
+  {
+   "peek": "over_29"
+  },
+  {
+   "rootshot": "over_29"
+  },
+  {
+   "restpeek": "over_29",
+   "watch": "watch_pirates_p11.json"
+  },
+  {
+   "wait": 1.0
+  },
+  {
+   "windows": "over_30"
+  },
+  {
+   "peek": "over_30"
+  }
+ ]
+}

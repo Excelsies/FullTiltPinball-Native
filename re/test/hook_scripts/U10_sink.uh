@@ -1,0 +1,18 @@
+# TSink, DRAGON tower sink a_sink16 ejects with mask 1 << attr1301 and Z = 601[3] + radius.
+# DAT values quoted from DRAGON.DAT a_sink16: 1301 = [4.0] -> mask 1 << 4 = 16; 601 = [-6.5632, -13.5235,
+# 0.0707, 1.9828] -> 601[3] = 1.9828; 407 = 0.5. Ball radius 0.37 (spec part_tsink S3).
+# Spec: part_tsink S2 (eject mask), S3 (eject Z). S4 (control::handler notify) is not checked here.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+# TSinkResetTimer 0.2 s at frame 10: the eject timer fires in frame 29 (observed, both runs). Later frames are not
+# checked: the ejected ball climbs the ramps.
+10 msg a_sink16 TSinkResetTimer 0.2
+15 dump before
+29 dump eject
+5 expect n_active_balls == 0
+29 expect n_active_balls == 1
+29 expect n_ball0_mask == 16
+29 expect n_ball0_z ~= 2.3528 0.0001
+40 quit

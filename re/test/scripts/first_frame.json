@@ -1,0 +1,16 @@
+{
+  "name": "first_frame",
+  "description": "Startup to the first in-game frame: shot after load, new game, plunge.",
+  "steps": [
+    {"wait": 3.0},
+    {"shot": "loaded", "crops": ["score", "panel"]},
+    {"wait": 0.2},
+    {"tap": "new_game"},
+    {"wait": 2.0},
+    {"shot": "new_game", "crops": ["score", "panel"]},
+    {"wait": 0.2},
+    {"tap": "plunger", "hold": 1.0},
+    {"wait": 1.5},
+    {"shot": "ball_launched", "crops": ["score", "panel"]}
+  ]
+}

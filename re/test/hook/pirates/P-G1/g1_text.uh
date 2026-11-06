@@ -1,0 +1,60 @@
+# TextEvent: all 24 FT codes 0x57..0x6e with an expect line each (ids/times are literals, see tools/gen_g1_text.py).
+# 0x58 (FT 0x41dc50 draw) does nothing natively: no text event expected. 0x68-0x6a drive the credits ticker (no text event).
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 text 0x57
+100-101 expect text info_text_box clear code 87
+110 text 0x58
+110-111 expect none text info_text_box display
+110-111 expect none text info_text_box clear
+120 text 0x59
+120-121 expect text info_text_box display code 89 id 2003
+130 text 0x5a
+130-131 expect text info_text_box display code 90 id 2002
+140 text 0x5b
+140-141 expect text info_text_box display code 91 id 2004
+150 text 0x5c
+150-151 expect text info_text_box display code 92 id 2001
+160 text 0x5d
+160-161 expect text info_text_box display code 93 id 2005
+170 text 0x5e
+170-171 expect text info_text_box display code 94 id 2006
+180 text 0x5f
+180-181 expect text info_text_box clear code 95
+190 text 0x60
+190-191 expect text info_text_box display code 96 id 2015
+200 text 0x61
+200-201 expect text info_text_box display code 97 id 2007
+210 text 0x62
+210-211 expect text info_text_box display code 98 id 2016
+220 text 0x63
+220-221 expect text info_text_box display code 99 id 2008
+230 text 0x64
+230-231 expect text info_text_box display code 100 id 2017
+240 text 0x65
+240-241 expect text info_text_box display code 101 id 2009
+250 text 0x66
+250-251 expect text info_text_box display code 102 id 2018
+260 text 0x67
+260-261 expect text info_text_box display code 103 id 2010
+270 text 0x68
+270-271 expect none text info_text_box display
+270-271 expect none text info_text_box clear
+280 text 0x69
+280-281 expect none text info_text_box display
+280-281 expect none text info_text_box clear
+290 text 0x6a
+290-291 expect none text info_text_box display
+290-291 expect none text info_text_box clear
+300 text 0x6b
+300-301 expect text info_text_box display code 107 id 2038
+310 text 0x6c
+310-311 expect text info_text_box display code 108 id 2039
+320 text 0x6d
+320-321 expect text info_text_box display code 109 id 2036
+330 text 0x6e
+330-331 expect text info_text_box display code 110 id 2037
+360 quit

@@ -1,0 +1,46 @@
+# AwardNextSpecialTreasure through its real caller HideawaySinkControl1 (pirates_hideaway.cpp HideawaySinkBody): in
+# mode 3 it takes the default branch (ScorePart 3002 + tabb11), and it calls AwardNextSpecialTreasure(0.0f) only in
+# mode 0xb (case 0xb, :111-116) or on a lit treasure light in mode 8; the mystery is lit only in mode 5 (case 5, :85-90),
+# so string 3059 and v_lite529 do not occur here (awards_collect covers them).
+# This script pokes mode 11 (0xb). AwardNextSpecialTreasure/AwardSpecialTreasure 0x424930/0x424780 (pirates_awards.cpp:156-182):
+# all six treasures 3019..3024 (scores 100k, 250k, 500k, 750k, 1M, 1.5M) and the clamped 7th call (index 6 -> default row 3024,
+# 1.5M; the last check includes 25,000 the ball itself scores at frame 431 through SouthWindRolloverControl (a_roll2)), sound tabb84 (id 56) on every call, special_treasure_light_group.message_field counts the calls.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch special_treasure_light_group.message_field
+10 key down new_game
+11 key up new_game
+140 poke info_text_box message_field 11
+150 event a_sink17 ControlCollision
+150-151 expect text info_text_box display id 3019
+150-151 expect sound 56
+151 expect special_treasure_light_group.message_field == 1
+151 expect n_score == 100000
+200 event a_sink17 ControlCollision
+200-201 expect text info_text_box display id 3020
+200-201 expect sound 56
+201 expect special_treasure_light_group.message_field == 2
+201 expect n_score == 350000
+250 event a_sink17 ControlCollision
+250-251 expect text info_text_box display id 3021
+250-251 expect sound 56
+251 expect n_score == 850000
+300 event a_sink17 ControlCollision
+300-301 expect text info_text_box display id 3022
+300-301 expect sound 56
+301 expect n_score == 1600000
+350 event a_sink17 ControlCollision
+350-351 expect text info_text_box display id 3023
+350-351 expect sound 56
+351 expect n_score == 2600000
+400 event a_sink17 ControlCollision
+400-401 expect text info_text_box display id 3024
+400-401 expect sound 56
+401 expect n_score == 4100000
+450 event a_sink17 ControlCollision
+450-451 expect text info_text_box display id 3024
+450-451 expect sound 56
+451 expect n_score == 5625000  # 5,600,000 + 25,000: the demo ball rolls over the a_roll2 rollover (text 3010) at frame 431
+451 expect special_treasure_light_group.message_field == 7
+500 quit

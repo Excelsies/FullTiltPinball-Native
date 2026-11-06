@@ -1,0 +1,27 @@
+# ModeStartCleanup with info_text_box.message_field 12 skips SetLavaLights(0) (FT 0x42aad0,
+# listing 5808-5828) through its real caller. The fourth lava-bank hit (a_spot11/8/9/10 with message_field 2) runs StartMode12
+# (pirates_lava.cpp:37) -> SetMode(12) -> Mode12Controller, which calls ModeStartCleanup (:140) with field 12, so the lava lights
+# v_lite548-551 (poked on at 235) stay on at 245. Control: pd_lights.uh (mode-4 start, field 3) has the same four lights go off.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite548.light_on v_lite549.light_on v_lite550.light_on v_lite551.light_on a_spot11.message_field info_text_box.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event a_spot11 ControlCollision
+220 event a_spot8 ControlCollision
+230 event a_spot9 ControlCollision
+235 poke v_lite548 light_on 1
+235 poke v_lite549 light_on 1
+235 poke v_lite550 light_on 1
+235 poke v_lite551 light_on 1
+237 expect v_lite548.light_on == 1
+240 event a_spot10 ControlCollision
+245 expect mode == 12
+245 expect info_text_box.message_field == 12
+245 expect v_lite548.light_on == 1
+245 expect v_lite549.light_on == 1
+245 expect v_lite550.light_on == 1
+245 expect v_lite551.light_on == 1
+300 quit

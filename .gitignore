@@ -300,3 +300,19 @@ _deps
 build.ninja
 # Build directory
 /build
+
+## FullTiltPinball-Native: never commit game data, original executables or their decompiled exports
+re/work/
+*.DAT
+*.EXE
+*.exe
+SOUND/
+*.WAV
+*.MDS
+build/
+# Windows cross-build output (Platform/Windows/build-mingw.sh; the SDL libraries go to /Libs)
+build-win/
+bin-win/
+# Machine-local agent notes and tooling config
+CLAUDE.local.md
+.claude-project.json

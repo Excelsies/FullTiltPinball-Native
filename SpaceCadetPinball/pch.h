@@ -93,9 +93,11 @@ inline size_t pgm_save(int width, int height, char* data, FILE* outfile)
 	return n;
 }
 
+#include "ft_rand.h"
+
 inline float RandFloat()
 {
-	return static_cast<float>(std::rand() / static_cast<double>(RAND_MAX));
+	return ft_rand::Float();
 }
 
 template <typename T>

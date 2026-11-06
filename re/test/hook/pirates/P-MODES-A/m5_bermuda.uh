@@ -1,0 +1,72 @@
+# Mode5Controller (FT 0x42c070; listing 6507-6597; machine code read there): ControlMissionComplete scores
+# 200,000 and starts the sweeps (8.0), string 3063; the sweep end restarts the bermuda group's notify timer, enables a_kout1,
+# SetMode5WindLight(1) (pirates_winds.cpp), resets the mode timer to 31.14 s and shows string 3045; each notify tick of
+# bermuda_light_group moves the four-light pattern one row (table 0x43d118, 16 bytes per row; row 0 = 0,4,8,12) and wraps after
+# row 3; ModeEnd / drain as the other modes. Expected values: machine code, not a run.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms v_lite606.message_field v_lite504.light_on v_lite505.light_on a_kout1.active v_lite506.light_on v_lite507.light_on v_lite508.light_on v_lite509.light_on v_lite510.light_on v_lite511.light_on v_lite512.light_on v_lite513.light_on v_lite514.light_on v_lite515.light_on v_lite516.light_on v_lite517.light_on v_lite518.light_on
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+195 expect no_hold_start == 0
+200 poke info_text_box message_field 5
+201 event info_text_box ControlMissionComplete
+201 expect mode == 5
+201 expect n_score == 200000
+201 expect text info_text_box display id 3063
+201 expect sound 48
+201 expect track 0
+# a non-timer, non-sweeps caller does nothing
+250 event v_lite4 ControlTimerExpired
+251 expect mode_timer.time_left_ms == 0
+300 event light_sweeps ControlTimerExpired
+300 expect text info_text_box display id 3045
+301 expect mode_timer.time_left_ms in 31100 31140
+301 expect a_kout1.active == 1
+# pattern: light index i of the group is v_lite(506+i). Row k (table 0x43d118, 16 bytes per row) = {k, k+4, k+8, k+12 (row 0 only)}.
+# The group's own 0.1 s notify timer has ticked 5 times by frame 349 (script time), so the step is 1 (row 1 lit: 507/511/515);
+# each manual notify event turns the current row off, advances (wrap after row 3) and turns the next row on.
+349 expect v_lite507.light_on == 1
+349 expect v_lite511.light_on == 1
+349 expect v_lite515.light_on == 1
+350 event bermuda_light_group ControlNotifyTimerExpired
+351 expect v_lite507.light_on == 0
+351 expect v_lite508.light_on == 1
+351 expect v_lite512.light_on == 1
+351 expect v_lite516.light_on == 1
+352 event bermuda_light_group ControlNotifyTimerExpired
+353 expect v_lite508.light_on == 0
+353 expect v_lite509.light_on == 1
+353 expect v_lite513.light_on == 1
+353 expect v_lite517.light_on == 1
+354 event bermuda_light_group ControlNotifyTimerExpired
+355 expect v_lite509.light_on == 0
+# wrap: row 0 has four lights (index 12 = v_lite518)
+355 expect v_lite506.light_on == 1
+355 expect v_lite510.light_on == 1
+355 expect v_lite514.light_on == 1
+355 expect v_lite518.light_on == 1
+356 event bermuda_light_group ControlNotifyTimerExpired
+357 expect v_lite506.light_on == 0
+357 expect v_lite518.light_on == 0
+357 expect v_lite507.light_on == 1
+# another caller does not move the pattern
+358 event v_lite4 ControlNotifyTimerExpired
+359 expect v_lite507.light_on == 1
+359 expect v_lite508.light_on == 0
+400 poke v_lite606 message_field 2
+401 event mode_timer ControlTimerExpired
+402 expect v_lite606.message_field == 3
+402 expect a_kout1.active == 0
+402 expect v_lite504.light_on == 0
+402 expect v_lite505.light_on == 1
+402 expect mode == 2
+500 poke info_text_box message_field 5
+501 event mode_timer ControlBallDrained
+502 expect mode_timer.time_left_ms == 0
+502 expect v_lite606.message_field == 4
+502 expect mode == 2
+550 quit

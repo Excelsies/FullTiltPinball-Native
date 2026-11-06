@@ -1,0 +1,38 @@
+# TKickout, DRAGON (part_tkickout K3, K4, K5). Expected values come from the spec rows, not game text.
+# Needs a two-player game (header below) so the table's own player switch drives the per-player swap.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init watch a_kout2.active a_kout2.message_field a_kout3.active
+10 key down new_game
+11 key up new_game
+# K3 (FT 0x4c disable, 0x4b enable on a 1012 kickout, ActiveFlag +0x05), engine Message 0x4163a0.
+100 msg a_kout2 ft:0x4c@TKickout 0
+101 expect a_kout2.active == 0
+110 msg a_kout2 ft:0x4b@TKickout 0
+111 expect a_kout2.active == 1
+# K4: a_kout2 (1012) keeps its ActiveFlag over a player change, its MessageField is per player
+# (save/restore order of base 0x413570 called at the end of case 0x3fe, FT 0x4163a0): player 0's 3 is
+# stored, player 1 reads 0, and player 0 reads 3 again after the second switch. a_kout3 (1029,
+# NotSomeFlag) is deactivated by case 0x3fe.
+120 poke a_kout2 message_field 3
+121 expect a_kout2.message_field == 3
+122 poke a_kout3 active 1
+123 expect a_kout3.active == 1
+130 msg table SwitchToNextPlayer 0
+131 expect a_kout2.message_field == 0
+131 expect a_kout3.active == 0
+131 expect a_kout2.active == 1
+140 msg table SwitchToNextPlayer 0
+141 expect a_kout2.message_field == 3
+141 expect a_kout2.active == 1
+# K5: Reset (case 0x402 then base 0x413550) zeroes MessageField and all four per-player copies, so
+# a later switch to player 1 and back reads 0 for both players.
+150 msg a_kout2 Reset 0
+151 expect a_kout2.message_field == 0
+160 msg table SwitchToNextPlayer 0
+161 expect a_kout2.message_field == 0
+170 msg table SwitchToNextPlayer 0
+171 expect a_kout2.message_field == 0
+200 quit

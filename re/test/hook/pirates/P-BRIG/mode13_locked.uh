@@ -1,0 +1,20 @@
+# B11 (listing 2255-2276 + 7151-7207): mode 13 through the jail target a_spot6 (three hits) with one ball locked. The ball
+# locked at 210 is relaunched (multiball 1 again); the third hit scores 5,000 and starts mode 13, where the locked ball joins the
+# balls in play (multiball 1 + 1 = 2, locked 0), +100,000 and text 3056. Total 3 x 5,000 + 100,000 = 115,000 (s_hole19 scores 0).
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+210 event s_hole19 ControlBallCaptured
+210 expect locked == 1
+400 expect multiball == 1
+410 event a_spot6 ControlCollision
+420 event a_spot6 ControlCollision
+430 event a_spot6 ControlCollision
+430 expect mode == 13
+430 expect locked == 0
+430 expect multiball == 2
+430 expect n_score == 115000
+430 expect text info_text_box display id 3056
+460 quit

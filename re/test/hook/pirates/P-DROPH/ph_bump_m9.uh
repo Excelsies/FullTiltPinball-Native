@@ -1,0 +1,29 @@
+# BumperControl mode 9: the shared mode counter counts 1..9 and each of those hits scores 25,000 via ScoreValue; the 10th hit awards the
+# jackpot (AwardJackpot(0.0), pirates_core.cpp) instead of 25,000 and resets the counter, so the 11th hit scores 25,000 again (listing 2497-2549).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch a_bump1.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 9
+300 event a_bump1 ControlCollision
+310 event a_bump2 ControlCollision
+320 event a_bump3 ControlCollision
+330 event a_bump1 ControlCollision
+340 event a_bump2 ControlCollision
+350 event a_bump3 ControlCollision
+360 event a_bump1 ControlCollision
+370 event a_bump2 ControlCollision
+380 event a_bump3 ControlCollision
+390 event a_bump1 ControlCollision
+400 event a_bump2 ControlCollision
+300 expect n_score == 25000 delta 299
+300 expect sound 53
+390 expect none sound 53
+380 expect n_score == 25000 delta 379
+390 expect n_score == 1225000
+390 expect n_score == 1000000 delta 389
+390 expect sound 57
+400 expect n_score == 25000 delta 399
+440 quit

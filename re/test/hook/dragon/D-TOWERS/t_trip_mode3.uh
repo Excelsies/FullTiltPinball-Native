@@ -1,0 +1,18 @@
+# Window tripwires in mode 3 with the mode timer at 6: ScorePart(.., 0) + 3008 only (no light advance, no sound).
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 3
+100 poke mode_timer message_field 6
+110 event s_trip6 ControlCollision
+120 event s_trip3 ControlCollision
+130 event s_trip8 ControlCollision
+110 expect n_score == 25000 delta 109
+120 expect n_score == 40000 delta 119
+130 expect n_score == 50000 delta 129
+110 expect none sound 24
+110 expect none sound 43
+110 expect none sound 5
+110 expect text info_text_box display id 3008
+150 quit

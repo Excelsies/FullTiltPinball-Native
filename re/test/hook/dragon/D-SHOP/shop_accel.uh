@@ -1,0 +1,23 @@
+# Accelerator a_accl1 (FT 0x426940): 75,000 with v_lite32 off, 500,000 lit; mode 4 = no accelerator score and no accelerator sound.
+# In the poked mode 4 Mode4Controller (dragon_quest_modes.cpp:134-136) scores the accelerator gem, 100,000
+# with its own text. The check is 'exactly the gem is scored (not gem + 75,000 or 500,000) and sound 15 is not played'.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_sink4.message_field s_hole118.message_field a_kout3.message_field a_kout3.active info_text_box.message_field
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 2
+205 event a_accl1 ControlCollision
+210 expect n_score == 75000 delta 204
+205-205 expect sound 15
+220 poke v_lite32 light_on 1
+225 event a_accl1 ControlCollision
+230 expect n_score == 500000 delta 224
+225-225 expect sound 15
+240 poke info_text_box message_field 4
+245 event a_accl1 ControlCollision
+250 expect n_score == 100000 delta 244
+245-245 expect text info_text_box display id 3028
+245-245 expect none sound 15
+260 quit

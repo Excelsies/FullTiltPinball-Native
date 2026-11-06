@@ -132,6 +132,21 @@ int timer::set(float time, void* caller, void (* callback)(int, void*))
 	return timer->TimerId;
 }
 
+float timer::get_time_left(int timerId)
+{
+	timer_struct* current = ActiveList;
+	for (int index = 0; index < Count; index++, current = current->NextTimer)
+	{
+		if (current->TimerId == timerId)
+		{
+			if (pb::time_ticks <= current->TargetTime)
+				return static_cast<float>(current->TargetTime - pb::time_ticks) / 1000.0f;
+			return 0.0f;
+		}
+	}
+	return -1.0f;
+}
+
 int timer::check()
 {
 	timer_struct* current = ActiveList;

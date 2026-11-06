@@ -1,0 +1,21 @@
+# PlungerControl (DRAGON 0x4245b0, listing 1173-1251): F2 -> PlungerStartFeedTimer sets the per-ball globals; the fed ball
+# (PlungerFeedBall) re-displays the mode text. Expected values from the listing: ball_drained 0, targets_hit 0, spells 0,
+# ball_save 3 (last statement), mode 10 when SelectRandomQuest != 9 (dragon_quests.cpp), ball_held 1 (Mode10
+# ControlMissionComplete), text id 3066.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+12 expect mode == 10
+12 expect ball_drained == 0
+12 expect targets_hit == 0
+12 expect spells == 0
+12 expect ball_save == 3
+12 expect ball_held == 1
+10-12 expect text info_text_box display id 3066
+# ball fed to the plunger: PlungerFeedBall -> MissionControl(ControlMissionStarted) -> Mode 10 shows the text again (frame 106 measured)
+106-107 expect text info_text_box display id 3066
+150 expect multiball == 1
+200 quit

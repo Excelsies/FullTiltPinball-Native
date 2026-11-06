@@ -1,0 +1,23 @@
+# DRAGON: per-player MessageField of the info text box (FT 0x41e110: PlayerChanged swaps,
+# Reset zeroes the field and all copies). Same pattern as U14_players.uh; the queue itself is not per player.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+init watch info_text_box.message_field info_text_box.queue_len
+10 key down new_game
+11 key up new_game
+120 poke info_text_box message_field 3
+121 expect info_text_box.message_field == 3
+130 msg table SwitchToNextPlayer 0
+131 expect info_text_box.message_field == 0
+131 expect info_text_box.queue_len == 1
+140 msg table SwitchToNextPlayer 0
+141 expect info_text_box.message_field == 3
+150 msg info_text_box Reset 0
+151 expect info_text_box.message_field == 0
+160 msg table SwitchToNextPlayer 0
+161 expect info_text_box.message_field == 0
+170 msg table SwitchToNextPlayer 0
+171 expect info_text_box.message_field == 0
+200 quit

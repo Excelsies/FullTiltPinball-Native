@@ -1,0 +1,36 @@
+# Quest completed by a drain: launch, mode 2, quest 5 selected, NMAX starts it, then the unheld ball drains:
+# ControlBallDrained ends the quest directly (mode 5 -> 11, not through mode 2), the quest
+# counts (quests_done +1, jackpot +500,000 = CompleteQuest 0x424000), and the bonus count shows the bonus line for quests (text 3013)
+# at its own step. Frame 2019 mode 5, frame 2020 mode 11: the quest ends in one frame, never through mode 2. The selection is
+# already 0 in the frame mode 11 begins (CompleteQuest on the drain path clears it; SelectRandomQuest returns -1 while BallDrained,
+# dragon_quests.cpp:247-262, 290-300), so this script does NOT show the bonus clearing the selection: that is
+# D-BONUS/dq_bonus_clear.uh (selection still set at 2200, gone at 2230). The end-of-count score (frame 2800, delta from
+# 2230 = 187,000 = 12,000 + 100,000 for the quest + 75,000, seed 1) asserts the quest amount together with the other
+# two lines of the count.
+# Frames are the ones of dq_drain_m5.uh (drain between 1510 and 2020 on seed 1; mode 11 at 2020, text 3013 at 2219).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch selected_quest quests_done jackpot bonus_step
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+400 event a_spot4 ControlCollision
+410 poke a_kout2 message_field 5
+420 type NMAX
+470 expect mode == 5
+470 expect selected_quest == 5
+470 expect quests_done == 0
+2019 expect mode == 5
+2020 expect mode == 11
+2100 expect mode == 11
+2100 expect quests_done == 1
+2100 expect jackpot == 500000 delta 2018
+2100 expect selected_quest == 0
+2100 expect bonus_step == 1
+2100-2299 expect text info_text_box display id 3013
+2230 expect bonus_step == 2
+2230 expect selected_quest == 0
+2800 expect n_score == 187000 delta 2230
+2800 quit

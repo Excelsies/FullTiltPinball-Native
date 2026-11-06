@@ -1,0 +1,8 @@
+{"name": "rest_check", "steps": [
+  {"wait": 3.0},
+  {"restpeek": "rest_1"},
+  {"wait": 0.5},
+  {"restpeek": "rest_2"},
+  {"wait": 0.5},
+  {"restpeek": "rest_3"}
+]}

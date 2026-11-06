@@ -1,0 +1,12 @@
+# Ship captures advance the fathom (AdvanceFathom 0x424350): code 0xf lights all six lights, multiplier 7, idempotent.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 4
+200 event s_rexit8 ControlBallToLayer2
+201 expect multiplier == 7
+300 event s_rexit8 ControlBallToLayer2
+301 expect multiplier == 7
+340 quit

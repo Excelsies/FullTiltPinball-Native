@@ -1,0 +1,35 @@
+# Island lane bank through its real caller IslandLaneRolloverControl1 (pirates_winds.cpp:374-378 -> IslandLaneRollover
+# :151-170), which takes three branches: top light v_lite538 off -> tabb44 sound, ScorePart, light the top;
+# top on and bottom v_lite541 off -> light the bottom and call IslandLaneBank (pirates_awards.cpp:243-257); both on -> flash, tabb44,
+# ScorePart. IslandLaneBank 0x429ef0: not all six lit -> sound tabb44 (id 30) and ScorePart(0); all six lit (groups report 3 each)
+# -> fathom reset-and-on, multiplier = count + 1, sound tabb88 (id 60), ScorePart(1).
+# Real-caller sequence: event 1 lights the top lane (+1,200 = the part's row 0 score, no bank call); event 2
+# lights the bottom lane and runs the bank, not full (sound 30, +1,200, multiplier 1); the other four lights are poked on and the
+# bottom light poked off, then event 3 takes the bottom branch again and the bank is full: multiplier 2, sound 60, +20,000 x 2.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch v_lite538.light_on
+init watch v_lite541.light_on
+10 key down new_game
+11 key up new_game
+150 event a_roll12 ControlCollision
+151 expect v_lite538.light_on == 1
+151 expect multiplier == 1
+151 expect n_score == 1200
+150-151 expect sound 30  # tabb44 (top lane)
+160 event a_roll12 ControlCollision
+161 expect v_lite541.light_on == 1
+161 expect multiplier == 1
+161 expect n_score == 2400
+160-161 expect sound 30  # tabb44 (bank not full)
+170 poke v_lite539 light_on 1
+170 poke v_lite540 light_on 1
+170 poke v_lite542 light_on 1
+170 poke v_lite543 light_on 1
+170 poke v_lite541 light_on 0
+200 event a_roll12 ControlCollision
+201 expect multiplier == 2
+200-201 expect sound 60  # tabb88 (bank full)
+201 expect n_score == 42400  # 2,400 + 20,000 x multiplier 2 (score table row 2)
+240 quit

@@ -14,6 +14,8 @@ public:
 	static void TimerExpired(int timerId, void* caller);
 
 	float TimerTime;
+	int EjectMask;
+	float EjectZ;
 	vector2 BallPosition{};
 	vector3 BallThrowDirection{};
 	float ThrowAngleMult;

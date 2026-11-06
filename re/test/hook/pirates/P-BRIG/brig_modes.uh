@@ -1,0 +1,31 @@
+# B3 (listing 4362-4386, 5293-5319): the brig and the lock-release one-way act in the modes below 12, 14-16 and above 17,
+# never in 12, 13 or 17. Mode 12: a capture does nothing. Mode 17 likewise. Mode 14: a capture locks.
+# (After a lock in mode 14 the plunger relaunch message returns the table to mode 2 through PlungerControl: not asserted.)
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 poke info_text_box message_field 12
+210 event s_hole19 ControlBallCaptured
+210 expect locked == 0
+210 expect multiball == 1
+210 expect none text info_text_box display id 3007
+210 expect n_score == 0
+220 poke info_text_box message_field 17
+230 event s_hole19 ControlBallCaptured
+230 expect locked == 0
+230 expect multiball == 1
+230 expect n_score == 0
+240 poke info_text_box message_field 13
+250 event s_hole19 ControlBallCaptured
+250 expect locked == 0
+250 expect multiball == 1
+260 poke info_text_box message_field 14
+270 event s_hole19 ControlBallCaptured
+270 expect locked == 1
+270 expect multiball == 0
+270 expect text info_text_box display id 3007
+# a non-capture code is ignored
+280 event s_hole19 ControlCollision
+280 expect locked == 1
+300 quit

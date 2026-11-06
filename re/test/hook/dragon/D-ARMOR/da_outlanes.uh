@@ -1,0 +1,37 @@
+init window 960 666
+init fixed_dt 10
+init seed 1
+# Outlane rollovers (FT 0x426b00 a_roll6, 0x426b70 a_roll1, 0x426a50 a_roll7; lines 2776-2815, 2728-2747).
+# Scores from the original's table (control_tables_dragon.json): a_roll6 / a_roll1 10,000, a_roll7 15,000.
+# The game starts in mode 10 (PlungerControl, dragon_ball.cpp:136, after SelectRandomQuest). The first part collision in
+# mode 10 is the skill shot (Mode10LaunchBallController, ScoreValue 15000, then mode 2), which would add to this script's
+# own award, so the script pokes info_text_box message_field 2 (mode 2) at 190; the skill-shot sum is checked by
+# da_skill_armor.uh.
+init dump_period 10
+init watch a_kick1.active v_lite56.light_on v_lite55.light_on v_lite47.light_on
+10 key down new_game
+11 key up new_game
+190 poke a_kick1 active 0
+190 poke info_text_box message_field 2
+200 event a_roll6 ControlCollision
+201 expect n_score == 10000 delta 199
+201 expect a_kick1.active == 0
+300 event a_roll1 ControlCollision
+301 expect n_score == 10000 delta 299
+301 expect a_kick1.active == 0
+390 poke v_lite56 light_on 1
+400 event a_roll6 ControlCollision
+401 expect n_score == 10000 delta 399
+401 expect a_kick1.active == 1
+401 expect v_lite56.light_on == 1
+600 poke a_kick1 active 0
+600 poke v_lite55 light_on 1
+610 event a_roll1 ControlCollision
+611 expect n_score == 10000 delta 609
+611 expect a_kick1.active == 1
+800 poke a_kick1 active 0
+810 event a_roll7 ControlCollision
+811 expect n_score == 15000 delta 809
+811 expect a_kick1.active == 1
+811 expect v_lite47.light_on == 1
+900 quit

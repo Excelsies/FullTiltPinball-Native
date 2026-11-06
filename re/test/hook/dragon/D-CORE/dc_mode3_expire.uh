@@ -1,0 +1,19 @@
+# Mode3Controller: ControlMissionComplete starts the 10 s window (text 3067, v_lite63/64 flash), expiry returns to mode 2 and puts the lights out.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init watch v_lite63.flasher_on v_lite64.flasher_on
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 3
+190 poke mode_timer message_field 1
+200 event info_text_box ControlMissionComplete
+205 expect mode == 3
+195-205 expect text info_text_box display id 3067
+205 expect v_lite63.flasher_on == 1
+205 expect v_lite64.flasher_on == 1
+1150 expect mode == 3
+1250 expect mode == 2
+1250 expect v_lite63.flasher_on == 0
+1250 expect v_lite64.flasher_on == 0
+1300 quit

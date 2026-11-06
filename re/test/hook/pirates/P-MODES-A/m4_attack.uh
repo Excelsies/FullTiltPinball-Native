@@ -1,0 +1,59 @@
+# Mode4Controller (FT 0x42ad70; listing 5951-6039; machine code read there): ControlMissionComplete scores 200,000,
+# string 3060, v_lite504 on / v_lite505 off, blockers a_bloce frame 1 / a_blocf 0 / a_blocg 0 / a_blocc -1, flashers on
+# v_lite4-8 + v_lite567; the sweep end resets the mode timer to 29.38 s and shows string 3016; the fathom group's notify timer
+# shows string 3017; the timer ends the mode (modes_played + 1, jackpot +750,000 by the dispatcher); drain stops the timer (-1.0).
+# Expected values come from the machine code, not from a run. Effects of the other rule functions reached are not
+# asserted here.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch mode_timer.time_left_ms v_lite606.message_field v_lite504.light_on v_lite505.light_on v_lite567.flasher_on v_lite567.light_on v_lite4.flasher_on v_lite8.flasher_on a_bloce.blocker_state a_blocf.blocker_state a_blocg.blocker_state a_blocc.blocker_state
+10 key down new_game
+11 key up new_game
+190 poke info_text_box message_field 2
+191 event info_text_box ControlMissionComplete
+195 expect no_hold_start == 0
+200 poke info_text_box message_field 4
+201 event info_text_box ControlMissionComplete
+201 expect mode == 4
+201 expect n_score == 200000
+201 expect text info_text_box display id 3060
+# sound ids are the engine's (tabb58wave = 43, tabb26wave = 18), read from sounds.jsonl; track 0 = no music handle loaded in the hook run
+201 expect sound 43
+201 expect track 0
+201 expect v_lite504.light_on == 1
+201 expect v_lite505.light_on == 0
+201 expect v_lite567.flasher_on == 1
+201 expect v_lite4.flasher_on == 1
+201 expect v_lite8.flasher_on == 1
+# blocker states settle after the SetFrame steps (a_blocf is held back while a ball is in the way: only a_blocc is exact)
+210 expect a_blocc.blocker_state == -1
+# a non-timer, non-sweeps caller does nothing
+250 event v_lite4 ControlTimerExpired
+251 expect mode_timer.time_left_ms == 0
+300 event light_sweeps ControlTimerExpired
+300 expect text info_text_box display id 3016
+301 expect mode_timer.time_left_ms in 29300 29380
+# the fathom group notify timer shows string 3017
+350 event fathom_light_group ControlNotifyTimerExpired
+350 expect text info_text_box display id 3017
+350 expect sound 18
+# another notifier does nothing
+360 event v_lite4 ControlNotifyTimerExpired
+360 expect none text info_text_box display
+400 poke v_lite606 message_field 2
+401 event mode_timer ControlTimerExpired
+402 expect v_lite606.message_field == 3
+402 expect v_lite567.light_on == 0
+402 expect v_lite504.light_on == 0
+402 expect v_lite505.light_on == 1
+# jackpot 1,000,000 + 40,000 (a_sink8 release at the sweep end, as in P-MODES-B/m9_mode.uh) + 750,000 (modes 4-11)
+402 expect jackpot == 1790000
+402 expect mode == 2
+# drain path: timer stopped, mode ends
+500 poke info_text_box message_field 4
+501 event mode_timer ControlBallDrained
+502 expect mode_timer.time_left_ms == 0
+502 expect v_lite606.message_field == 4
+502 expect mode == 2
+550 quit

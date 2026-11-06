@@ -1,0 +1,15 @@
+# Check winds_roll3; sound ids = DAT sound order offset 4 (tabb12=11, tabb43=29, tabb44=30); scores from acceptance_pirates.md rows WINDS / island lanes
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+140 poke info_text_box message_field 2
+160 event a_roll3 ControlCollision
+161 expect n_score == 25000
+160-161 expect sound 29
+170 poke v_lite529 light_on 1
+180 event a_roll3 ControlCollision
+181 expect n_score != 50000
+180-181 expect none sound 29
+220 quit

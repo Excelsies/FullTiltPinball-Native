@@ -1,0 +1,66 @@
+# RestoreSkulduggeryTargets (listing 964-1114) through its real caller ModeEndRestoreLights (pirates_core.cpp:119-129,
+# FT 0x42ab40), reached when a mode ends: here the skill-shot wheel is set to outcome 4, the one-way event starts
+# Mode4Controller, and a drain after the ball save ran out (15 s after the one-way, as pb_count.uh) sends ControlBallDrained, which
+# ends the mode (pirates_modes_a.cpp:241-244 -> ControlModeEnd -> ModeEndRestoreLights).
+# (1) The three hit-bit fields are not checked: ModeEndRestoreLights calls ResetLduggTargets / ResetSkuTargets /
+# ResetEryTargets right after RestoreSkulduggeryTargets (pirates_core.cpp:124-126, FT 0x42ab40), which zero the three fields and
+# enable all eleven targets, so the bits RestoreLetter sets are overwritten before anything can read them.
+# (2) The lights are observable: each letter light follows its bit of v_lite1.message_field (set by a poke before the
+# drain), and v_lite520 / v_lite521 (poked on at 1731, checked on at 1740) are off at 1760 (ModeEndRestoreLights FT 0x42ab40 turns them off).
+# Three mode-4 balls: letters 0x555 (SKU letters 1,3 / LDUGG 2,4 / ERY 1,3 lit), 0x7ff (all lit) and 0 (none lit).
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+init watch a_drop13.message_field a_drop5.message_field a_drop10.message_field v_lite1.message_field v_lite2.light_on v_lite3.light_on v_lite5.light_on v_lite6.light_on v_lite9.light_on v_lite10.light_on v_lite520.light_on v_lite521.light_on
+10 key down new_game
+11 key up new_game
+222 poke s_launcher1 message_field 4
+225 event s_oneway3 ControlCollision
+230 expect mode == 4
+1730 poke v_lite1 message_field 1365
+1731 poke v_lite520 light_on 1
+1731 poke v_lite521 light_on 1
+1740 expect v_lite520.light_on == 1
+1745 expect ball_save == 0
+1750 place 0 0 15.6 0.37 0 1 5 0x1
+1760 expect mode == 16
+1760 expect v_lite520.light_on == 0
+1760 expect v_lite521.light_on == 0
+1760 expect v_lite3.light_on == 1
+1760 expect v_lite2.light_on == 0
+1760 expect v_lite5.light_on == 1
+1760 expect v_lite6.light_on == 0
+1760 expect v_lite9.light_on == 1
+1760 expect v_lite10.light_on == 0
+# ball 2: all eleven letters lit (0x7ff): every letter light on
+2500 expect mode == 3
+2502 poke s_launcher1 message_field 4
+2505 event s_oneway3 ControlCollision
+2510 expect mode == 4
+3500 poke v_lite1 message_field 2047
+4030 expect ball_save == 0
+4040 place 0 0 15.6 0.37 0 1 5 0x1
+4070 expect mode == 16
+4070 expect v_lite2.light_on == 1
+4070 expect v_lite6.light_on == 1
+4070 expect v_lite10.light_on == 1
+# ball 3: no letter lit (0): the lights poked on after the mode start (ModeStartCleanup had cleared them) go off at the mode end
+4600 expect mode == 3
+4602 poke s_launcher1 message_field 4
+4605 event s_oneway3 ControlCollision
+4610 expect mode == 4
+6000 poke v_lite1 message_field 0
+6000 poke v_lite2 light_on 1
+6000 poke v_lite6 light_on 1
+6000 poke v_lite10 light_on 1
+6010 expect v_lite2.light_on == 1
+6530 expect ball_save == 0
+6540 place 0 0 15.6 0.37 0 1 5 0x1
+6570 expect v_lite2.light_on == 0
+6570 expect v_lite6.light_on == 0
+6570 expect v_lite10.light_on == 0
+6570 expect v_lite3.light_on == 0
+6570 expect v_lite5.light_on == 0
+6570 expect v_lite9.light_on == 0
+6700 quit

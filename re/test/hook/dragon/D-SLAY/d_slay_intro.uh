@@ -1,0 +1,20 @@
+# Mode9Controller ControlMissionComplete (listing 5097-5160): no armor/gate lights lit -> time 30, 8 hits
+# (v_lite114 = 8), intro sweep running, sinks a_sink17/18 off, kickout a_kout3 on. The jaw is covered by d_slay_jaw.uh.
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+155 dump intro v_lite114.message_field a_sink17.active a_sink18.active a_kout3.active
+# listing: v_lite114.MessageField = 8 minus one per lit hit light (none lit)
+156 expect v_lite114.message_field == 8
+# listing: a_sink18->ActiveFlag = 0 and a_sink17->ActiveFlag = 0
+156 expect a_sink17.active == 0
+156 expect a_sink18.active == 0
+# listing: a_kout3->ActiveFlag = 1
+156 expect a_kout3.active == 1
+# listing: Display(string 3048) with time -1
+151 expect text info_text_box display id 3048
+200 quit

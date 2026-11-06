@@ -1,0 +1,23 @@
+# UpdateTowerLocks (0x423be0): all three tower lights lit solid and none flashing when a bank completes in mode 2 writes mode 13
+# and sends ControlMissionComplete (Mode13Controller: MultiballCount + 3, text 3051).
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+100 poke info_text_box message_field 2
+100 poke v_lite48 light_on 1
+100 poke v_lite49 light_on 1
+100 poke v_lite50 light_on 1
+110 event a_spot3 ControlCollision
+120 event a_spot2 ControlCollision
+130 event a_spot1 ControlCollision
+140 dump mode13 v_lite47.light_on v_lite78.flasher_on a_sink18.active a_sink17.active v_lite48.message_field v_lite49.message_field v_lite50.message_field
+130 expect n_score == 10000 delta 129
+140 expect mode == 13
+140 expect multiball == 4
+140 expect v_lite47.light_on == 1
+140 expect v_lite78.flasher_on == 1
+140 expect a_sink18.active == 0
+140 expect a_sink17.active == 0
+140 expect v_lite48.message_field == 0
+160 quit

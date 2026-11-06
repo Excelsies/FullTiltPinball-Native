@@ -1,0 +1,20 @@
+# CloseDragonJaw(1) (listing 952-985) on ControlModeEnd (label ModeEnd): after the jaw opened at the sweep end
+# (frame 651) a ControlModeEnd at frame 1000 closes it: lights 113/114/115, s_bwal170, a_ramp107 inactive, a_jaw frame 0.
+init fixed_dt 10
+init seed 1
+init dump_period 100
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 9
+151 event info_text_box ControlMissionComplete
+1000 dump open a_jaw.blocker_state
+1001 expect a_jaw.blocker_state == 7
+1002 event info_text_box ControlModeEnd
+1200 dump closed v_lite113.active v_lite114.active v_lite115.active a_ramp107.active s_bwal170.active a_jaw.blocker_state
+1201 expect v_lite113.active == 0
+1201 expect v_lite114.active == 0
+1201 expect v_lite115.active == 0
+1201 expect a_ramp107.active == 0
+1201 expect s_bwal170.active == 0
+1201 expect a_jaw.blocker_state == 0
+1300 quit

@@ -1,0 +1,25 @@
+# Sound ids: tabb12wave = 11, tabb41wave = 27 (read from sounds.jsonl info after the tag mapping; not resolved independently from the DAT).
+# R-1: the 12-step ladder [25k, 50k, 75k, 150k, 175k, 200k, 275k, 300k, 325k, 425k, 450k, 475k]
+# indexed 0/3/6/9 by the lit count of the combo light group (+1/+2 by the wind group, which only gets lit in mode 2). Mode 3 (not 2, not 5):
+# no wind light flashes, so five Island hits 3 s apart (the 2.0 s flashes have ended) score 25k, 150k, 275k, 425k, 425k. Expected values
+# come from the ladder row, not from a run. Text 3004 is the Island text (listing 4172).
+init window 960 666
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+150 poke info_text_box message_field 3
+199 expect n_score == 0
+200 event a_ramp8 ControlBallToLayer2
+200 expect sound 11
+201 expect n_score == 25000
+200 expect text info_text_box display id 3004
+500 event a_ramp8 ControlBallToLayer2
+501 expect n_score == 175000
+800 event a_ramp8 ControlBallToLayer2
+801 expect n_score == 450000
+1100 event a_ramp8 ControlBallToLayer2
+1101 expect n_score == 875000
+1400 event a_ramp8 ControlBallToLayer2
+1401 expect n_score == 1300000
+1450 quit

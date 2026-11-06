@@ -8,10 +8,13 @@
 #include "pb.h"
 #include "render.h"
 #include "TBall.h"
+#include "TAccelerator.h"
 #include "TBlocker.h"
 #include "TBumper.h"
 #include "TComponentGroup.h"
 #include "TDemo.h"
+#include "TDiverter.h"
+#include "TMagnet.h"
 #include "TFlagSpinner.h"
 #include "TGate.h"
 #include "THole.h"
@@ -21,10 +24,12 @@
 #include "TLight.h"
 #include "TLightBargraph.h"
 #include "TLightGroup.h"
+#include "TLightSweeps.h"
 #include "TLightRollover.h"
 #include "TOneway.h"
 #include "TPopupTarget.h"
 #include "TRamp.h"
+#include "TRampExit.h"
 #include "TRollover.h"
 #include "TSink.h"
 #include "TSoloTarget.h"
@@ -62,7 +67,7 @@ TPinballTable::TPinballTable(): TPinballComponent(nullptr, -1, false)
 	auto ball = AddBall({0.0f, 0.0f});
 	ball->Disable();
 
-	new TTableLayer(this);
+	TableLayer = new TTableLayer(this);
 	LightGroup = new TLightGroup(this, 0);
 
 	auto score1 = score::create("score1", render::background_bitmap);
@@ -80,6 +85,7 @@ TPinballTable::TPinballTable(): TPinballComponent(nullptr, -1, false)
 	int groupIndexObjects = loader::query_handle("table_objects");
 
 	short* shortArr = loader::query_iattribute(groupIndexObjects, 1025, &shortArrLength);
+	int partsBuilt = 0;
 	if (shortArrLength > 0)
 	{
 		for (int i = 0; i < shortArrLength / 2; ++i)
@@ -88,6 +94,7 @@ TPinballTable::TPinballTable(): TPinballComponent(nullptr, -1, false)
 			short* shortArrPlus1 = shortArr + 1;
 			int groupIndex = *shortArrPlus1;
 			shortArr = shortArrPlus1 + 1;
+			const size_t componentsBefore = ComponentList.size();
 			switch (objectType)
 			{
 			case 1000:
@@ -97,14 +104,17 @@ TPinballTable::TPinballTable(): TPinballComponent(nullptr, -1, false)
 			case 1001:
 				Plunger = new TPlunger(this, groupIndex);
 				break;
+			case 1034:
+				Plunger = new TPlunger(this, groupIndex, true);
+				break;
 			case 1002:
 				LightGroup->List.push_back(new TLight(this, groupIndex));
 				break;
 			case 1003:
-				FlipperL = new TFlipper(this, groupIndex);
+				FlipperListL.push_back(new TFlipper(this, groupIndex));
 				break;
 			case 1004:
-				FlipperR = new TFlipper(this, groupIndex);
+				FlipperListR.push_back(new TFlipper(this, groupIndex));
 				break;
 			case 1005:
 				new TBumper(this, groupIndex);
@@ -178,16 +188,54 @@ TPinballTable::TPinballTable(): TPinballComponent(nullptr, -1, false)
 			case 1033:
 				new TTextBox(this, groupIndex);
 				break;
+			case 1035:
+				new TRampExit(this, groupIndex);
+				break;
+			case 1036:
+				new TAccelerator(this, groupIndex);
+				break;
+			case 1037:
+				BallList.push_back(new TBall(this, groupIndex));
+				break;
+			case 1038:
+				assertm(!LightSweeps, "Only one light_sweeps part per table");
+				LightSweeps = new TLightSweeps(this, LightGroup, groupIndex);
+				break;
+			case 1043:
+				new TDiverter(this, groupIndex);
+				break;
+			case 1042:
+				new TMagnet(this, groupIndex);
+				break;
 			default:
 				continue;
 			}
+			partsBuilt++;
+			// The component remembers the DAT part type it was built from (FT GetTypeId).
+			for (size_t c = componentsBefore; c < ComponentList.size(); c++)
+				if (ComponentList[c]->GroupIndex == groupIndex)
+					ComponentList[c]->TypeId = objectType;
 		}
 	}
 
+	printf("Table parts: built %d of %d entries (%d skipped: unknown part type)\n", partsBuilt, shortArrLength / 2,
+	       shortArrLength / 2 - partsBuilt);
+
 	render::build_occlude_list();
 	pb::InfoTextBox = dynamic_cast<TTextBox*>(find_component("info_text_box"));
-	pb::MissTextBox = dynamic_cast<TTextBox*>(find_component("mission_text_box"));
+	// Silent lookup (find_component shows a warning box on a miss); DRAGON/PIRATES DATs have no mission_text_box
+	pb::MissTextBox = nullptr;
+	for (auto component : ComponentList)
+		if (component->GroupName && !strcmp(component->GroupName, "mission_text_box"))
+		{
+			pb::MissTextBox = dynamic_cast<TTextBox*>(component);
+			break;
+		}
+	if (!pb::MissTextBox)
+		pb::MissTextBox = pb::InfoTextBox;
 	control::make_links(this);
+	if (control::Rules)
+		control::table_control_handler(MessageCode::TableBuilt); // FT 0x3f7, once after make_links
 }
 
 
@@ -255,13 +303,21 @@ int TPinballTable::AddScore(int score)
 		if (JackpotScore > jackpotLimit)
 			JackpotScore = jackpotLimit;
 	}
+	if (SuperJackpotScoreFlag)
+	{
+		SuperJackpotScore += score;
+		if (SuperJackpotScore > 20000000)
+			SuperJackpotScore = 20000000;
+	}
 	if (BonusScoreFlag)
 	{
 		BonusScore += score;
 		if (BonusScore > 5000000)
 			BonusScore = 5000000;
 	}
-	int addedScore = ScoreAdded + score * score_multipliers[ScoreMultiplier];
+	// Rules set (FT tables): ScoreMultiplier is the factor itself (FT 0x419f10); Space Cadet keeps the index table.
+	const int factor = control::Rules ? ScoreMultiplier : score_multipliers[ScoreMultiplier];
+	int addedScore = ScoreAdded + score * factor;
 	CurScore += addedScore;
 	if (CurScore > 1000000000)
 	{
@@ -290,11 +346,16 @@ void TPinballTable::tilt(float time)
 {
 	if (!TiltLockFlag && !BallInDrainFlag)
 	{
-		pb::InfoTextBox->Clear();
-		pb::MissTextBox->Clear();
-		pb::InfoTextBox->Display(pb::get_rc_string(Msg::STRING136), -1.0);
+		if (control::TextEvent(0x57))
+			control::TextEvent(0x5e);
+		else
+		{
+			pb::InfoTextBox->Clear();
+			pb::MissTextBox->Clear();
+			pb::InfoTextBox->Display(pb::get_rc_string(Msg::STRING136), -1.0);
+		}
 		loader::play_sound(SoundIndex3, nullptr, "TPinballTable1");
-		TiltTimeoutTimer = timer::set(30.0, this, tilt_timeout);
+		TiltTimeoutTimer = timer::set(pb::IsFullTiltTable() ? 15.0 : 30.0, this, tilt_timeout); // FT tables: 15 s (0x41a261)
 
 		for (auto component : ComponentList)
 		{
@@ -324,25 +385,33 @@ int TPinballTable::Message(MessageCode code, float value)
 	case MessageCode::LeftFlipperInputPressed:
 		if (!TiltLockFlag)
 		{
-			FlipperL->Message(MessageCode::TFlipperExtend, value);
+			// every flipper of the side, last added first (FT order)
+			for (auto it = FlipperListL.rbegin(); it != FlipperListL.rend(); ++it)
+				(*it)->Message(MessageCode::TFlipperExtend, value);
 		}
 		break;
 	case MessageCode::LeftFlipperInputReleased:
 		if (!TiltLockFlag)
 		{
-			FlipperL->Message(MessageCode::TFlipperRetract, value);
+			// every flipper of the side, last added first (FT order)
+			for (auto it = FlipperListL.rbegin(); it != FlipperListL.rend(); ++it)
+				(*it)->Message(MessageCode::TFlipperRetract, value);
 		}
 		break;
 	case MessageCode::RightFlipperInputPressed:
 		if (!TiltLockFlag)
 		{
-			FlipperR->Message(MessageCode::TFlipperExtend, value);
+			// every flipper of the side, last added first (FT order)
+			for (auto it = FlipperListR.rbegin(); it != FlipperListR.rend(); ++it)
+				(*it)->Message(MessageCode::TFlipperExtend, value);
 		}
 		break;
 	case MessageCode::RightFlipperInputReleased:
 		if (!TiltLockFlag)
 		{
-			FlipperR->Message(MessageCode::TFlipperRetract, value);
+			// every flipper of the side, last added first (FT order)
+			for (auto it = FlipperListR.rbegin(); it != FlipperListR.rend(); ++it)
+				(*it)->Message(MessageCode::TFlipperRetract, value);
 		}
 		break;
 	case MessageCode::PlungerInputPressed:
@@ -369,13 +438,19 @@ int TPinballTable::Message(MessageCode code, float value)
 		break;
 	case MessageCode::StartGamePlayer1:
 		LightGroup->Message(MessageCode::TLightGroupReset, 0.0);
-		LightGroup->Message(MessageCode::TLightResetAndTurnOff, 0.0);
+		// Full Tilt sends only TLightGroupReset before the plunger feed.
+		if (!pb::IsFullTiltTable())
+			LightGroup->Message(MessageCode::TLightResetAndTurnOff, 0.0);
 		Plunger->Message(MessageCode::PlungerStartFeedTimer, 0.0);
-		if (Demo && Demo->ActiveFlag)
-			rc_text = pb::get_rc_string(Msg::STRING131);
-		else
-			rc_text = pb::get_rc_string(Msg::STRING127);
-		pb::InfoTextBox->Display(rc_text, -1.0);
+		// FT 0x3f5 shows the Player 1 text only when the table has a Demo part (0x60 demo / 0x61 normal).
+		if (Demo ? !control::TextEvent(Demo->ActiveFlag ? 0x60 : 0x61) : !control::Rules)
+		{
+			if (Demo && Demo->ActiveFlag)
+				rc_text = pb::get_rc_string(Msg::STRING131);
+			else
+				rc_text = pb::get_rc_string(Msg::STRING127);
+			pb::InfoTextBox->Display(rc_text, -1.0);
+		}
 		if (Demo)
 			Demo->Message(MessageCode::NewGame, 0.0);
 		break;
@@ -420,7 +495,7 @@ int TPinballTable::Message(MessageCode code, float value)
 			CurScoreStruct = plr1Score;
 			CurScore = 0;
 			score::set(plr1Score, 0);
-			ScoreMultiplier = 0;
+			ScoreMultiplier = control::Rules ? 1 : 0; // FT: the factor 1 (0x15e = 1)
 
 			for (int plrIndex = 1; plrIndex < PlayerCount; ++plrIndex)
 			{
@@ -432,6 +507,7 @@ int TPinballTable::Message(MessageCode code, float value)
 				scorePtr->ExtraBalls = ExtraBalls;
 				scorePtr->BallLockedCounter = BallLockedCounter;
 				scorePtr->JackpotScore = JackpotScore;
+				scorePtr->SuperJackpotScore = SuperJackpotScore; // FT slot +0x92: copies the current value (the original leaks this rule global across players)
 			}
 
 			BallCount = MaxBallCount;
@@ -445,10 +521,14 @@ int TPinballTable::Message(MessageCode code, float value)
 			}
 
 			JackpotScoreFlag = false;
+			SuperJackpotScoreFlag = false;
 			BonusScoreFlag = false;
 			UnknownP71 = 0;
-			pb::InfoTextBox->Clear();
-			pb::MissTextBox->Clear();
+			if (!control::TextEvent(0x57))
+			{
+				pb::InfoTextBox->Clear();
+				pb::MissTextBox->Clear();
+			}
 			LightGroup->Message(MessageCode::TLightGroupLightShowAnimation, 0.2f);
 			auto time = loader::play_sound(SoundIndex1, nullptr, "TPinballTable2");
 			if (time < 0)
@@ -456,13 +536,17 @@ int TPinballTable::Message(MessageCode code, float value)
 			LightShowTimer = timer::set(time, this, LightShow_timeout);
 		}
 
-		if (pb::FullTiltMode)
+		// Space Cadet defaults only; Dragon/Pirates set theirs in TableControlHandler(NewGame).
+		if (!control::Rules)
 		{
-			// Multi-ball is FT exclusive feature, at least for now.
-			MultiballFlag = true;
-			JackpotScore = 500000;
+			if (pb::FullTiltMode)
+			{
+				// Multi-ball is FT exclusive feature, at least for now.
+				MultiballFlag = true;
+				JackpotScore = 500000;
+			}
+			midi::play_track(MidiTracks::Track1, true);
 		}
-		midi::play_track(MidiTracks::Track1, true);
 		break;
 	case MessageCode::PlungerRelaunchBall:
 		if (ReplayTimer)
@@ -474,6 +558,8 @@ int TPinballTable::Message(MessageCode code, float value)
 		{
 			if (PlayerCount <= 1)
 			{
+				if (control::TextEvent(Demo->ActiveFlag ? 0x60 : 0x61))
+					break;
 				const char* textboxText;
 				if (Demo->ActiveFlag)
 					textboxText = pb::get_rc_string(Msg::STRING131);
@@ -494,6 +580,7 @@ int TPinballTable::Message(MessageCode code, float value)
 			PlayerScores[CurrentPlayer].ExtraBalls = ExtraBalls;
 			PlayerScores[CurrentPlayer].BallLockedCounter = BallLockedCounter;
 			PlayerScores[CurrentPlayer].JackpotScore = JackpotScore;
+			PlayerScores[CurrentPlayer].SuperJackpotScore = SuperJackpotScore;
 
 			CurScore = nextScorePtr->Score;
 			CurScoreE9 = nextScorePtr->ScoreE9Part;
@@ -501,6 +588,7 @@ int TPinballTable::Message(MessageCode code, float value)
 			ExtraBalls = nextScorePtr->ExtraBalls;
 			BallLockedCounter = nextScorePtr->BallLockedCounter;
 			JackpotScore = nextScorePtr->JackpotScore;
+			SuperJackpotScore = nextScorePtr->SuperJackpotScore;
 
 			CurScoreStruct = nextScorePtr->ScoreStruct;
 			score::set(CurScoreStruct, CurScore);
@@ -515,40 +603,45 @@ int TPinballTable::Message(MessageCode code, float value)
 				component->Message(MessageCode::PlayerChanged, static_cast<float>(nextPlayer));
 			}
 
-			const char* textboxText = nullptr;
-			switch (nextPlayer)
+			// FT text codes 0x60..0x67: Player N+1, even = demo, odd = normal.
+			if (!control::TextEvent(0x60 + 2 * nextPlayer + (Demo->ActiveFlag ? 0 : 1)))
 			{
-			case 0:
-				if (Demo->ActiveFlag)
-					textboxText = pb::get_rc_string(Msg::STRING131);
-				else
-					textboxText = pb::get_rc_string(Msg::STRING127);
-				break;
-			case 1:
-				if (Demo->ActiveFlag)
-					textboxText = pb::get_rc_string(Msg::STRING132);
-				else
-					textboxText = pb::get_rc_string(Msg::STRING128);
-				break;
-			case 2:
-				if (Demo->ActiveFlag)
-					textboxText = pb::get_rc_string(Msg::STRING133);
-				else
-					textboxText = pb::get_rc_string(Msg::STRING129);
-				break;
-			case 3:
-				if (Demo->ActiveFlag)
-					textboxText = pb::get_rc_string(Msg::STRING134);
-				else
-					textboxText = pb::get_rc_string(Msg::STRING130);
-				break;
-			default:
-				break;
-			}
+				const char* textboxText = nullptr;
+				switch (nextPlayer)
+				{
+				case 0:
+					if (Demo->ActiveFlag)
+						textboxText = pb::get_rc_string(Msg::STRING131);
+					else
+						textboxText = pb::get_rc_string(Msg::STRING127);
+					break;
+				case 1:
+					if (Demo->ActiveFlag)
+						textboxText = pb::get_rc_string(Msg::STRING132);
+					else
+						textboxText = pb::get_rc_string(Msg::STRING128);
+					break;
+				case 2:
+					if (Demo->ActiveFlag)
+						textboxText = pb::get_rc_string(Msg::STRING133);
+					else
+						textboxText = pb::get_rc_string(Msg::STRING129);
+					break;
+				case 3:
+					if (Demo->ActiveFlag)
+						textboxText = pb::get_rc_string(Msg::STRING134);
+					else
+						textboxText = pb::get_rc_string(Msg::STRING130);
+					break;
+				default:
+					break;
+				}
 
-			if (textboxText != nullptr)
-				pb::InfoTextBox->Display(textboxText, -1);
+				if (textboxText != nullptr)
+					pb::InfoTextBox->Display(textboxText, -1);
+			}
 			JackpotScoreFlag = false;
+			SuperJackpotScoreFlag = false;
 			BonusScoreFlag = false;
 			UnknownP71 = 0;
 			CurrentPlayer = nextPlayer;
@@ -556,8 +649,13 @@ int TPinballTable::Message(MessageCode code, float value)
 		break;
 	case MessageCode::GameOver:
 		loader::play_sound(SoundIndex2, nullptr, "TPinballTable3");
-		pb::MissTextBox->Clear();
-		pb::InfoTextBox->Display(pb::get_rc_string(Msg::STRING135), -1.0);
+		if (control::TextEvent(0x57))
+			control::TextEvent(0x5a);
+		else
+		{
+			pb::MissTextBox->Clear();
+			pb::InfoTextBox->Display(pb::get_rc_string(Msg::STRING135), -1.0);
+		}
 		EndGameTimeoutTimer = timer::set(3.0, this, EndGame_timeout);
 		break;
 	case MessageCode::Reset:
@@ -574,13 +672,18 @@ int TPinballTable::Message(MessageCode code, float value)
 			LightGroup->Message(MessageCode::TLightGroupReset, 0.0);
 		}
 		LightShowTimer = 0;
-		ScoreMultiplier = 0;
+		ScoreMultiplier = control::Rules ? 1 : 0; // FT: the factor 1 (0x15e = 1)
 		ScoreAdded = 0;
 		ReflexShotScore = 0;
 		BonusScore = 10000;
 		BonusScoreFlag = false;
 		JackpotScore = 20000;
 		JackpotScoreFlag = false;
+		if (pb::IsFullTiltTable())
+		{
+			SuperJackpotScore = 20000; // FT Reset 0x402: +0x17a = 20000, flag +0x17e = 0
+			SuperJackpotScoreFlag = false;
+		}
 		UnknownP71 = 0;
 		ExtraBalls = 0;
 		MultiballCount = 0;
@@ -615,6 +718,7 @@ TBall* TPinballTable::AddBall(vector2 position)
 	if (ball != nullptr)
 	{
 		ball->ActiveFlag = 1;
+		ball->HasGroupFlag = false;
 		ball->Position.Z = ball->Radius;
 		ball->Direction = {};
 		ball->Speed = 0;
@@ -658,6 +762,24 @@ int TPinballTable::BallCountInRect(const RectF& rect)
 	return count;
 }
 
+int TPinballTable::BallCountInRect(const RectF& rect, unsigned int mask)
+{
+	int count = 0;
+	for (const auto ball : BallList)
+	{
+		if (ball->ActiveFlag &&
+			(static_cast<unsigned int>(ball->CollisionMask) & mask) &&
+			ball->Position.X >= rect.XMin &&
+			ball->Position.Y >= rect.YMin &&
+			ball->Position.X <= rect.XMax &&
+			ball->Position.Y <= rect.YMax)
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
 int TPinballTable::BallCountInRect(const vector2& pos, float margin)
 {
 	RectF rect{};
@@ -681,7 +803,10 @@ void TPinballTable::EndGame_timeout(int timerId, void* caller)
 	if (table->Demo)
 		table->Demo->Message(MessageCode::GameOver, 0.0);
 	control::handler(MessageCode::ControlMissionStarted, pb::MissTextBox);
-	pb::InfoTextBox->Display(pb::get_rc_string(Msg::STRING125), -1.0);
+	if (control::TextEvent(0x57))
+		control::TextEvent(0x5c);
+	else
+		pb::InfoTextBox->Display(pb::get_rc_string(Msg::STRING125), -1.0);
 }
 
 void TPinballTable::LightShow_timeout(int timerId, void* caller)
@@ -708,6 +833,8 @@ void TPinballTable::tilt_timeout(int timerId, void* caller)
 	{
 		for (auto ball : table->BallList)
 		{
+			if (ball->HasGroupFlag)
+				continue;
 			table->Drain->Collision(ball, &vec, &vec, 0.0, nullptr);
 		}
 	}

@@ -1,0 +1,56 @@
+# STUB-ONLY: needs a test-only stub TableRules, so it cannot pass on a build whose table has the real DragonRules (the
+# `event table num:900x` events do nothing there). The same engine paths are checked with the real rules by: score multiplier factor ->
+# IU3b_real_rules_dragon.uh; per-player save / restore of the super jackpot -> IU3b_real_rules_dragon.uh and
+# D-BALL/dm_two.uh; cheat key byte -> IU3b_real_rules_dragon.uh (1MAX) and D-G1/d_1max.uh; flipper flags ->
+# IU3b_flip_left_dragon.uh, IU3b_flip_right_dragon.uh. The AddScore accumulate branch (flag on, 20,000,000 cap) and
+# "switch clears the flag" have no real-rules cover: Dragon never sets the flag.
+# The stub is a test-only TableRules (not part of the tree) whose TableControlHandler maps `event table num:9001` =
+# AddScore(1000); 9002 = rules set ScoreMultiplier 4; 9003 = super jackpot flag on and value 19999000; 9005 / 9006 =
+# super jackpot 5,000,000 with flag / 7,000,000. Expected values are literals. Run it on a hook build of a copy of the
+# tree in which control::CreateRules returns the stub for Full Tilt tables:
+#   cmake -S <stubtree> -B <stubtree>/build-hook -DFT_TEST_HOOK=ON -DFT_OUTPUT_DIR=<abs>/<stubtree>/build-hook/bin
+#   cmake --build <stubtree>/build-hook -j4
+#   python re/test/hookrun.py run --table dragon --bin <stubtree>/build-hook/bin/SpaceCadetPinball ...
+# Expected result on the stub build: 13 PASS / 0 FAIL.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init option Players 2
+2 key down new_game
+3 key up new_game
+# With Rules set the multiplier is the factor: NewGame leaves 1, so 1000 scores 1000.
+20 expect multiplier == 1
+21 event table num:9001
+22 expect n_score == 1000 delta 20
+# Rules write the factor 4: 1000 scores 4000 (Space Cadet's table would give index 4 -> x10 = 10000).
+30 event table num:9002
+31 event table num:9001
+32 expect multiplier == 4
+32 expect n_score == 4000 delta 22
+# Accumulate branch: flag on, 19,999,000 + 1000 = cap 20,000,000 after one AddScore, still 20,000,000 after another.
+40 event table num:9003
+41 event table num:9001
+42 expect super_jackpot == 20000000
+43 event table num:9001
+44 expect super_jackpot == 20000000
+# Per-player save / restore (leakage included): player 2 started with the value NewGame saw (20000).
+50 event table num:9005
+51 msg table SwitchToNextPlayer 0
+60 expect current_player == 1
+60 expect super_jackpot == 20000
+# The switch cleared the accumulate flag: scoring does not change the value.
+61 event table num:9001
+62 expect super_jackpot == 20000
+70 event table num:9006
+71 msg table SwitchToNextPlayer 0
+80 expect current_player == 0
+80 expect super_jackpot == 5000000
+90 msg table SwitchToNextPlayer 0
+100 expect super_jackpot == 7000000
+# Flipper flags and VK reach Rules->BackdoorKey (target.log lines, checked by check_stub.py).
+110 key down left_flipper
+111 key up left_flipper
+112 key down right_flipper
+113 key up right_flipper
+120 type 1max
+140 quit

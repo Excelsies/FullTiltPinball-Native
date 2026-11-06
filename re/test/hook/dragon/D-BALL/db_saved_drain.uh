@@ -1,0 +1,25 @@
+# Saved drain: P1, launch, event s_oneway2 ControlCollision, drain at d. The ball is placed in the drain wall at
+# frame 380; the drain is at d = 385 (drain_state 3 and multiball 0 in that frame). multiball 0 -> 1 at d+95 (Wine 0.95 s),
+# ball_drained 1 (MissionControl pre-hook, DRAGON 0x42c056, runs before BallDrainControl); no text in d..d+95, ball_count unchanged. The no-text window is 386-479: frame d shows id 3001 (the placed ball's first contact is the drain itself and ends mode 10, Mode2WaitQuest re-displays) and frame d+95 shows id 3001 again (relaunched ball fed: PlungerFeedBall -> MissionControl(Started)); both are the listing's behaviour.
+init window 960 666
+init fixed_dt 10
+init seed 1
+init dump_period 10
+10 key down new_game
+11 key up new_game
+200 key down plunger
+300 key up plunger
+360 event s_oneway2 ControlCollision
+380 place 0 0 15.6 0.37 0 1 5 0x1
+384 expect drain_state == 0
+385 expect drain_state == 3
+385 expect multiball == 0
+385 expect ball_count == 3
+385 expect ball_drained == 1
+385 expect text info_text_box display id 3001
+480 expect text info_text_box display id 3001
+386-479 expect none text info_text_box display
+479 expect multiball == 0
+480 expect multiball == 1
+480 expect ball_count == 3
+700 quit

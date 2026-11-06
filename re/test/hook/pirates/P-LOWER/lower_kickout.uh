@@ -1,0 +1,13 @@
+# K1 (listing 5360-5379, FT 0x42a420): a ball in either kickout scores 1,000,000 (ScoreValue(0, 1000000)), shows
+# string 3015, and restarts the kicker timer (TKickoutRestartTimer 1.0). Both a_kout1 and a_kout2 run the same control.
+init fixed_dt 10
+init seed 1
+10 key down new_game
+11 key up new_game
+200 event a_kout1 ControlCollision
+200 expect n_score == 1000000 delta 199
+200 expect text info_text_box display id 3015
+300 event a_kout2 ControlCollision
+300 expect n_score == 1000000 delta 299
+300 expect text info_text_box display id 3015
+400 quit

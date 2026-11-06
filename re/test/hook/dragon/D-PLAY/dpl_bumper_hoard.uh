@@ -1,0 +1,29 @@
+# BumperControl in mode 4 (listing 1372-1385): no bumper score and no bumper sound (id 3, measured in mode 2); a_bump3 /
+# a_bump4 still flash their light and the contact counter still counts.
+# Mode 4 is Mode4Controller (dragon_quest_modes.cpp:116-118): every bumper contact (TypeId 1005) is a 10,000 gem
+# with its own text (3021) and the gem sound (id 40), so n_score grows 10,000 per contact. The check is 'only the gem is
+# scored and heard, never the bumper's 1,500 / sound 3'.
+init fixed_dt 10
+init seed 1
+init watch a_bump1.message_field v_lite65.flasher_on v_lite66.flasher_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 4
+99 expect a_bump1.message_field == 0
+100 event a_bump1 ControlCollision
+100 expect n_score == 10000 delta 99
+100 expect none sound 3
+100 expect sound 40
+100 expect text info_text_box display id 3021
+100 expect a_bump1.message_field == 1
+110 event a_bump3 ControlCollision
+110 expect n_score == 20000 delta 99
+110 expect none sound 3
+110 expect a_bump1.message_field == 2
+110 expect v_lite65.flasher_on == 1
+120 event a_bump4 ControlCollision
+120 expect n_score == 30000 delta 99
+120 expect none sound 3
+120 expect a_bump1.message_field == 3
+120 expect v_lite66.flasher_on == 1
+200 quit

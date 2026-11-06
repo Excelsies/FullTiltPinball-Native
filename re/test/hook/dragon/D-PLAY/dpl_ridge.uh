@@ -1,0 +1,32 @@
+# RidgeControl (listing 2684-2727): s_trip1 / s_trip2 score v_lite69's MessageField as the table index [20k, 50k, 100k, 1M],
+# show text 3007 (value = the score added), count MessageField up to 3 and light v_lite69 (code 1 TLightTurnOn, then code 0x10
+# TLightFlasherStartTimedThenStayOff 20.0, machine code 0x426a0b-0x426a2e). ControlTimerExpired on v_lite69 resets the counter.
+init fixed_dt 10
+init seed 1
+init watch v_lite69.message_field v_lite69.light_on
+10 key down new_game
+11 key up new_game
+50 poke info_text_box message_field 2
+99 expect v_lite69.message_field == 0
+100 event s_trip1 ControlCollision
+100 expect n_score == 20000 delta 99
+100 expect text info_text_box display id 3007
+100 expect v_lite69.message_field == 1
+100 expect v_lite69.light_on == 1
+110 event s_trip2 ControlCollision
+110 expect n_score == 50000 delta 109
+110 expect v_lite69.message_field == 2
+120 event s_trip1 ControlCollision
+120 expect n_score == 100000 delta 119
+120 expect v_lite69.message_field == 3
+130 event s_trip2 ControlCollision
+130 expect n_score == 1000000 delta 129
+130 expect v_lite69.message_field == 3
+140 event s_trip1 ControlCollision
+140 expect n_score == 1000000 delta 139
+140 expect v_lite69.message_field == 3
+150 event v_lite69 ControlTimerExpired
+150 expect v_lite69.message_field == 0
+160 event s_trip2 ControlCollision
+160 expect n_score == 20000 delta 159
+200 quit
