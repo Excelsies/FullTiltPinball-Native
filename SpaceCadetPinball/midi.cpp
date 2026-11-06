@@ -151,7 +151,7 @@ int midi::load_track(const std::string& name)
 	auto audio = load_music(name);
 	if (!audio)
 	{
-		printf("midi: track %s not loaded (audio closed or no file)\n", name.c_str());
+		printf("midi: track %s not loaded (audio closed, no file, or not music)\n", name.c_str());
 		fflush(stdout);
 		return 0;
 	}

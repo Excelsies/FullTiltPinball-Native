@@ -8,6 +8,9 @@
 //    changes from the main thread reach the synthesizer through the audio thread).
 // 3. Restarts: after a restart, no voice of the stopped play is still sounding once the first audio
 //    callback of the new play has rendered.
+// 4. Volume while stopped: volume changes while nothing plays make no synthesizer call (the stopped
+//    play's voices can still be listed, and fluidsynth would queue a gain change for each), and the
+//    next play applies the last one.
 // Exit 0 = pass, 1 = fail, 2 = cannot run.
 
 #include "midi.h"
@@ -220,14 +223,36 @@ int main(int argc, char** argv)
 		}
 		restarts++;
 	}
-	// Let the last play render a few callbacks.
+	// Let the last play render a few callbacks, at full volume.
+	midi::SetVolume(MIX_MAX_VOLUME);
 	std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	auto fullGain = fluid_synth_get_gain(Synth);
 	midi::music_stop();
 	printf("restarts %d, gain changes applied %d, callbacks with an earlier play's voices %d (at most %d voices)\n",
 	       restarts, GainCalls - gainCallsBefore, OldVoiceCallbacks.load(), OldVoicesMax.load());
 	Expect(MainCallsWhileAttached == 0, "no synthesizer call from the main thread while the hook is attached");
 	Expect(GainCalls - gainCallsBefore > 0, "volume changes during playback reach the synthesizer");
 	Expect(OldVoiceCallbacks == 0, "no voice of a stopped play remains after the new play's first callback");
+
+	// 4. Volume changes while nothing plays (the hook is detached, nothing renders).
+	fluid_voice_t* list[1024];
+	auto stoppedVoices = ListedVoices(list, 1024);
+	gainCallsBefore = GainCalls;
+	const int lastVolume = 37;
+	for (int i = 0; i <= 2000; i++)
+		midi::SetVolume(i < 2000 ? i % (MIX_MAX_VOLUME + 1) : lastVolume);
+	auto gainCallsStopped = GainCalls - gainCallsBefore;
+	midi::music_play();
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	auto resumedGain = fluid_synth_get_gain(Synth);
+	auto expectedGain = fullGain * lastVolume / MIX_MAX_VOLUME;
+	midi::music_stop();
+	printf("voices listed after the stop %d, synthesizer gain calls for 2001 volume changes while stopped %d, "
+	       "gain after the next play %.4f (expected %.4f)\n",
+	       stoppedVoices, gainCallsStopped, resumedGain, expectedGain);
+	Expect(gainCallsStopped == 0, "volume changes while nothing plays make no synthesizer call");
+	Expect(resumedGain > expectedGain - 0.001f && resumedGain < expectedGain + 0.001f,
+	       "the next play applies the last volume set while nothing played");
 
 	midi::music_shutdown();
 	Mix_CloseAudio();

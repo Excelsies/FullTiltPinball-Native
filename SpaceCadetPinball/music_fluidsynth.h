@@ -10,11 +10,12 @@
 /// SoundFont's presets, for every loaded Mix_Music, and before SDL_mixer 2.8.1 (or with fluidsynth
 /// 1.x) it does not rewind a track that plays again. Here a single synthesizer renders into
 /// SDL_mixer's music hook, and every play creates a new player from the track's MIDI bytes, so each
-/// play starts at the track's beginning. A stop ends every voice, release included, and resets controllers, programs and
-/// effects, so nothing of the stopped track sounds in the next play.
+/// play starts at the track's beginning. A stop ends every voice, release included, and resets
+/// controllers, programs and effects, so nothing of the stopped track sounds in the next play.
 ///
 /// Threads: the main thread uses the synthesizer only while the music hook is detached; while it is
-/// attached, only the hook (SDL's audio thread) does, which also applies volume changes.
+/// attached, only the hook (SDL's audio thread) does. A volume change is applied by the next audio
+/// callback or, while nothing plays, by the next play.
 class music_fluidsynth
 {
 public:
@@ -34,8 +35,8 @@ public:
 	static bool Play(const std::vector<uint8_t>& midi);
 	/// Stops playback and ends every voice. No effect when nothing plays.
 	static void Stop();
-	/// volume 0..MIX_MAX_VOLUME, scaled as SDL_mixer's fluidsynth backend does. While music plays, the
-	/// next audio callback applies it.
+	/// volume 0..MIX_MAX_VOLUME, scaled as SDL_mixer's fluidsynth backend does. Makes no synthesizer
+	/// call: the next audio callback applies it, or the next play when nothing plays.
 	static void SetVolume(int volume);
 	/// Stops playback and frees the synthesizer and the SoundFonts.
 	static void Shutdown();

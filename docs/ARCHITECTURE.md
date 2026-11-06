@@ -166,10 +166,13 @@ track is loaded; what is kept depends on the backend, chosen once in `music_init
   voices, still marked as playing, are put back into their release phase. Detaching first matters
   because the player's timer runs inside the synthesizer's rendering. The main thread uses the
   synthesizer only while the hook is detached; while it is attached only the hook (SDL's audio
-  thread) does, and a volume change waits for the next audio callback (or the next play) to apply
-  it. SDL_mixer's `Mix_VolumeMusic` holds its device's audio lock instead; that lock is not
-  reachable from outside SDL_mixer (`SDL_LockAudio` locks the legacy device 1, not the device
-  `Mix_OpenAudio` opens). The gain is the one SDL_mixer's fluidsynth backend sets for the music
+  thread) does. A volume change makes no synthesizer call: the next audio callback applies it, or,
+  while nothing plays, the next play. SDL_mixer's `Mix_VolumeMusic` holds its device's audio lock
+  instead; that lock is not reachable from outside SDL_mixer (`SDL_LockAudio` locks the legacy
+  device 1, not the device `Mix_OpenAudio` opens). Applying a change at once while nothing plays is
+  not an option either: the voices of the stopped track end only when the next play renders, and
+  fluidsynth queues a gain change for each of them, so many changes overflow its event queue
+  (`Ringbuffer full`). The gain is the one SDL_mixer's fluidsynth backend sets for the music
   volume (full volume 1.2 up to SDL_mixer 2.6.x, 1.0 from 2.8.0, by `Mix_Linked_Version`), so music
   has the level that backend gives it. The synthesizer is created in `music_init` because
   fluidsynth's one-time set-up draws from the C library's `rand()`, which Space Cadet's random

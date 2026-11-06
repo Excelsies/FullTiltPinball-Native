@@ -17,8 +17,8 @@ namespace
 	float FullGain = 1.0f; // gain at MIX_MAX_VOLUME
 	int Volume = MIX_MAX_VOLUME; // the music volume last set (main thread)
 	// Threads: the synthesizer is used by the main thread only while the music hook is detached, and by
-	// Render (SDL's audio thread) while it is attached. A volume change waits here for the next of the
-	// two to apply it; -1 = none pending.
+	// Render (SDL's audio thread) while it is attached. A volume change waits here until the next audio
+	// callback or, while nothing plays, the next play applies it; -1 = none pending.
 	std::atomic<int> PendingVolume{-1};
 
 	void ApplyPendingVolume()
@@ -178,10 +178,10 @@ void music_fluidsynth::Stop()
 
 void music_fluidsynth::SetVolume(int volume)
 {
+	// Only stored, also while nothing plays: the voices of a stopped track end only when the next play
+	// renders, and fluidsynth queues a gain change for each of them in a bounded queue.
 	Volume = volume;
 	PendingVolume = volume;
-	if (Synth && !Player)
-		ApplyPendingVolume(); // the hook is detached: apply it now
 }
 
 void music_fluidsynth::Shutdown()

@@ -179,8 +179,11 @@ links `music_backend_check.cpp` against the hook build's objects, with the fluid
 `Mix_HookMusic` calls wrapped (`--wrap`), and drives `midi` with SDL's dummy driver. It checks that
 an empty, a too short and a non-MIDI track file give `load_track` 0 (as `Mix_LoadMUS_RW` gives no
 music for them) and a MIDI file a handle; that while the music hook is attached the main thread makes
-no synthesizer call, with volume changes every 0.2 ms during twelve plays; and that after each
-restart no voice of the earlier play is still listed once the new play's first callback has rendered.
+no synthesizer call, with volume changes every 0.2 ms during twelve plays; that after each
+restart no voice of the earlier play is still listed once the new play's first callback has rendered;
+and that 2001 volume changes while nothing plays make no synthesizer call (otherwise fluidsynth
+queues a gain change for every voice of the stopped play and floods `Ringbuffer full`) while the next
+play applies the last one.
 Exit 0 = pass, 1 = fail, 2 = cannot run (no fluidsynth backend or no SoundFont).
 
 Which track plays is the same logic for both backends: hook runs with audio on (dummy driver,
