@@ -1,8 +1,0 @@
-#!/bin/bash
-# Rebuild the menu console order: RetroPie's current system list, in the original cabinet order.
-# Re-run after installing any emulator/system, since the custom order file overrides RetroPie's list.
-set -euo pipefail
-python3 /home/pi/arcade-tools/reorder_systems.py \
-  /etc/emulationstation/es_systems.cfg \
-  /home/pi/old-setup/configs/all/emulationstation/es_systems.cfg \
-  /opt/retropie/configs/all/emulationstation/es_systems.cfg

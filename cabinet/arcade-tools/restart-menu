@@ -1,6 +1,0 @@
-#!/bin/bash
-# Restart EmulationStation on the TV by restarting the tty1 autologin (runs autostart -> ES).
-rm -f /tmp/es-restart
-sudo systemctl restart getty@tty1
-for i in $(seq 1 30); do pgrep -f /opt/retropie/supplementary/emulationstation/emulationstation$ >/dev/null && { echo "menu running"; exit 0; }; sleep 2; done
-echo "menu did not start within 60s"; exit 1

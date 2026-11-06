@@ -171,11 +171,6 @@ Settings live in `imgui_pb.ini` in SDL's per-user data directory: on Linux
   differently from upstream's (for example the tilt timeout: 15 s in CADET.EXE, 30 s upstream),
   Space Cadet keeps upstream's behaviour. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Arcade cabinet
-
-The cabinet setup (Raspberry Pi 3, RetroPie, the cabinet's button service and settings menu) is
-described in [cabinet/README.md](cabinet/README.md).
-
 ## Testing
 
 The port is tested against the original executables running under Wine, with a native test hook
@@ -192,7 +187,6 @@ The reverse-engineering tools and findings are in [docs/REVERSE_ENGINEERING.md](
 | `docs/` | Architecture, testing and reverse-engineering documentation |
 | `re/` | Reverse-engineering tools (Python, Ghidra script); `re/work/` is a local, git-ignored workspace |
 | `re/test/` | Test harness: Wine vs native runs, the native test hook runner and its scripts |
-| `cabinet/` | The Raspberry Pi cabinet tools |
 | `CMakeLists.txt`, `CMakeModules/`, `Platform/`, `mingwcc.cmake` | Build files (upstream's, plus the port's sources and options); `Platform/Windows/build-mingw.sh` is the Windows cross-build |
 | `UPSTREAM-README.md`, `CONTRIBUTING.md`, `Doc/`, `Screenshots/` | Upstream's documentation |
 | `bin/`, `build/`, `build-hook/`, `bin-win/`, `build-win/`, `Libs/` | Build output and downloaded SDL libraries (git-ignored) |
