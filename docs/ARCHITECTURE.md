@@ -150,19 +150,30 @@ track is loaded; what is kept depends on the backend, chosen once in `music_init
 
 - **fluidsynth** (`music_fluidsynth.*`, compiled when CMake finds fluidsynth's development files:
   `FT_MUSIC_FLUIDSYNTH`; used when the mixer's output is 16-bit stereo and one of SDL_mixer's
-  SoundFonts, `Mix_GetSoundFonts`, exists). Tracks are kept as MIDI bytes. `music_init` creates one
+  SoundFonts, `Mix_GetSoundFonts`, exists). Tracks are kept as MIDI bytes; data that is not MIDI
+  (fewer than 12 bytes, or not starting with `MThd`: the test `Mix_LoadMUS_RW` applies) gives no
+  track, so an empty or foreign file is a missing track with either backend. `music_init` creates one
   synthesizer for the process (at the sample rate of the opened mixer) and, when the `Music` option
   is on, loads the SoundFonts into it; otherwise they load at the first play. The synthesizer
   renders into SDL_mixer's music hook (`Mix_HookMusic`), which SDL_mixer calls on a cleared buffer
-  before it mixes the sound effects, as with its own music. Every play detaches the hook, deletes
-  the previous player, resets the synthesizer (`fluid_synth_system_reset`: no voices, controllers or
-  programs carry over), creates a new player from the track's bytes, loops it and attaches the hook
-  again; a stop detaches the hook, deletes the player and resets the synthesizer. Detaching first
-  matters because the player's timer runs inside the synthesizer's rendering. The gain is the one
-  SDL_mixer's fluidsynth backend sets for the music volume (full volume 1.2 up to SDL_mixer 2.6.x,
-  1.0 from 2.8.0, by `Mix_Linked_Version`), so the level is unchanged. The synthesizer is created in
-  `music_init` because fluidsynth's one-time set-up draws from the C library's `rand()`, which Space
-  Cadet's random numbers use: SDL_mixer created its first synthesizer at the same point (loading
+  before it mixes the sound effects, as with its own music. Every play stops the previous one,
+  creates a new player from the track's bytes, loops it and attaches the hook again. A stop
+  detaches the hook, deletes the player, resets the synthesizer (`fluid_synth_system_reset`:
+  controllers, programs, reverb and chorus) and then sends "all sounds off" to every channel, so no
+  voice of the stopped track sounds in the next play, not even its release. The second call is
+  needed with fluidsynth 2.x: there the reset's own "all sounds off" is followed by an "all notes
+  off" (the reset's basic-channel set-up), and since voice changes are queued for the renderer, the
+  voices, still marked as playing, are put back into their release phase. Detaching first matters
+  because the player's timer runs inside the synthesizer's rendering. The main thread uses the
+  synthesizer only while the hook is detached; while it is attached only the hook (SDL's audio
+  thread) does, and a volume change waits for the next audio callback (or the next play) to apply
+  it. SDL_mixer's `Mix_VolumeMusic` holds its device's audio lock instead; that lock is not
+  reachable from outside SDL_mixer (`SDL_LockAudio` locks the legacy device 1, not the device
+  `Mix_OpenAudio` opens). The gain is the one SDL_mixer's fluidsynth backend sets for the music
+  volume (full volume 1.2 up to SDL_mixer 2.6.x, 1.0 from 2.8.0, by `Mix_Linked_Version`), so music
+  has the level that backend gives it. The synthesizer is created in `music_init` because
+  fluidsynth's one-time set-up draws from the C library's `rand()`, which Space Cadet's random
+  numbers use: the SDL_mixer backend creates its first synthesizer at the same point (loading
   `TABA1` in `music_init`).
 - **SDL_mixer** (no fluidsynth in the build, as on Windows, or the conditions above fail): each track
   is loaded as a `Mix_Music` (`Mix_LoadMUS_RW`) and played with `Mix_PlayMusic`. SDL_mixer's
@@ -237,7 +248,8 @@ Space Cadet anyway. The changes that do reach Space Cadet are:
   plunger press launch the ball as the original does;
 - the music lookup above (identical result for the `CADET` folder, which has only `.MDS` files);
 - the fluidsynth music backend above: one synthesizer instead of three, every play of a track starts
-  at its beginning, a stop silences held notes. The synthesizer is created where SDL_mixer created
-  its first one, so Space Cadet's `rand()` sequence is unchanged; the track logic is upstream's;
+  at its beginning, a stop ends every voice. The synthesizer is created where the SDL_mixer backend
+  creates its first one, so Space Cadet's `rand()` sequence is the same with both backends; the
+  track logic is upstream's;
 - the mouse-capture change and the changed-area texture upload (output pixel-identical);
 - the Table menu and option, and the `-table=` command-line option.

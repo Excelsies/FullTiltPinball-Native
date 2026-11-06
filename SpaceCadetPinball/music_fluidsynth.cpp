@@ -5,6 +5,8 @@
 
 #include <fluidsynth.h>
 
+#include <atomic>
+
 namespace
 {
 	fluid_settings_t* Settings = nullptr;
@@ -12,7 +14,19 @@ namespace
 	fluid_player_t* Player = nullptr;
 	bool SoundFontsLoaded = false;
 	bool Failed = false; // reported once; every later play returns false
-	int Volume = MIX_MAX_VOLUME;
+	float FullGain = 1.0f; // gain at MIX_MAX_VOLUME
+	int Volume = MIX_MAX_VOLUME; // the music volume last set (main thread)
+	// Threads: the synthesizer is used by the main thread only while the music hook is detached, and by
+	// Render (SDL's audio thread) while it is attached. A volume change waits here for the next of the
+	// two to apply it; -1 = none pending.
+	std::atomic<int> PendingVolume{-1};
+
+	void ApplyPendingVolume()
+	{
+		auto volume = PendingVolume.exchange(-1);
+		if (volume >= 0)
+			fluid_synth_set_gain(Synth, FullGain * volume / MIX_MAX_VOLUME);
+	}
 
 	int SDLCALL SoundFontExists(const char* path, void*)
 	{
@@ -41,18 +55,8 @@ namespace
 	/// on top afterwards, as with its own music; Usable() guarantees 16-bit stereo.
 	void SDLCALL Render(void*, Uint8* stream, int len)
 	{
+		ApplyPendingVolume();
 		fluid_synth_write_s16(Synth, len / 4, stream, 0, 2, stream, 1, 2);
-	}
-
-	void ApplyGain()
-	{
-		// The gain SDL_mixer's own fluidsynth backend sets (FLUIDSYNTH_SetVolume), so music keeps the
-		// level it has with the SDL_mixer in use: full volume is gain 1.2 up to SDL_mixer 2.6.x, 1.0 from 2.8.0.
-		auto linked = Mix_Linked_Version();
-		auto fullGain = SDL_VERSIONNUM(linked->major, linked->minor, linked->patch) >= SDL_VERSIONNUM(2, 8, 0)
-			                ? 1.0
-			                : 1.2;
-		fluid_synth_set_gain(Synth, static_cast<float>(Volume * fullGain / MIX_MAX_VOLUME));
 	}
 
 	void DeleteSynth()
@@ -105,7 +109,12 @@ bool music_fluidsynth::Open(bool loadSoundFonts)
 		DeleteSynth();
 		return Fail("synthesizer not created");
 	}
-	ApplyGain();
+	// The gain SDL_mixer's own fluidsynth backend sets for the music volume (FLUIDSYNTH_SetVolume), so
+	// music has the level that backend gives it: full volume is gain 1.2 up to SDL_mixer 2.6.x, 1.0 from 2.8.0.
+	auto linked = Mix_Linked_Version();
+	FullGain = SDL_VERSIONNUM(linked->major, linked->minor, linked->patch) >= SDL_VERSIONNUM(2, 8, 0) ? 1.0f : 1.2f;
+	PendingVolume = Volume;
+	ApplyPendingVolume();
 	printf("midi: fluidsynth synthesizer at %d Hz\n", frequency);
 	fflush(stdout);
 	return !loadSoundFonts || LoadSoundFonts();
@@ -144,6 +153,7 @@ bool music_fluidsynth::Play(const std::vector<uint8_t>& midi)
 		Player = nullptr;
 		return false;
 	}
+	ApplyPendingVolume();
 	Mix_HookMusic(Render, nullptr);
 	return true;
 }
@@ -157,15 +167,21 @@ void music_fluidsynth::Stop()
 	fluid_player_stop(Player);
 	delete_fluid_player(Player);
 	Player = nullptr;
-	// Held notes, controllers and programs of the stopped track do not carry into the next play.
+	// Controllers and programs of the stopped track do not carry into the next play. With fluidsynth 2.x
+	// the reset's own "all sounds off" does not end the voices: the reset then sends "all notes off",
+	// which puts the voices, still marked as playing, back into their release phase (the queued
+	// voice events reach the renderer in that order). The "all sounds off" after it ends them, together
+	// with their release, at the start of the next rendered block.
 	fluid_synth_system_reset(Synth);
+	fluid_synth_all_sounds_off(Synth, -1);
 }
 
 void music_fluidsynth::SetVolume(int volume)
 {
 	Volume = volume;
-	if (Synth)
-		ApplyGain();
+	PendingVolume = volume;
+	if (Synth && !Player)
+		ApplyPendingVolume(); // the hook is detached: apply it now
 }
 
 void music_fluidsynth::Shutdown()

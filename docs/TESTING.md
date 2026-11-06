@@ -174,6 +174,15 @@ two conditions. The voice-warning flood itself happens only with SDL_mixer < 2.8
 (the Raspberry Pi's libraries), so on a PC with newer libraries the warning count shows only that
 nothing else floods.
 
+`re/test/native/music_backend_check.sh <file.sf2> <out-dir>` (after a hook build with fluidsynth)
+links `music_backend_check.cpp` against the hook build's objects, with the fluidsynth and
+`Mix_HookMusic` calls wrapped (`--wrap`), and drives `midi` with SDL's dummy driver. It checks that
+an empty, a too short and a non-MIDI track file give `load_track` 0 (as `Mix_LoadMUS_RW` gives no
+music for them) and a MIDI file a handle; that while the music hook is attached the main thread makes
+no synthesizer call, with volume changes every 0.2 ms during twelve plays; and that after each
+restart no voice of the earlier play is still listed once the new play's first callback has rendered.
+Exit 0 = pass, 1 = fail, 2 = cannot run (no fluidsynth backend or no SoundFont).
+
 Which track plays is the same logic for both backends: hook runs with audio on (dummy driver,
 `Music=1`, a SoundFont in `SDL_SOUNDFONTS`) log the same `track` events as with the baseline build.
 Audio-on hook runs depend on wall-clock timing where the harness resizes the window, so only their
@@ -192,6 +201,8 @@ release and hook builds and run the Space Cadet checks above.
   file's header.
 - `re/test/native/ft_common_null_scorer_check.sh <out-dir>`: the shared scoring helpers with a null
   scorer; links against the hook build's objects.
+- `re/test/native/music_backend_check.sh <file.sf2> <out-dir>`: the fluidsynth music backend (Music,
+  above); links against the hook build's objects.
 - `re/test/*_sweep_check.py <hook run dir>`: a light-sweep hook run against `re/light_sweeps.py`,
   an independent simulation of part type 1038 from the DAT.
 - `re/test/selftest_*.py`: self-tests of the harness (re/test/README.md).

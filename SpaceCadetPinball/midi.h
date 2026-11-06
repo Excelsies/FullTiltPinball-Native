@@ -104,8 +104,9 @@ public:
 	static MidiTracks get_active_track();
 
 	/// Named tracks (Full Tilt tables: the rules load their own list). load_track returns a handle
-	/// >= 1, or 0 when audio is closed or neither <name>.MDS nor <name>.MID exists; the caller decides
-	/// what a missing track means (FT rules fall back to their default track).
+	/// >= 1, or 0 when audio is closed or neither <name>.MDS nor <name>.MID exists and holds music
+	/// (a valid MIDS file, MIDI data); the caller decides what a missing track means (FT rules fall
+	/// back to their default track).
 	static int load_track(const std::string& name);
 	/// Plays a handle from load_track. Handle 0 (never loaded) stops the playing music (as the original) and returns false.
 	static bool play_track(int handle, bool replay);

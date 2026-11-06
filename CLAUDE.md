@@ -98,7 +98,11 @@ table folder (README.md, Game data).
 - Music (Linux builds with fluidsynth's development files): one fluidsynth synthesizer for the whole
   process, created in `midi::music_init`, rendering through `Mix_HookMusic` (`music_fluidsynth.*`);
   tracks are cached MIDI bytes and every play gets a new player, so a track always starts at its
-  beginning. SDL_mixer's own fluidsynth backend makes one synthesizer (with its own SoundFont
-  presets) per loaded track and, with SDL_mixer < 2.8.1 / fluidsynth 1.x (the Pi), does not rewind a
-  replayed track (stale position, or a voice-warning flood after a loop). Builds without
-  fluidsynth (Windows) still use SDL_mixer. Check: `re/test/music_check.py` (docs/TESTING.md).
+  beginning. A stop is `fluid_synth_system_reset` plus "all sounds off": with fluidsynth 2.x the
+  reset alone lets the stopped track's voices release into the next play. The main thread uses the
+  synthesizer only while the hook is detached (volume changes are applied in the hook). SDL_mixer's
+  own fluidsynth backend makes one synthesizer (with its own SoundFont presets) per loaded track
+  and, with SDL_mixer < 2.8.1 / fluidsynth 1.x (the Pi), does not rewind a replayed track (stale
+  position, or a voice-warning flood after a loop). Builds without fluidsynth (Windows) still use
+  SDL_mixer. Checks: `re/test/music_check.py`, `re/test/native/music_backend_check.sh`
+  (docs/TESTING.md).

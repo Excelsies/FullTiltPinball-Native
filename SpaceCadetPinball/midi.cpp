@@ -251,6 +251,13 @@ midi::music_track* midi::make_track(const std::vector<uint8_t>& midi)
 	auto track = new music_track();
 	if (UseFluidsynth)
 	{
+		// The test Mix_LoadMUS_RW applies to MIDI data (at least 12 bytes, starting with "MThd"), so an
+		// empty or foreign file gives no track with either backend.
+		if (midi.size() < 12 || memcmp(midi.data(), "MThd", 4) != 0)
+		{
+			delete track;
+			return nullptr;
+		}
 		track->Midi = midi;
 		return track;
 	}
