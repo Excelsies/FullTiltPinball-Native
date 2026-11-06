@@ -145,9 +145,33 @@ their default track, as the original does.
 File lookup under `SOUND/`: with Full Tilt data the `.MDS` file is tried before `.MID` (Full Tilt
 plays only `.MDS`; Skulduggery's folder also ships `.MID` copies). Each name is tried as given, in
 lower case and then in upper case, because the rules ask for lower-case names and the data ships
-upper-case ones. Each `.MDS` is converted to MIDI in memory and loaded with SDL_mixer
-(`Mix_LoadMUS_RW`). With SDL_mixer's fluidsynth backend every loaded track gets its own synthesizer,
-which is why music costs more memory on the six-track tables (README, Known limitations).
+upper-case ones. Each `.MDS` is converted to MIDI in memory (a `.MID` is read as it is) when the
+track is loaded; what is kept depends on the backend, chosen once in `music_init`:
+
+- **fluidsynth** (`music_fluidsynth.*`, compiled when CMake finds fluidsynth's development files:
+  `FT_MUSIC_FLUIDSYNTH`; used when the mixer's output is 16-bit stereo and one of SDL_mixer's
+  SoundFonts, `Mix_GetSoundFonts`, exists). Tracks are kept as MIDI bytes. `music_init` creates one
+  synthesizer for the process (at the sample rate of the opened mixer) and, when the `Music` option
+  is on, loads the SoundFonts into it; otherwise they load at the first play. The synthesizer
+  renders into SDL_mixer's music hook (`Mix_HookMusic`), which SDL_mixer calls on a cleared buffer
+  before it mixes the sound effects, as with its own music. Every play detaches the hook, deletes
+  the previous player, resets the synthesizer (`fluid_synth_system_reset`: no voices, controllers or
+  programs carry over), creates a new player from the track's bytes, loops it and attaches the hook
+  again; a stop detaches the hook, deletes the player and resets the synthesizer. Detaching first
+  matters because the player's timer runs inside the synthesizer's rendering. The gain is the one
+  SDL_mixer's fluidsynth backend sets for the music volume (full volume 1.2 up to SDL_mixer 2.6.x,
+  1.0 from 2.8.0, by `Mix_Linked_Version`), so the level is unchanged. The synthesizer is created in
+  `music_init` because fluidsynth's one-time set-up draws from the C library's `rand()`, which Space
+  Cadet's random numbers use: SDL_mixer created its first synthesizer at the same point (loading
+  `TABA1` in `music_init`).
+- **SDL_mixer** (no fluidsynth in the build, as on Windows, or the conditions above fail): each track
+  is loaded as a `Mix_Music` (`Mix_LoadMUS_RW`) and played with `Mix_PlayMusic`. SDL_mixer's
+  fluidsynth backend creates a synthesizer per `Mix_Music`, and before SDL_mixer 2.8.1 (or with
+  fluidsynth 1.x) `Mix_PlayMusic` does not rewind a track that played before (README, Known
+  limitations).
+
+Either way the rules see the same handles, `ActiveKey` / `NextKey` / `IsPlaying` decide what plays,
+and the test hook logs the same `track` events. `midi: music via ...` in the log names the backend.
 
 ## Physics stepping
 
@@ -186,8 +210,9 @@ The Windows build compiles the same sources. Its platform-specific code is upstr
   `SDL2_mixer.dll` next to the executable. `mingwcc.cmake` is the MinGW-w64 toolchain file (it picks
   `x86_64-w64-mingw32-g++-posix` or else `-g++`, and adds `Libs/` to `CMAKE_FIND_ROOT_PATH`).
   `Platform/Windows/build-mingw.sh` downloads the pinned SDL libraries and runs the build.
-- Music: SDL_mixer's MinGW build has no fluidsynth backend; `midi.cpp` is unchanged and loads the
-  converted MIDI through SDL_mixer, which uses Timidity and then Windows' MIDI synthesizer.
+- Music: the Windows build has no fluidsynth (CMake looks for it only on Unix systems other than
+  macOS, and SDL_mixer's MinGW build has no fluidsynth backend), so `midi.cpp` plays the converted
+  MIDI through SDL_mixer, which uses Timidity and then Windows' MIDI synthesizer.
 
 ## Other engine changes
 
@@ -211,5 +236,8 @@ Space Cadet anyway. The changes that do reach Space Cadet are:
   0.025 s; 3D Pinball data keeps upstream's value). Together with the slicing this makes an early
   plunger press launch the ball as the original does;
 - the music lookup above (identical result for the `CADET` folder, which has only `.MDS` files);
+- the fluidsynth music backend above: one synthesizer instead of three, every play of a track starts
+  at its beginning, a stop silences held notes. The synthesizer is created where SDL_mixer created
+  its first one, so Space Cadet's `rand()` sequence is unchanged; the track logic is upstream's;
 - the mouse-capture change and the changed-area texture upload (output pixel-identical);
 - the Table menu and option, and the `-table=` command-line option.

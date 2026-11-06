@@ -70,8 +70,10 @@ layout: `DRAGON.DAT`, `DRAGON.EXE` and `SOUND/` side by side).
 ## Build
 
 Needs CMake, a C++11 compiler, and the SDL2 and SDL2_mixer development packages. Music also needs
-fluidsynth and a SoundFont (see [Platform/Linux/BUILD.md](Platform/Linux/BUILD.md), including
-`SDL_SOUNDFONT`).
+a SoundFont and, for the build, the fluidsynth development package (see
+[Platform/Linux/BUILD.md](Platform/Linux/BUILD.md), including `SDL_SOUNDFONTS`). With fluidsynth's
+development files present, CMake reports `Music: fluidsynth` and the game plays all music through
+one fluidsynth synthesizer; without them music goes through SDL_mixer's own MIDI backends.
 
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
     cmake --build build -j
@@ -147,15 +149,17 @@ Settings live in `imgui_pb.ini` in SDL's per-user data directory: on Linux
 
 - **Music is off by default.** The `Music` option defaults to off (as upstream) and is one setting
   for all three tables (**Options > Audio**, the F6 key, or `Music` in `imgui_pb.ini`).
-- **Memory use with music.** SDL_mixer creates a separate fluidsynth synthesizer, with its own copy
-  of the SoundFont, for every loaded music track. Dragon's Keep and Skulduggery load six tracks,
-  Space Cadet three. Measured on the Raspberry Pi 3 with music on: about 440 MB resident for the two
-  Full Tilt tables against about 304 MB for Space Cadet.
-- **fluidsynth warnings when music restarts.** When a track restarts (pause and resume, a new game,
-  a track change), fluidsynth sometimes runs out of voices and prints thousands of
-  `Ringbuffer full` / `Failed to allocate a synthesis process` warnings to stderr; notes are dropped
-  while it lasts. The upstream build on the same Pi does not show this. The cause is not found yet.
-- **Windows music backend.** SDL_mixer's Windows build has no fluidsynth, so `SDL_SOUNDFONT` does
+- **SoundFont load time.** With music on, the SoundFont is loaded once at start-up (and after a
+  table change); with music off, when music is first switched on. FluidR3_GM takes about 1 s on a
+  Raspberry Pi 3 when the file is in the page cache and 8-11 s when it is read from the SD card;
+  the game does not respond meanwhile.
+- **Builds without fluidsynth.** A Linux build made without fluidsynth's development files plays
+  music through SDL_mixer, which creates a synthesizer with its own copy of the SoundFont's presets
+  for every loaded track, and, with SDL_mixer before 2.8.1 or fluidsynth 1.x (Raspberry Pi OS
+  Buster), restarts a track that has played before at a stale position: from mid-song after
+  silence, or with a burst of `Ringbuffer full` / `Failed to allocate a synthesis process`
+  warnings and dropped notes once the track has looped.
+- **Windows music backend.** SDL_mixer's Windows build has no fluidsynth, so `SDL_SOUNDFONTS` does
   not apply. MIDI goes to Timidity (which logs "Couldn't open timidity.cfg" when it has no
   configuration) and then to Windows' native MIDI synthesizer. Under Wine all six Dragon's Keep
   tracks load; whether the music sounds right was not checked, because the tests run without

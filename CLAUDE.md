@@ -95,6 +95,10 @@ table folder (README.md, Game data).
 - All options, including `Music` (off by default), are shared by the three tables in
   `~/.local/share/SpaceCadetPinball/imgui_pb.ini`; high scores are per table (`DragonsKeep.` /
   `Skulduggery.` key prefixes, Space Cadet unprefixed).
-- Music: every loaded track gets its own fluidsynth synthesizer (memory), and track restarts can
-  flood stderr with fluidsynth voice warnings on the Pi; both are open (README.md, Known
-  limitations).
+- Music (Linux builds with fluidsynth's development files): one fluidsynth synthesizer for the whole
+  process, created in `midi::music_init`, rendering through `Mix_HookMusic` (`music_fluidsynth.*`);
+  tracks are cached MIDI bytes and every play gets a new player, so a track always starts at its
+  beginning. SDL_mixer's own fluidsynth backend makes one synthesizer (with its own SoundFont
+  presets) per loaded track and, with SDL_mixer < 2.8.1 / fluidsynth 1.x (the Pi), does not rewind a
+  replayed track (stale position, or a voice-warning flood after a loop). Builds without
+  fluidsynth (Windows) still use SDL_mixer. Check: `re/test/music_check.py` (docs/TESTING.md).

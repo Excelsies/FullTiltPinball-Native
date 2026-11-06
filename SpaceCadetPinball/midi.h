@@ -113,18 +113,27 @@ public:
 	/// stopped), 0 if none or if a Space Cadet track is playing.
 	static int active_track();
 private:
-	static std::vector<Mix_Music*> LoadedTracks;
-	static std::vector<Mix_Music*> NamedTracks; // handle h is NamedTracks[h - 1]
-	static Mix_Music* track1, * track2, * track3;
+	/// A loaded track: with the fluidsynth backend (music_fluidsynth.h) the track's Standard MIDI File
+	/// bytes, played by a new player at every play; otherwise SDL_mixer's Mix_Music.
+	struct music_track
+	{
+		Mix_Music* Music = nullptr;
+		std::vector<uint8_t> Midi;
+	};
+
+	static std::vector<music_track*> LoadedTracks; // owns every track
+	static std::vector<music_track*> NamedTracks; // handle h is NamedTracks[h - 1]
+	static music_track* track1, * track2, * track3;
 	// Playback key: 0 none, 1..3 Space Cadet MidiTracks, -h named handle h (kept apart from 1..3)
 	static int ActiveKey, NextKey;
 	static int Volume;
-	static bool IsPlaying, MixOpen;
+	static bool IsPlaying, MixOpen, UseFluidsynth;
 
 	static void StopPlayback();
-	static Mix_Music* load_music(std::string fileName);
-	static Mix_Music* load_track_sub(std::string fileName, bool isMidi);
-	static Mix_Music* KeyToMusic(int key);
+	static music_track* load_music(std::string fileName);
+	static music_track* load_track_sub(std::string fileName, bool isMidi);
+	static music_track* make_track(const std::vector<uint8_t>& midi);
+	static music_track* KeyToTrack(int key);
 	static bool play_key(int key, bool replay);
 	static std::vector<uint8_t>* MdsToMidi(std::string file);
 };

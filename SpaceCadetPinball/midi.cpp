@@ -1,17 +1,19 @@
 #include "pch.h"
 #include "ft_test_hook.h"
 #include "midi.h"
+#include "music_fluidsynth.h"
 
 
+#include "options.h"
 #include "pb.h"
 
 
-std::vector<Mix_Music*> midi::LoadedTracks{};
-Mix_Music* midi::track1, * midi::track2, * midi::track3;
-std::vector<Mix_Music*> midi::NamedTracks{};
+std::vector<midi::music_track*> midi::LoadedTracks{};
+midi::music_track* midi::track1, * midi::track2, * midi::track3;
+std::vector<midi::music_track*> midi::NamedTracks{};
 int midi::ActiveKey = 0, midi::NextKey = 0;
 int midi::Volume = MIX_MAX_VOLUME;
-bool midi::IsPlaying = false, midi::MixOpen = false;
+bool midi::IsPlaying = false, midi::MixOpen = false, midi::UseFluidsynth = false;
 
 constexpr uint32_t FOURCC(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
 {
@@ -60,7 +62,12 @@ void midi::StopPlayback()
 	if (ActiveKey != 0)
 	{
 		if (MixOpen)
-			Mix_HaltMusic();
+		{
+			if (UseFluidsynth)
+				music_fluidsynth::Stop();
+			else
+				Mix_HaltMusic();
+		}
 		ActiveKey = 0;
 	}
 }
@@ -68,6 +75,16 @@ void midi::StopPlayback()
 int midi::music_init(bool mixOpen, int volume)
 {
 	MixOpen = mixOpen;
+	// One fluidsynth synthesizer when the build and the system allow it; tracks are then kept as MIDI
+	// bytes. Its SoundFonts load now when music is on, else at the first play (F6 / Options).
+	UseFluidsynth = MixOpen && !pb::quickFlag && music_fluidsynth::Usable();
+	if (MixOpen)
+	{
+		printf("midi: music via %s\n", UseFluidsynth ? "fluidsynth (one synthesizer)" : "SDL_mixer");
+		fflush(stdout);
+	}
+	if (UseFluidsynth)
+		music_fluidsynth::Open(options::Options.Music);
 	SetVolume(volume);
 	ActiveKey = 0;
 	NextKey = 0;
@@ -104,10 +121,13 @@ int midi::music_init(bool mixOpen, int volume)
 void midi::music_shutdown()
 {
 	music_stop();
+	music_fluidsynth::Shutdown();
 
-	for (auto midi : LoadedTracks)
+	for (auto track : LoadedTracks)
 	{
-		Mix_FreeMusic(midi);
+		if (track->Music)
+			Mix_FreeMusic(track->Music);
+		delete track;
 	}
 	ActiveKey = 0;
 	LoadedTracks.clear();
@@ -118,7 +138,12 @@ void midi::SetVolume(int volume)
 {
 	Volume = volume;
 	if (MixOpen)
-		Mix_VolumeMusic(volume);
+	{
+		if (UseFluidsynth)
+			music_fluidsynth::SetVolume(volume);
+		else
+			Mix_VolumeMusic(volume);
+	}
 }
 
 int midi::load_track(const std::string& name)
@@ -137,7 +162,7 @@ int midi::load_track(const std::string& name)
 	return handle;
 }
 
-Mix_Music* midi::load_music(std::string fileName)
+midi::music_track* midi::load_music(std::string fileName)
 {
 	if (!MixOpen || pb::quickFlag)
 		return nullptr;
@@ -162,11 +187,11 @@ Mix_Music* midi::load_music(std::string fileName)
 	return audio;
 }
 
-Mix_Music* midi::load_track_sub(std::string fileName, bool isMidi)
+midi::music_track* midi::load_track_sub(std::string fileName, bool isMidi)
 {
 	// FT has music in two formats, depending on game version: MIDI in 16bit, MIDS in 32bit.
 	// 3DPB music is MIDI only.
-	Mix_Music* audio = nullptr;
+	music_track* audio = nullptr;
 	fileName += isMidi ? ".MID" : ".MDS";
 	// Probes: the name as given, all lower case, then (Full Tilt tables only) all upper case, because the Full Tilt
 	// data ships upper case names (SOUND/TABC7.MDS) and the rules ask for lower case ones; a case-sensitive
@@ -187,9 +212,15 @@ Mix_Music* midi::load_track_sub(std::string fileName, bool isMidi)
 			auto fileHandle = fopenu(filePath.c_str(), "rb");
 			if (fileHandle)
 			{
+				fseek(fileHandle, 0, SEEK_END);
+				std::vector<uint8_t> bytes(static_cast<size_t>(std::max(ftell(fileHandle), 0L)));
+				fseek(fileHandle, 0, SEEK_SET);
+				auto read = fread(bytes.data(), 1, bytes.size(), fileHandle);
 				fclose(fileHandle);
-				auto rw = SDL_RWFromFile(filePath.c_str(), "rb");
-				audio = Mix_LoadMUS_RW(rw, 1);
+				if (read == bytes.size())
+					audio = make_track(bytes);
+				else
+					printf("midi: could not read %s\n", filePath.c_str());
 				break;
 			}
 		}
@@ -205,8 +236,7 @@ Mix_Music* midi::load_track_sub(std::string fileName, bool isMidi)
 				fwrite(midi->data(), 1, midi->size(), fileHandle);
 				fclose(fileHandle);*/
 
-				auto rw = SDL_RWFromMem(midi->data(), static_cast<int>(midi->size()));
-				audio = Mix_LoadMUS_RW(rw, 1); // This call seems to leak memory no matter what.
+				audio = make_track(*midi);
 				delete midi;
 				break;
 			}
@@ -214,6 +244,24 @@ Mix_Music* midi::load_track_sub(std::string fileName, bool isMidi)
 	}
 
 	return audio;
+}
+
+midi::music_track* midi::make_track(const std::vector<uint8_t>& midi)
+{
+	auto track = new music_track();
+	if (UseFluidsynth)
+	{
+		track->Midi = midi;
+		return track;
+	}
+	auto rw = SDL_RWFromConstMem(midi.data(), static_cast<int>(midi.size()));
+	track->Music = Mix_LoadMUS_RW(rw, 1);
+	if (!track->Music)
+	{
+		delete track;
+		return nullptr;
+	}
+	return track;
 }
 
 bool midi::play_track(MidiTracks track, bool replay)
@@ -238,8 +286,8 @@ bool midi::play_track(int handle, bool replay)
 
 bool midi::play_key(int key, bool replay)
 {
-	auto midi = KeyToMusic(key);
-	if (!midi || (!replay && ActiveKey == key))
+	auto track = KeyToTrack(key);
+	if (!track || (!replay && ActiveKey == key))
 		return false;
 
 	StopPlayback();
@@ -250,7 +298,7 @@ bool midi::play_key(int key, bool replay)
 		return false;
 	}
 
-	if (MixOpen && Mix_PlayMusic(midi, -1))
+	if (MixOpen && !(UseFluidsynth ? music_fluidsynth::Play(track->Midi) : Mix_PlayMusic(track->Music, -1) == 0))
 	{
 		ActiveKey = 0;
 		return false;
@@ -275,7 +323,7 @@ int midi::active_track()
 	return key < 0 ? -key : 0;
 }
 
-Mix_Music* midi::KeyToMusic(int key)
+midi::music_track* midi::KeyToTrack(int key)
 {
 	if (key < 0)
 	{

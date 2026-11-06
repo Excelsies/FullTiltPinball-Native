@@ -41,6 +41,20 @@ find_package(SDL2 REQUIRED)
 FIND_PACKAGE(SDL2_mixer REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIR} ${SDL2_MIXER_INCLUDE_DIR})
+
+# Music through one fluidsynth synthesizer (music_fluidsynth.cpp) when fluidsynth's development files
+# are found (Linux and other Unix systems, not macOS); otherwise music plays through SDL_mixer alone.
+if(UNIX AND NOT APPLE)
+    find_package(PkgConfig QUIET)
+    if(PKG_CONFIG_FOUND)
+        pkg_check_modules(FLUIDSYNTH QUIET fluidsynth)
+    endif()
+endif()
+if(FLUIDSYNTH_FOUND)
+    message(STATUS "Music: fluidsynth ${FLUIDSYNTH_VERSION} (one synthesizer)")
+else()
+    message(STATUS "Music: SDL_mixer only (fluidsynth development files not found)")
+endif()
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 foreach(dir ${dirs})
   message(STATUS "Include dir='${dir}'")
@@ -69,6 +83,8 @@ set(SOURCE_FILES
         SpaceCadetPinball/maths.h
         SpaceCadetPinball/midi.cpp
         SpaceCadetPinball/midi.h
+        SpaceCadetPinball/music_fluidsynth.cpp
+        SpaceCadetPinball/music_fluidsynth.h
         SpaceCadetPinball/nudge.cpp
         SpaceCadetPinball/nudge.h
         SpaceCadetPinball/options.cpp
@@ -265,6 +281,12 @@ target_include_directories(SpaceCadetPinball PRIVATE ${CMAKE_CURRENT_LIST_DIR}/S
 
 if(FT_TEST_HOOK)
     target_compile_definitions(SpaceCadetPinball PRIVATE FT_TEST_HOOK=1)
+endif()
+
+if(FLUIDSYNTH_FOUND)
+    target_compile_definitions(SpaceCadetPinball PRIVATE FT_MUSIC_FLUIDSYNTH=1)
+    target_include_directories(SpaceCadetPinball PRIVATE ${FLUIDSYNTH_INCLUDE_DIRS})
+    target_link_libraries(SpaceCadetPinball ${FLUIDSYNTH_LDFLAGS})
 endif()
 
 # Skip pch on foreign code

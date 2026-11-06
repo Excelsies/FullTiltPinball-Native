@@ -153,6 +153,32 @@ tables differ by at most 0.9 % of the pixels, all in animation (blinking lights,
 text, ball position after launch); geometry, colours and fonts are identical. Ball motion differs
 run to run as in any comparison after a launch.
 
+### Music
+
+`re/test/music_check.py` runs the release build of each table three times on its own Xvfb displays
+(N, N+1, N+2) with SDL's dummy audio driver: music on, music off, and music on with a SoundFont
+path that does not exist (the baseline without any synthesizer). It presses F2 (new game), F3 twice
+after the track has looped (pause, resume), F6 twice (music off, on) and F2 again, samples the
+memory in use (VmRSS + VmSwap) every 0.25 s and counts fluidsynth's voice warnings in the log.
+
+```sh
+python re/test/music_check.py --bin bin/SpaceCadetPinball --soundfont <file.sf2> --display 120 \
+    --out re/work/runs/music
+```
+
+It passes when the memory music costs is the same on all three tables (within 12 MB: one
+synthesizer, whatever the number of tracks), music off costs at most 20 MB before F6 switches it on
+(no SoundFont loaded), memory does not grow from the first restart on, and no `Ringbuffer full` /
+`Failed to allocate a synthesis process` line appears. A build without fluidsynth fails the first
+two conditions. The voice-warning flood itself happens only with SDL_mixer < 2.8.1 or fluidsynth 1.x
+(the Raspberry Pi's libraries), so on a PC with newer libraries the warning count shows only that
+nothing else floods.
+
+Which track plays is the same logic for both backends: hook runs with audio on (dummy driver,
+`Music=1`, a SoundFont in `SDL_SOUNDFONTS`) log the same `track` events as with the baseline build.
+Audio-on hook runs depend on wall-clock timing where the harness resizes the window, so only their
+logs, not their frames, are compared between builds.
+
 ### Linux builds stay unchanged
 
 Windows-only code sits in `_WIN32` branches, `mingwcc.cmake` (used only with
