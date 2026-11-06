@@ -24,6 +24,33 @@ Muzychenko, a reverse-engineered port of the Space Cadet table. Its README is ke
 How the engine was extended: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Current limitations:
 [below](#known-limitations).
 
+## Screenshots
+
+The three tables running natively on Linux, each with a ball in play:
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/space-cadet.jpg" width="300" alt="Space Cadet running natively on Linux, ball in play"><br>Space Cadet</td>
+    <td align="center"><img src="docs/screenshots/dragons-keep.jpg" width="300" alt="Dragon's Keep running natively on Linux, ball in play"><br>Dragon's Keep</td>
+    <td align="center"><img src="docs/screenshots/skulduggery.jpg" width="300" alt="Skulduggery running natively on Linux, ball in play"><br>Skulduggery</td>
+  </tr>
+</table>
+
+<img src="docs/screenshots/windows-build-wine.jpg" width="600" alt="The Windows build playing Dragon's Keep under Wine">
+
+The Windows build (`SpaceCadetPinball.exe`) playing Dragon's Keep under Wine, in Wine's virtual
+desktop with its window frame.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/cabinet-settings-menu.jpg" width="450" alt="The cabinet settings menu over a paused game of Skulduggery"></td>
+    <td align="center"><img src="docs/screenshots/cabinet-theme.jpg" width="450" alt="The Theme item of the cabinet settings menu over the Ports game list"></td>
+  </tr>
+</table>
+
+The arcade cabinet's screen: the settings menu over a paused game of Skulduggery, with the chosen
+item's description under the list (left), and the Theme item over the Ports game list (right).
+
 ## Game data (not included)
 
 You need your own copy of Full Tilt! Pinball. Nothing from it (data, executables, text, music) is in
