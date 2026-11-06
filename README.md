@@ -41,16 +41,6 @@ The three tables running natively on Linux, each with a ball in play:
 The Windows build (`SpaceCadetPinball.exe`) playing Dragon's Keep under Wine, in Wine's virtual
 desktop with its window frame.
 
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/cabinet-settings-menu.jpg" width="450" alt="The cabinet settings menu over a paused game of Skulduggery"></td>
-    <td align="center"><img src="docs/screenshots/cabinet-theme.jpg" width="450" alt="The Theme item of the cabinet settings menu over the Ports game list"></td>
-  </tr>
-</table>
-
-The arcade cabinet's screen: the settings menu over a paused game of Skulduggery, with the chosen
-item's description under the list (left), and the Theme item over the Ports game list (right).
-
 ## Game data (not included)
 
 You need your own copy of Full Tilt! Pinball. Nothing from it (data, executables, text, music) is in
